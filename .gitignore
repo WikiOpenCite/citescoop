@@ -42,3 +42,11 @@
 
 # debug information files
 *.dwo
+
+# output directory
+build
+
+# cmake configs
+CMakeUserPresets.json
+
+.clangd
