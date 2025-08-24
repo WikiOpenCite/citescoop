@@ -22,7 +22,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - run: pipx run cpplint --recursive
+      - run: pipx run cpplint --recursive .
 
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
