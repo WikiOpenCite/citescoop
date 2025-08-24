@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: 2025 The University of St Andrews
 # SPDX-License-Identifier: CC0-1.0
 ---
+# codespell:ignore
 # Configure clang-tidy for this project.
 
 # Here is an explanation for why some of the checks are disabled:

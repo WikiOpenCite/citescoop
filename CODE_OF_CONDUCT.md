@@ -111,7 +111,7 @@ severity of a violation, lower rungs on the ladder may be skipped.
    2. Consequence: A private, written warning from the Community
       Moderators.
    3. Repair: Examples of repair include a private written apology,
-      acknowledgement of responsibility, and seeking clarification on
+      acknowledgment of responsibility, and seeking clarification on
       expectations.
 2. Temporarily Limited Activities
    1. Event: A repeated incidence of a violation that previously
