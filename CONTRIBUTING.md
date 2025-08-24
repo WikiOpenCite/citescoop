@@ -5,6 +5,13 @@ SPDX-License-Identifier: CC-BY-SA-4.0
 
 # Getting Started
 
+## Pre-commit
+
+This project uses [pre-commit](https://pre-commit.com/) to run
+pre-commit hooks to ensure correct formatting of code. Make sure you
+have installed pre-commit and then run `pre-commit install` to set up
+the hooks.
+
 ## Developer mode
 
 Build system targets that are only useful for developers of this project are
