@@ -25,7 +25,6 @@ generator, like the Unix Makefiles one:
 First create a `CMakeUserPresets.json` file in the root of the
 repository.
 
-````json
 ```json
 {
   "version": 2,
@@ -36,19 +35,16 @@ repository.
   },
   "configurePresets": [
     {
-            "name": "release",
-            "inherits": [
-                "ci-<os>",
-                "vcpkg"
-            ],
-            "binaryDir": "${sourceDir}/build/release",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release"
-            },
-            "environment": {
-                "VCPKG_ROOT": "<PATH TO VCPKG>"
-            }
-        }
+      "name": "release",
+      "inherits": ["ci-<os>", "vcpkg"],
+      "binaryDir": "${sourceDir}/build/release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      },
+      "environment": {
+        "VCPKG_ROOT": "<PATH TO VCPKG>"
+      }
+    }
   ],
   "buildPresets": [
     {
@@ -56,9 +52,9 @@ repository.
       "configurePreset": "release",
       "configuration": "Release"
     }
-  ],
+  ]
 }
-````
+```
 
 ```sh
 cmake -S . -B build -D CMAKE_BUILD_TYPE=Release
