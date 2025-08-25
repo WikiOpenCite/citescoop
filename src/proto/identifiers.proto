@@ -1,0 +1,14 @@
+// SPDX-FileCopyrightText: 2025 The University of St Andrews
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+syntax = "proto3";
+
+package wikiopencite.protobuf;
+
+message Identifiers {
+  optional string doi = 1;
+  optional string isbn = 2;
+  optional int32 pmid = 3;
+  optional int32 pmcid = 4;
+  optional string issn = 5;
+}

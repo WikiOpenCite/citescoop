@@ -1,0 +1,15 @@
+// SPDX-FileCopyrightText: 2025 The University of St Andrews
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+syntax = "proto3";
+
+import "extracted_citation.proto";
+import "revision.proto";
+
+package wikiopencite.protobuf;
+
+message Citation {
+  optional ExtractedCitation citation = 1;
+  optional Revision revision_added = 2;
+  optional Revision revision_removed = 3;
+}
