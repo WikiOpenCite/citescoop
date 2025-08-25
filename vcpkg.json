@@ -2,7 +2,8 @@
   "name": "citescoop",
   "version-semver": "0.1.0",
   "dependencies": [
-    "fmt"
+    "fmt",
+    "protobuf"
   ],
   "features": {
     "test": {

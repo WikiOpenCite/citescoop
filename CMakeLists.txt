@@ -16,6 +16,8 @@ project(
 include(cmake/project-is-top-level.cmake)
 include(cmake/variables.cmake)
 
+add_subdirectory(src/proto)
+
 # ---- Declare library ----
 
 add_library(
@@ -62,7 +64,9 @@ target_include_directories(
 target_compile_features(citescoop_lib PUBLIC cxx_std_20)
 
 find_package(fmt REQUIRED)
+
 target_link_libraries(citescoop_lib PRIVATE fmt::fmt)
+target_link_libraries(citescoop_lib PUBLIC wikiopencite::protobuf)
 
 # ---- Declare executable ----
 
