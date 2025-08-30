@@ -13,8 +13,11 @@ project(
     LANGUAGES CXX
 )
 
+set_property(GLOBAL PROPERTY CXX_STANDARD 20)
+
 include(cmake/project-is-top-level.cmake)
 include(cmake/variables.cmake)
+include(cmake/configure-files.cmake)
 
 add_subdirectory(src/proto)
 
@@ -59,6 +62,7 @@ target_include_directories(
     citescoop_lib SYSTEM
     PUBLIC
     "\$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/export>"
+    "\$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/configured>"
 )
 
 target_compile_features(citescoop_lib PUBLIC cxx_std_20)
@@ -72,6 +76,8 @@ target_link_libraries(citescoop_lib PUBLIC wikiopencite::protobuf)
 
 add_executable(citescoop_exe
   src/cli/main.cc
+  src/cli/cli.cc
+  src/cli/commands/base_command.cc
 )
 add_executable(citescoop::exe ALIAS citescoop_exe)
 
@@ -79,7 +85,10 @@ set_property(TARGET citescoop_exe PROPERTY OUTPUT_NAME citescoop)
 
 target_compile_features(citescoop_exe PRIVATE cxx_std_20)
 
-target_link_libraries(citescoop_exe PRIVATE citescoop_lib)
+find_package(Boost REQUIRED COMPONENTS program_options)
+find_package(spdlog REQUIRED)
+find_package(fmt REQUIRED)
+target_link_libraries(citescoop_exe PRIVATE citescoop_lib spdlog::spdlog_header_only Boost::program_options fmt::fmt)
 
 # ---- Install rules ----
 

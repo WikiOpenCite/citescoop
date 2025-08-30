@@ -2,8 +2,11 @@
   "name": "citescoop",
   "version-semver": "0.1.0",
   "dependencies": [
+    "boost-program-options",
+    "bzip2",
     "fmt",
-    "protobuf"
+    "protobuf",
+    "spdlog"
   ],
   "features": {
     "test": {
