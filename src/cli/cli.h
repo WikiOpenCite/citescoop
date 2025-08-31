@@ -5,23 +5,19 @@
 #define SRC_CLI_CLI_H_
 
 #include <array>
-#include <cstdint>
 #include <map>
 #include <memory>
 #include <string>
 #include <utility>
 
+#include "boost/program_options/options_description.hpp"
 #include "boost/program_options/parsers.hpp"
+#include "boost/program_options/positional_options.hpp"
 #include "boost/program_options/variables_map.hpp"
 
 #include "commands/base_command.h"
 
 namespace wikiopencite::citescoop::cli {
-
-enum class ExitCode : std::uint8_t {
-  kCliArgsError = 3,
-};
-
 class Cli {
  public:
   Cli();
@@ -39,6 +35,17 @@ class Cli {
   int Run(int argc, char* argv[]);  //NOLINT (modernize-avoid-c-arrays)
 
  private:
+  // Print the program version
+  static void PrintVersion();
+
+  // Take the parsed variables map for global arguments and convert it to
+  // a struct ready to pass to the commands.
+  //
+  // @param args Arguments variables map for global args.
+  // @returns Parsed global options.
+  static GlobalOptions GlobalArgsToStruct(
+      const boost::program_options::variables_map& args);
+
   // Parse the global arguments
   //
   // @param argc Number of command line arguments in array
@@ -49,11 +56,16 @@ class Cli {
             boost::program_options::parsed_options>
   ParseGlobalArgs(int argc, char* argv[]);  // NOLINT(modernize-avoid-c-arrays)
 
-  // Print the program version
-  static void PrintVersion();
-
   // Print the global help
   void PrintGlobalHelp();
+
+  // Handle flags that result in an immediate execution. I.e. --help and
+  // --version.
+  // @param args Command line arguments variable map.
+  // @returns Were any flags executed? If they were we should probably
+  // exit with success.
+  bool HandleImmediateExecutionFlags(
+      const boost::program_options::variables_map& args);
 
   // Mapping of command name to command
   std::map<std::string, std::unique_ptr<BaseCommand>> commands_;

@@ -4,13 +4,23 @@
 #ifndef SRC_CLI_COMMANDS_BASE_COMMAND_H_
 #define SRC_CLI_COMMANDS_BASE_COMMAND_H_
 
+#include <cstdint>
 #include <string>
+#include <utility>
+#include <vector>
 
+#include "boost/program_options/options_description.hpp"
+#include "boost/program_options/parsers.hpp"
+#include "boost/program_options/variables_map.hpp"
 #include "spdlog/common.h"
 
 namespace wikiopencite::citescoop::cli {
 struct GlobalOptions {
   spdlog::level::level_enum log_level;
+};
+
+enum class ExitCode : std::uint8_t {
+  kCliArgsError = 3,
 };
 
 // Base type for CLI commands
@@ -19,16 +29,22 @@ class BaseCommand {
   explicit BaseCommand(std::string name, std::string description);
   virtual ~BaseCommand() = default;
 
-  virtual int Run(int argc, std::array<char*, 0> argv,
+  virtual int Run(std::vector<std::string> args,
                   struct GlobalOptions globals) = 0;
+
+  void PrintHelp();
 
   std::string description() { return description_; }
 
   std::string name() { return name_; }
 
- private:
+ protected:
+  std::pair<boost::program_options::variables_map,
+            boost::program_options::parsed_options>
+  ParseArgs(std::vector<std::string> args);
   std::string name_;
   std::string description_;
+  boost::program_options::options_description cli_options_;
 };
 
 }  // namespace wikiopencite::citescoop::cli

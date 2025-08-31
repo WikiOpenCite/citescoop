@@ -5,6 +5,7 @@
 #include <cctype>
 #include <cstdlib>
 #include <ios>
+#include <memory>
 #include <sstream>
 #include <string>
 
@@ -12,8 +13,10 @@
 #include "spdlog/spdlog.h"
 
 #include "cli.h"
+#include "commands/base_command.h"
+#include "commands/extract_command.h"
 
-using wikiopencite::citescoop::cli::Cli;
+namespace cli = wikiopencite::citescoop::cli;
 
 namespace {
 void SetDebug() {
@@ -38,7 +41,8 @@ void SetDebug() {
 auto main(int argc, char** argv) -> int {
   SetDebug();
 
-  Cli cli = Cli();
+  cli::Cli cli = cli::Cli();
+  cli.Register(std::unique_ptr<cli::BaseCommand>(new cli::ExtractCommand()));
 
   return cli.Run(argc, argv);
 }

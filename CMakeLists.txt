@@ -78,6 +78,7 @@ add_executable(citescoop_exe
   src/cli/main.cc
   src/cli/cli.cc
   src/cli/commands/base_command.cc
+  src/cli/commands/extract_command.cc
 )
 add_executable(citescoop::exe ALIAS citescoop_exe)
 

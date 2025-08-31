@@ -10,12 +10,14 @@
 #include <utility>
 #include <vector>
 
+#include "boost/program_options/detail/parsers.hpp"
 #include "boost/program_options/options_description.hpp"
 #include "boost/program_options/parsers.hpp"
 #include "boost/program_options/positional_options.hpp"
 #include "boost/program_options/value_semantic.hpp"
 #include "boost/program_options/variables_map.hpp"
 #include "fmt/format.h"
+#include "spdlog/common.h"
 #include "spdlog/spdlog.h"
 
 #include "citescoop/version.h"
@@ -27,7 +29,9 @@ namespace wikiopencite::citescoop::cli {
 Cli::Cli() : global_options_("Global options") {
   global_options_.add_options()("help", "Show global help message")(
       "version", "Show citescoop version")(
-      "command", options::value<std::string>(), "command to execute")(
+      "log-level", options::value<std::string>()->default_value("off"),
+      "Logging level")("command", options::value<std::string>(),
+                       "command to execute")(
       "subargs", options::value<std::vector<std::string>>(),
       "Arguments for command");
 
@@ -41,32 +45,54 @@ void Cli::Register(std::unique_ptr<BaseCommand> command) {
 
 int Cli::Run(int argc,
              char* argv[]) {  // NOLINT(modernize-avoid-c-arrays)
-  auto global_args = ParseGlobalArgs(argc, argv);
+  spdlog::trace("Got request to run command");
 
-  // Check our --help and --version flags first
-  if (!global_args.first["help"].empty()) {
-    PrintGlobalHelp();
+  auto parsed_global_args = ParseGlobalArgs(argc, argv);
+  auto global_args = GlobalArgsToStruct(parsed_global_args.first);
+  spdlog::set_level(global_args.log_level);
+
+  if (HandleImmediateExecutionFlags(parsed_global_args.first))
     return EXIT_SUCCESS;
-  }
 
-  if (!global_args.first["version"].empty()) {
-    PrintVersion();
-    return EXIT_SUCCESS;
-  }
-
-  if (global_args.first["command"].empty()) {
+  if (parsed_global_args.first["command"].empty()) {
     spdlog::critical("No command passed");
     std::cout << "Missing required argument command" << '\n';
     return static_cast<int>(ExitCode::kCliArgsError);
   }
 
-  std::string cmd = global_args.first["command"].as<std::string>();
+  std::string cmd = parsed_global_args.first["command"].as<std::string>();
   if (!commands_.contains(cmd)) {
     spdlog::critical("Command {} not found", cmd);
     return static_cast<int>(ExitCode::kCliArgsError);
   }
 
-  return EXIT_SUCCESS;
+  auto command_args = options::collect_unrecognized(
+      parsed_global_args.second.options, options::include_positional);
+
+  // BUG(computroniks): Potential for this to cause issues if the
+  // positional argument isn't the first unrecognized command.
+  command_args.erase(command_args.begin());
+
+  spdlog::debug("Running command {}", cmd);
+  auto r_code = commands_.at(cmd)->Run(command_args, global_args);
+  spdlog::debug("Command exited with code {}", r_code);
+  return r_code;
+}
+
+void Cli::PrintVersion() {
+  namespace cmake = wikiopencite::citescoop::cmake;
+  std::cout << fmt::format("{} v{} ({})", cmake::project_name,
+                           cmake::project_version, cmake::git_sha)
+            << '\n';
+}
+
+GlobalOptions Cli::GlobalArgsToStruct(
+    const boost::program_options::variables_map& args) {
+
+  GlobalOptions options;
+  options.log_level =
+      spdlog::level::from_str(args["log-level"].as<std::string>());
+  return options;
 }
 
 std::pair<options::variables_map, options::parsed_options> Cli::ParseGlobalArgs(
@@ -81,16 +107,10 @@ std::pair<options::variables_map, options::parsed_options> Cli::ParseGlobalArgs(
 
   options::variables_map cli_variables;
   options::store(parsed, cli_variables);
+  options::notify(cli_variables);
 
   return std::pair<options::variables_map, options::parsed_options>(
       cli_variables, parsed);
-}
-
-void Cli::PrintVersion() {
-  namespace cmake = wikiopencite::citescoop::cmake;
-  std::cout << fmt::format("{} v{} ({})", cmake::project_name,
-                           cmake::project_version, cmake::git_sha)
-            << '\n';
 }
 
 void Cli::PrintGlobalHelp() {
@@ -109,6 +129,19 @@ void Cli::PrintGlobalHelp() {
                              command->description())
               << '\n';
   }
+}
+
+bool Cli::HandleImmediateExecutionFlags(const options::variables_map& args) {
+  if (!args["help"].empty()) {
+    PrintGlobalHelp();
+    return true;
+  }
+
+  if (!args["version"].empty()) {
+    PrintVersion();
+    return true;
+  }
+  return false;
 }
 
 }  // namespace wikiopencite::citescoop::cli
