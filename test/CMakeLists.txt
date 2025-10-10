@@ -1,13 +1,19 @@
 # SPDX-FileCopyrightText: 2025 https://github.com/friendlyanon
 # SPDX-License-Identifier: Unlicense
 
-# Parent project does not export its library target, so this CML implicitly
-# depends on being added from it, i.e. the testing is done only from the build
-# tree and is not feasible from an install location
+cmake_minimum_required(VERSION 3.14)
 
 project(citescoopTests LANGUAGES CXX)
 
+include(../cmake/project-is-top-level.cmake)
+include(../cmake/folders.cmake)
+
 # ---- Dependencies ----
+
+if(PROJECT_IS_TOP_LEVEL)
+  find_package(citescoop REQUIRED)
+  enable_testing()
+endif()
 
 find_package(Catch2 REQUIRED)
 include(Catch)
@@ -17,7 +23,7 @@ include(Catch)
 add_executable(citescoop_test src/citescoop_test.cc)
 target_link_libraries(
     citescoop_test PRIVATE
-    citescoop_lib
+    wikiopencite::citescoop
     Catch2::Catch2WithMain
 )
 target_compile_features(citescoop_test PRIVATE cxx_std_20)
