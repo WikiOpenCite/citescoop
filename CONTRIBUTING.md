@@ -3,33 +3,41 @@ SPDX-FileCopyrightText: 2025 The University of St Andrews
 SPDX-License-Identifier: CC-BY-SA-4.0
 -->
 
-# Getting Started
+# Contributing
 
-## Pre-commit
+## Getting started
+
+Here is some wisdom to help you build and test this project as a developer and
+potential contributor.
+
+If you plan to contribute, please read the [CONTRIBUTING](CONTRIBUTING.md)
+guide.
+
+### Pre-commit
 
 This project uses [pre-commit](https://pre-commit.com/) to run
 pre-commit hooks to ensure correct formatting of code. Make sure you
 have installed pre-commit and then run `pre-commit install` to set up
 the hooks.
 
-## Developer mode
+### Developer mode
 
 Build system targets that are only useful for developers of this project are
-hidden if the `parser_DEVELOPER_MODE` option is disabled. Enabling this
+hidden if the `citescoop_DEVELOPER_MODE` option is disabled. Enabling this
 option makes tests and other developer targets and options available. Not
 enabling this option means that you are a consumer of this project and thus you
 have no need for these targets and options.
 
 Developer mode is always set to on in CI workflows.
 
-### Presets
+#### Presets
 
 This project makes use of [presets][1] to simplify the process of configuring
 the project. As a developer, you are recommended to always have the [latest
 CMake version][2] installed to make use of the latest Quality-of-Life
 additions.
 
-You have a few options to pass `parser_DEVELOPER_MODE` to the configure
+You have a few options to pass `citescoop_DEVELOPER_MODE` to the configure
 command, but this project prefers to use presets.
 
 As a developer, you should create a `CMakeUserPresets.json` file at the root of
@@ -93,7 +101,7 @@ in the terminal.
 > in `Tools > Options > CMake` **prior to opening the project**, after which
 > you can manually configure using `Project > Configure Cache`.
 
-### Dependency manager
+#### Dependency manager
 
 The above preset will make use of the [vcpkg][vcpkg] dependency manager. After
 installing it, make sure the `VCPKG_ROOT` environment variable is pointing at
@@ -104,7 +112,7 @@ to setup `PATH` to run tests.
 
 [vcpkg]: https://github.com/microsoft/vcpkg
 
-### Configure, build and test
+#### Configure, build and test
 
 If you followed the above instructions, then you can configure, build and test
 the project respectively with the following commands from the project root on
@@ -125,12 +133,12 @@ the number of jobs to use, which should ideally be specified to the number of
 threads your CPU has. You may also want to add that to your preset using the
 `jobs` property, see the [presets documentation][1] for more details.
 
-### Developer mode targets
+#### Developer mode targets
 
 These are targets you may invoke using the build command from above, with an
 additional `-t <target>` flag:
 
-#### `coverage`
+##### `coverage`
 
 Available if `ENABLE_COVERAGE` is enabled. This target processes the output of
 the previously run tests when built with coverage configuration. The commands
@@ -140,19 +148,19 @@ file by default, which can be submitted to services with CI integration. The
 HTML command uses the trace command's output to generate an HTML document to
 `<binary-dir>/coverage_html` by default.
 
-#### `docs`
+##### `docs`
 
 Available if `BUILD_MCSS_DOCS` is enabled. Builds to documentation using
 Doxygen and m.css. The output will go to `<binary-dir>/docs` by default
 (customizable using `DOXYGEN_OUTPUT_DIRECTORY`).
 
-#### `format-check` and `format-fix`
+##### `format-check` and `format-fix`
 
 These targets run the clang-format tool on the codebase to check errors and to
 fix them respectively. Customization available using the `FORMAT_PATTERNS` and
 `FORMAT_COMMAND` cache variables.
 
-#### `spell-check` and `spell-fix`
+##### `spell-check` and `spell-fix`
 
 These targets run the codespell tool on the codebase to check errors and to fix
 them respectively. Customization available using the `SPELL_COMMAND` cache
@@ -161,12 +169,12 @@ variable.
 [1]: https://cmake.org/cmake/help/latest/manual/cmake-presets.7.html
 [2]: https://cmake.org/download/
 
-# Style
+## Style
 
 This project aims to adhere to the [Google C++ Style
 Guide](https://google.github.io/styleguide/cppguide.html).
 
-# DCO
+## DCO
 
 All contributions (including pull requests) must agree to the Developer
 Certificate of Origin (DCO) version 1.1. This is exactly the same one
