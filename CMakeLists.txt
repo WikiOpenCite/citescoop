@@ -4,6 +4,7 @@
 cmake_minimum_required(VERSION 3.14)
 
 include(cmake/prelude.cmake)
+list(APPEND CMAKE_PREFIX_PATH "./third_party/install")
 
 project(
     citescoop
@@ -61,7 +62,10 @@ target_include_directories(
 target_compile_features(citescoop_citescoop PUBLIC cxx_std_20)
 
 find_package(fmt REQUIRED)
-target_link_libraries(citescoop_citescoop PRIVATE fmt::fmt)
+
+# find_package(citescoop-proto REQUIRED PATHS ./third_party/install)
+find_package(citescoop-proto REQUIRED)
+target_link_libraries(citescoop_citescoop PRIVATE fmt::fmt wikiopencite::citescoop-proto)
 
 # ---- Install rules ----
 
