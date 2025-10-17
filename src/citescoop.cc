@@ -5,12 +5,10 @@
 
 #include <string>
 
-#include "fmt/core.h"
+// #include "citescoop/citescoop.h"
 
-#include "citescoop/citescoop.h"
+// exported_class::exported_class() : m_name{fmt::format("{}", "citescoop")} {}
 
-exported_class::exported_class() : m_name{fmt::format("{}", "citescoop")} {}
-
-auto exported_class::name() const -> char const* {
-  return m_name.c_str();
-}
+// auto exported_class::name() const -> char const* {
+//   return m_name.c_str();
+// }

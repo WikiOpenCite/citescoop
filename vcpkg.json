@@ -3,12 +3,16 @@
   "version-semver": "0.1.0",
   "dependencies": [
     {
-      "name": "fmt",
-      "version>=": "11.0.2#1"
+      "name": "boost-parser",
+      "version>=": "1.89.0"
+    },
+    {
+      "name": "boost-algorithm",
+      "version>=": "1.89.0"
     },
     {
       "name": "citescoop-proto",
-      "version>=": "0.1.2"
+      "version>=": "0.1.4"
     }
   ],
   "default-features": [],

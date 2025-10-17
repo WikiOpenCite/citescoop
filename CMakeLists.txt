@@ -22,6 +22,9 @@ include(cmake/variables.cmake)
 add_library(
     citescoop_citescoop
     src/citescoop.cc
+    src/parser/parser.cc
+    src/parser/parser_impl.cc
+    src/parser/exceptions.cc
 )
 add_library(wikiopencite::citescoop ALIAS citescoop_citescoop)
 
@@ -61,11 +64,14 @@ target_include_directories(
 
 target_compile_features(citescoop_citescoop PUBLIC cxx_std_20)
 
-find_package(fmt REQUIRED)
-
-# find_package(citescoop-proto REQUIRED PATHS ./third_party/install)
+find_package(Boost REQUIRED COMPONENTS parser algorithm)
 find_package(citescoop-proto REQUIRED)
-target_link_libraries(citescoop_citescoop PRIVATE fmt::fmt wikiopencite::citescoop-proto)
+
+target_link_libraries(citescoop_citescoop PRIVATE
+  Boost::parser
+  Boost::algorithm
+  wikiopencite::citescoop-proto
+)
 
 # ---- Install rules ----
 

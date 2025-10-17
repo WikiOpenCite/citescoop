@@ -20,7 +20,10 @@ include(Catch)
 
 # ---- Tests ----
 
-add_executable(citescoop_test src/citescoop_test.cc)
+add_executable(citescoop_test
+  src/citescoop_test.cc
+  src/parser_test.cc
+)
 target_link_libraries(
     citescoop_test PRIVATE
     wikiopencite::citescoop
