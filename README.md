@@ -5,6 +5,11 @@ SPDX-License-Identifier: CC-BY-SA-4.0
 
 # Citescoop
 
+[![codecov](https://codecov.io/gh/WikiOpenCite/citescoop/graph/badge.svg?token=CX8WZMEVUL)](https://codecov.io/gh/WikiOpenCite/citescoop)
+[![Continuous
+Integration](https://github.com/WikiOpenCite/citescoop/actions/workflows/ci.yml/badge.svg)](https://github.com/WikiOpenCite/citescoop/actions/workflows/ci.yml)
+[![REUSE](https://github.com/WikiOpenCite/citescoop/actions/workflows/reuse.yaml/badge.svg)](https://github.com/WikiOpenCite/citescoop/actions/workflows/reuse.yaml)
+
 Citescoop is a library to extract citations from Wikitext.
 
 # Building and installing
