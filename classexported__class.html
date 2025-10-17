@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>citescoop/ directory | citescoop</title>
+  <title>exported_class class | citescoop</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400i,600,600i%7CSource+Code+Pro:400,400i,600" />
   <link rel="stylesheet" href="m-dark+documentation.compiled.css" />
   <link rel="icon" href="favicon-dark.png" type="image/png" />
@@ -49,27 +49,39 @@
     <div class="m-row">
       <div class="m-col-l-10 m-push-l-1">
         <h1>
-          citescoop<span class="m-breadcrumb">/</span> <span class="m-thin">directory</span>
+          exported_class <span class="m-thin">class</span>
+          <div class="m-doc-include m-code m-inverted m-text-right"><span class="cp">#include</span> <a class="cpf" href="citescoop_8h.html">&lt;citescoop/citescoop.h&gt;</a></div>
         </h1>
-        <p><span></span></p>
+        <p>Reports the name of the library.</p>
         <nav class="m-block m-default">
           <h3>Contents</h3>
           <ul>
             <li>
               Reference
               <ul>
-                <li><a href="#files">Files</a></li>
+                <li><a href="#typeless-methods">Constructors, destructors, conversion operators</a></li>
+                <li><a href="#pub-methods">Public functions</a></li>
               </ul>
             </li>
           </ul>
         </nav>
-        <section id="files">
-          <h2><a href="#files">Files</a></h2>
+<p>A note about the MSVC warning C4251: This warning should be suppressed for private data members of the project&#x27;s exported classes, because there are too many ways to work around it and all involve some kind of trade-off (increased code complexity requiring more developer time, writing boilerplate code, longer compile times), but those solutions are very situational and solve things in slightly different ways, depending on the requirements of the project. That is to say, there is no general solution.</p><p>What can be done instead is understand where issues could arise where this warning is spotting a legitimate bug. I will give the general description of this warning&#x27;s cause and break it down to make it trivial to understand.</p><p>C4251 is emitted when an exported class has a non-static data member of a non-exported class type.</p><p>The exported class in our case is the class below (<a href="classexported__class.html" class="m-doc">exported_<wbr />class</a>), which has a non-static data member (m_name) of a non-exported class type (std::string).</p><p>The rationale here is that the user of the exported class could attempt to access (directly, or via an inline member function) a static data member or a non-inline member function of the data member, resulting in a linker error. Inline member function above means member functions that are defined (not declared) in the class definition.</p><p>Since this exported class never makes these non-exported types available to the user, we can safely ignore this warning. It&#x27;s fine if there are non-exported class types as private member variables, because they are only accessed by the members of the exported class itself.</p><p>The <a href="#a5b9a478cb22a836056348c3c346489de" class="m-doc">name()</a> method below returns a pointer to the stored null-terminated string as a fundamental type (char const), so this is safe to use anywhere. The only downside is that you can have dangling pointers if the pointer outlives the class instance which stored the string.</p><p>Shared libraries are not easy, they need some discipline to get right, but they also solve some other problems that make them worth the time invested.</p><p>Please see the note above for considerations when creating shared libraries.</p>
+        <section id="typeless-methods">
+          <h2><a href="#typeless-methods">Constructors, destructors, conversion operators</a></h2>
           <dl class="m-doc">
-            <dt>file <a href="citescoop_8h.html" class="m-doc">citescoop.h</a></dt>
-            <dd><span></span></dd>
-            <dt>file <a href="parser_8h.html" class="m-doc">parser.h</a></dt>
-            <dd><span></span></dd>
+            <dt id="a18509e999b77a64f1e1adefd28f61631">
+              <span class="m-doc-wrap-bumper"><a href="#a18509e999b77a64f1e1adefd28f61631" class="m-doc-self">exported_class</a>(</span><span class="m-doc-wrap">)</span>
+            </dt>
+            <dd>Initializes the name field to the name of the project.</dd>
+          </dl>
+        </section>
+        <section id="pub-methods">
+          <h2><a href="#pub-methods">Public functions</a></h2>
+          <dl class="m-doc">
+            <dt id="a5b9a478cb22a836056348c3c346489de">
+              <span class="m-doc-wrap-bumper">auto <a href="#a5b9a478cb22a836056348c3c346489de" class="m-doc-self">name</a>(</span><span class="m-doc-wrap">) const -&gt; char const * -&gt; auto</span>
+            </dt>
+            <dd>Returns a non-owning pointer to the string stored in this class.</dd>
           </dl>
         </section>
       </div>

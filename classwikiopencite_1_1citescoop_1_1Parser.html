@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>citescoop/ directory | citescoop</title>
+  <title>wikiopencite::citescoop::Parser class | citescoop</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400i,600,600i%7CSource+Code+Pro:400,400i,600" />
   <link rel="stylesheet" href="m-dark+documentation.compiled.css" />
   <link rel="icon" href="favicon-dark.png" type="image/png" />
@@ -49,7 +49,8 @@
     <div class="m-row">
       <div class="m-col-l-10 m-push-l-1">
         <h1>
-          citescoop<span class="m-breadcrumb">/</span> <span class="m-thin">directory</span>
+          <span class="m-breadcrumb"><a href="namespacewikiopencite.html">wikiopencite</a>::<wbr/></span><span class="m-breadcrumb"><a href="namespacewikiopencite_1_1citescoop.html">citescoop</a>::<wbr/></span>Parser <span class="m-thin">class</span>
+          <div class="m-doc-include m-code m-inverted m-text-right"><span class="cp">#include</span> <a class="cpf" href="parser_8h.html">&lt;citescoop/parser.h&gt;</a></div>
         </h1>
         <p><span></span></p>
         <nav class="m-block m-default">
@@ -58,19 +59,71 @@
             <li>
               Reference
               <ul>
-                <li><a href="#files">Files</a></li>
+                <li><a href="#typeless-methods">Constructors, destructors, conversion operators</a></li>
+                <li><a href="#pub-methods">Public functions</a></li>
               </ul>
             </li>
           </ul>
         </nav>
-        <section id="files">
-          <h2><a href="#files">Files</a></h2>
+        <section id="typeless-methods">
+          <h2><a href="#typeless-methods">Constructors, destructors, conversion operators</a></h2>
           <dl class="m-doc">
-            <dt>file <a href="citescoop_8h.html" class="m-doc">citescoop.h</a></dt>
+            <dt>
+              <span class="m-doc-wrap-bumper"><a href="#ae8c99f24fc61fe2f5d37958c5b938ece" class="m-doc">Parser</a>(</span><span class="m-doc-wrap">)</span>
+            </dt>
+            <dd>Construct a parser that has no filter.</dd>
+            <dt id="a02130dc45510801fb0dcae5beb1d561d">
+              <span class="m-doc-wrap-bumper"><a href="#a02130dc45510801fb0dcae5beb1d561d" class="m-doc-self">Parser</a>(</span><span class="m-doc-wrap">std::function&lt;bool(const std::string&amp;)&gt; filter) <span class="m-label m-flat m-info">explicit</span> </span>
+            </dt>
             <dd><span></span></dd>
-            <dt>file <a href="parser_8h.html" class="m-doc">parser.h</a></dt>
+            <dt id="a8cdc55e63358552e88fad3b79fce3f87">
+              <span class="m-doc-wrap-bumper"><a href="#a8cdc55e63358552e88fad3b79fce3f87" class="m-doc-self">~Parser</a>(</span><span class="m-doc-wrap">)</span>
+            </dt>
             <dd><span></span></dd>
           </dl>
+        </section>
+        <section id="pub-methods">
+          <h2><a href="#pub-methods">Public functions</a></h2>
+          <dl class="m-doc">
+            <dt>
+              <span class="m-doc-wrap-bumper">auto <a href="#a31f4cf6b15e09bcb47a5a455cc069c3c" class="m-doc">parse</a>(</span><span class="m-doc-wrap">const std::string&amp; text) -&gt; std::vector&lt;wikiopencite::proto::ExtractedCitation&gt;</span>
+            </dt>
+            <dd>Parse a given input string to extract citations.</dd>
+          </dl>
+        </section>
+        <section>
+          <h2>Function documentation</h2>
+          <section class="m-doc-details" id="ae8c99f24fc61fe2f5d37958c5b938ece"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper"> wikiopencite::<wbr />citescoop::<wbr />Parser::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#ae8c99f24fc61fe2f5d37958c5b938ece" class="m-doc-self">Parser</a>(</span><span class="m-doc-wrap">)</span></span>
+            </h3>
+            <p>Construct a parser that has no filter.</p>
+<p>Parsers with no filter will return all citations no matter their type.</p>
+          </div></section>
+          <section class="m-doc-details" id="a31f4cf6b15e09bcb47a5a455cc069c3c"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper">std::vector&lt;wikiopencite::proto::ExtractedCitation&gt; wikiopencite::<wbr />citescoop::<wbr />Parser::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#a31f4cf6b15e09bcb47a5a455cc069c3c" class="m-doc-self">parse</a>(</span><span class="m-doc-wrap">const std::string&amp; text)</span></span>
+            </h3>
+            <p>Parse a given input string to extract citations.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <thead>
+                <tr><th colspan="2">Parameters</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="width: 1%">text</td>
+                  <td>WikiText to extract citations from.</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>Returns</th>
+                  <td>Citation protobuf representations.</td>
+                </tr>
+              </tfoot>
+            </table>
+<p>If a filter has been set for this parser, the return values will only contain any citations that match the provided filter.</p><aside class="m-note m-default"><h4>See also</h4><p><a href="#a02130dc45510801fb0dcae5beb1d561d" class="m-doc">Parser(std::<wbr />function&lt;bool(const std::<wbr />string&amp;)&gt; filter)</a></p></aside>
+          </div></section>
         </section>
       </div>
     </div>
