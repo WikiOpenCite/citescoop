@@ -2,12 +2,20 @@
   "name": "citescoop",
   "version-semver": "0.1.0",
   "dependencies": [
-    "boost-program-options",
-    "bzip2",
-    "fmt",
-    "protobuf",
-    "spdlog"
+    {
+      "name": "boost-parser",
+      "version>=": "1.89.0"
+    },
+    {
+      "name": "boost-algorithm",
+      "version>=": "1.89.0"
+    },
+    {
+      "name": "citescoop-proto",
+      "version>=": "0.1.4"
+    }
   ],
+  "default-features": [],
   "features": {
     "test": {
       "description": "Dependencies for testing",

@@ -7,4 +7,4 @@ check-filenames =
 check-hidden =
 skip = */.git,*/build,*/prefix,*/.vscode
 quiet-level = 2
-ignore-words-list = iff,thead
+ignore-words-list = iff,thead,endcode,ws

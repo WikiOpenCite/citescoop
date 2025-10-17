@@ -4,46 +4,44 @@
 cmake_minimum_required(VERSION 3.14)
 
 include(cmake/prelude.cmake)
+list(APPEND CMAKE_PREFIX_PATH "./third_party/install")
 
 project(
     citescoop
     VERSION 0.1.0
-    DESCRIPTION "Wikipedia citation extractor"
+    DESCRIPTION "A library for extracting citations from Wikitext"
     HOMEPAGE_URL "https://github.com/WikiOpenCite/citescoop"
     LANGUAGES CXX
 )
 
-set_property(GLOBAL PROPERTY CXX_STANDARD 20)
-
 include(cmake/project-is-top-level.cmake)
 include(cmake/variables.cmake)
-include(cmake/configure-files.cmake)
-
-add_subdirectory(src/proto)
 
 # ---- Declare library ----
 
 add_library(
-    citescoop_lib OBJECT
-    src/extract.cc
+    citescoop_citescoop
+    src/citescoop.cc
+    src/parser/parser.cc
+    src/parser/parser_impl.cc
+    src/parser/exceptions.cc
 )
-
-add_library(wikiopencite::citescoop ALIAS citescoop_lib)
+add_library(wikiopencite::citescoop ALIAS citescoop_citescoop)
 
 include(GenerateExportHeader)
 generate_export_header(
-    citescoop_lib
+    citescoop_citescoop
     BASE_NAME citescoop
-    EXPORT_FILE_NAME export/citescoop/citescoop_export.hpp
+    EXPORT_FILE_NAME export/citescoop/citescoop_export.h
     CUSTOM_CONTENT_FROM_VARIABLE pragma_suppress_c4251
 )
 
 if(NOT BUILD_SHARED_LIBS)
-  target_compile_definitions(citescoop_lib PUBLIC CITESCOOP_STATIC_DEFINE)
+  target_compile_definitions(citescoop_citescoop PUBLIC CITESCOOP_STATIC_DEFINE)
 endif()
 
 set_target_properties(
-    citescoop_lib PROPERTIES
+    citescoop_citescoop PROPERTIES
     CXX_VISIBILITY_PRESET hidden
     VISIBILITY_INLINES_HIDDEN YES
     VERSION "${PROJECT_VERSION}"
@@ -53,43 +51,27 @@ set_target_properties(
 )
 
 target_include_directories(
-    citescoop_lib ${warning_guard}
+    citescoop_citescoop ${warning_guard}
     PUBLIC
     "\$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"
 )
 
 target_include_directories(
-    citescoop_lib SYSTEM
+    citescoop_citescoop SYSTEM
     PUBLIC
     "\$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/export>"
-    "\$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/configured>"
 )
 
-target_compile_features(citescoop_lib PUBLIC cxx_std_20)
+target_compile_features(citescoop_citescoop PUBLIC cxx_std_20)
 
-find_package(fmt REQUIRED)
+find_package(Boost REQUIRED COMPONENTS parser algorithm)
+find_package(citescoop-proto REQUIRED)
 
-target_link_libraries(citescoop_lib PRIVATE fmt::fmt)
-target_link_libraries(citescoop_lib PUBLIC wikiopencite::protobuf)
-
-# ---- Declare executable ----
-
-add_executable(citescoop_exe
-  src/cli/main.cc
-  src/cli/cli.cc
-  src/cli/commands/base_command.cc
-  src/cli/commands/extract_command.cc
+target_link_libraries(citescoop_citescoop PRIVATE
+  Boost::parser
+  Boost::algorithm
+  wikiopencite::citescoop-proto
 )
-add_executable(citescoop::exe ALIAS citescoop_exe)
-
-set_property(TARGET citescoop_exe PROPERTY OUTPUT_NAME citescoop)
-
-target_compile_features(citescoop_exe PRIVATE cxx_std_20)
-
-find_package(Boost REQUIRED COMPONENTS program_options)
-find_package(spdlog REQUIRED)
-find_package(fmt REQUIRED)
-target_link_libraries(citescoop_exe PRIVATE citescoop_lib spdlog::spdlog_header_only Boost::program_options fmt::fmt)
 
 # ---- Install rules ----
 
