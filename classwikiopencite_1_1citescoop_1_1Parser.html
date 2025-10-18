@@ -71,11 +71,20 @@
             <dt>
               <span class="m-doc-wrap-bumper"><a href="#ae8c99f24fc61fe2f5d37958c5b938ece" class="m-doc">Parser</a>(</span><span class="m-doc-wrap">)</span>
             </dt>
-            <dd>Construct a parser that has no filter.</dd>
+            <dd>Construct a parser that has no filter and no options.</dd>
             <dt id="a02130dc45510801fb0dcae5beb1d561d">
               <span class="m-doc-wrap-bumper"><a href="#a02130dc45510801fb0dcae5beb1d561d" class="m-doc-self">Parser</a>(</span><span class="m-doc-wrap">std::function&lt;bool(const std::string&amp;)&gt; filter) <span class="m-label m-flat m-info">explicit</span> </span>
             </dt>
             <dd><span></span></dd>
+            <dt>
+              <span class="m-doc-wrap-bumper"><a href="#abc0d2ef1ff00d89cb1ff95f7a2c0fc2d" class="m-doc">Parser</a>(</span><span class="m-doc-wrap"><a href="structwikiopencite_1_1citescoop_1_1ParserOptions.html" class="m-doc">ParserOptions</a> options) <span class="m-label m-flat m-info">explicit</span> </span>
+            </dt>
+            <dd>Construct a new parser with parser options and no filter.</dd>
+            <dt>
+              <span class="m-doc-wrap-bumper"><a href="#ac53c672426418ac532ab34e069aa0df2" class="m-doc">Parser</a>(</span><span class="m-doc-wrap">std::function&lt;bool(const std::string&amp;)&gt; filter,
+              <a href="structwikiopencite_1_1citescoop_1_1ParserOptions.html" class="m-doc">ParserOptions</a> options)</span>
+            </dt>
+            <dd>Construct a new parser with a filter and parser options.</dd>
             <dt id="a8cdc55e63358552e88fad3b79fce3f87">
               <span class="m-doc-wrap-bumper"><a href="#a8cdc55e63358552e88fad3b79fce3f87" class="m-doc-self">~Parser</a>(</span><span class="m-doc-wrap">)</span>
             </dt>
@@ -89,6 +98,10 @@
               <span class="m-doc-wrap-bumper">auto <a href="#a31f4cf6b15e09bcb47a5a455cc069c3c" class="m-doc">parse</a>(</span><span class="m-doc-wrap">const std::string&amp; text) -&gt; std::vector&lt;wikiopencite::proto::ExtractedCitation&gt;</span>
             </dt>
             <dd>Parse a given input string to extract citations.</dd>
+            <dt>
+              <span class="m-doc-wrap-bumper">auto <a href="#a67a95456dfeb9cb9b50a5646f7cc603f" class="m-doc">getOptions</a>(</span><span class="m-doc-wrap">) -&gt; <a href="structwikiopencite_1_1citescoop_1_1ParserOptions.html" class="m-doc">ParserOptions</a></span>
+            </dt>
+            <dd>Get configured parser options.</dd>
           </dl>
         </section>
         <section>
@@ -97,8 +110,48 @@
             <h3>
               <span class="m-doc-wrap-bumper"> wikiopencite::<wbr />citescoop::<wbr />Parser::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#ae8c99f24fc61fe2f5d37958c5b938ece" class="m-doc-self">Parser</a>(</span><span class="m-doc-wrap">)</span></span>
             </h3>
-            <p>Construct a parser that has no filter.</p>
+            <p>Construct a parser that has no filter and no options.</p>
 <p>Parsers with no filter will return all citations no matter their type.</p>
+          </div></section>
+          <section class="m-doc-details" id="abc0d2ef1ff00d89cb1ff95f7a2c0fc2d"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper"> wikiopencite::<wbr />citescoop::<wbr />Parser::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#abc0d2ef1ff00d89cb1ff95f7a2c0fc2d" class="m-doc-self">Parser</a>(</span><span class="m-doc-wrap"><a href="structwikiopencite_1_1citescoop_1_1ParserOptions.html" class="m-doc">ParserOptions</a> options) <span class="m-label m-info">explicit</span> </span></span>
+            </h3>
+            <p>Construct a new parser with parser options and no filter.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <thead>
+                <tr><th colspan="2">Parameters</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="width: 1%">options</td>
+                  <td><a href="classwikiopencite_1_1citescoop_1_1Parser.html" class="m-doc">Parser</a> options to configure parser with.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div></section>
+          <section class="m-doc-details" id="ac53c672426418ac532ab34e069aa0df2"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper"> wikiopencite::<wbr />citescoop::<wbr />Parser::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#ac53c672426418ac532ab34e069aa0df2" class="m-doc-self">Parser</a>(</span><span class="m-doc-wrap">std::function&lt;bool(const std::string&amp;)&gt; filter,
+              <a href="structwikiopencite_1_1citescoop_1_1ParserOptions.html" class="m-doc">ParserOptions</a> options)</span></span>
+            </h3>
+            <p>Construct a new parser with a filter and parser options.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <thead>
+                <tr><th colspan="2">Parameters</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="width: 1%">filter</td>
+                  <td>Filter function to apply to citation types. The function is passed a normalized string (lower case, additional whitespace removed) of the first argument in a WikiText citation (see <a href="https://en.wikipedia.org/wiki/Wikipedia:Citation_templates">Wikipedia - Citation Templates</a> for more details).</td>
+                </tr>
+                <tr>
+                  <td>options</td>
+                  <td><a href="classwikiopencite_1_1citescoop_1_1Parser.html" class="m-doc">Parser</a> options to configure parser with.</td>
+                </tr>
+              </tbody>
+            </table>
+<p>Parsers may optionally filter based upon the citation type they encounter. This may be useful if you wish to exclude all citation templates that aren&#x27;t <code>&quot;citation book&quot;</code> for example.</p>
           </div></section>
           <section class="m-doc-details" id="a31f4cf6b15e09bcb47a5a455cc069c3c"><div>
             <h3>
@@ -123,6 +176,20 @@
               </tfoot>
             </table>
 <p>If a filter has been set for this parser, the return values will only contain any citations that match the provided filter.</p><aside class="m-note m-default"><h4>See also</h4><p><a href="#a02130dc45510801fb0dcae5beb1d561d" class="m-doc">Parser(std::<wbr />function&lt;bool(const std::<wbr />string&amp;)&gt; filter)</a></p></aside>
+          </div></section>
+          <section class="m-doc-details" id="a67a95456dfeb9cb9b50a5646f7cc603f"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper"><a href="structwikiopencite_1_1citescoop_1_1ParserOptions.html" class="m-doc">ParserOptions</a> wikiopencite::<wbr />citescoop::<wbr />Parser::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#a67a95456dfeb9cb9b50a5646f7cc603f" class="m-doc-self">getOptions</a>(</span><span class="m-doc-wrap">)</span></span>
+            </h3>
+            <p>Get configured parser options.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <tfoot>
+                <tr>
+                  <th style="width: 1%">Returns</th>
+                  <td>Configured parser options.</td>
+                </tr>
+              </tfoot>
+            </table>
           </div></section>
         </section>
       </div>
