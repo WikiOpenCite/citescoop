@@ -27,7 +27,8 @@ struct TemplateEntry {
 
 class Parser::ParserImpl {
  public:
-  explicit ParserImpl(std::function<bool(const std::string&)> filter);
+  explicit ParserImpl(std::function<bool(const std::string&)> filter,
+                      ParserOptions options);
 
   /// @brief Parse a given WikiText input, applying the filter for each
   /// citation extracted.
@@ -38,10 +39,12 @@ class Parser::ParserImpl {
   std::vector<wikiopencite::proto::ExtractedCitation> parse(
       const std::string& text);
 
- private:
-  /// @brief Filter function to filter citations by template type.
-  std::function<bool(const std::string&)> filter_;
+  /// @brief Get configured parser options.
+  ///
+  /// @returns Parsers configuration.
+  ParserOptions getOptions() { return this->options_; }
 
+ private:
   /// @brief Build a new @link wikiopencite::proto::ExtractedCitation
   /// from the parse result.
   ///
@@ -53,6 +56,40 @@ class Parser::ParserImpl {
   /// @return Citation including relevant parameter values.
   wikiopencite::proto::ExtractedCitation buildCitation(
       const TemplateEntry& entry);
+
+  /// @brief Parse a DOI into it's short form.
+  ///
+  /// Will remove the https://doi.org/ prefix if it is present.
+  ///
+  /// @param doi DOI to parse.
+  /// @return Normalized DOI.
+  std::string parseDoi(std::string doi);
+
+  /// @brief Parse the PMC Id.
+  ///
+  /// Parse the PMC Id, removing the PMC prefix as required. If the
+  /// resulting number cannot be converted to an int, a @link
+  /// wikiopencite::citescoop::TemplateParserException @endlink will be
+  /// thrown.
+  ///
+  /// @param pmcid PMC Id to parse.
+  /// @return Resulting PMC Id.
+  int parsePmcid(std::string pmcid);
+
+  /// @brief Parse an integer identifier as an int.
+  ///
+  /// Any exceptions caused during the conversion will be converted into
+  /// TemplateParserException.
+  ///
+  /// @param ident Identifier to parse.
+  /// @return Result
+  int strToIntIdent(std::string ident);
+
+  /// @brief Filter function to filter citations by template type.
+  std::function<bool(const std::string&)> filter_;
+
+  /// @brief Parser configuration options.
+  ParserOptions options_;
 };
 
 }  // namespace wikiopencite::citescoop

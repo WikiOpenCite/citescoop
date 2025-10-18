@@ -10,8 +10,10 @@
 #include "boost/parser/parser.hpp"
 
 #include "citescoop/proto/extracted_citation.pb.h"
+#include "citescoop/proto/url.pb.h"
 
 namespace algo = boost::algorithm;
+namespace proto = wikiopencite::proto;
 
 namespace wikiopencite::citescoop {
 
@@ -49,13 +51,14 @@ BOOST_PARSER_DEFINE_RULES(kTemplateTypeRule, kKeyRule, kValRule, kParamRule,
                           kTemplateRule, kWikitextRule);
 }  // namespace
 
-Parser::ParserImpl::ParserImpl(std::function<bool(const std::string&)> filter)
+Parser::ParserImpl::ParserImpl(std::function<bool(const std::string&)> filter,
+                               ParserOptions options)
     // NOLINTNEXTLINE(whitespace/indent_namespace)
-    : filter_(filter) {}
+    : filter_(filter), options_(options) {}
 
-std::vector<wikiopencite::proto::ExtractedCitation> Parser::ParserImpl::parse(
+std::vector<proto::ExtractedCitation> Parser::ParserImpl::parse(
     const std::string& text) {
-  std::vector<wikiopencite::proto::ExtractedCitation> citations = {};
+  std::vector<proto::ExtractedCitation> citations = {};
 
   auto first = text.begin();
   auto last = text.end();
@@ -78,10 +81,10 @@ std::vector<wikiopencite::proto::ExtractedCitation> Parser::ParserImpl::parse(
   return citations;
 }
 
-wikiopencite::proto::ExtractedCitation Parser::ParserImpl::buildCitation(
+proto::ExtractedCitation Parser::ParserImpl::buildCitation(
     const TemplateEntry& entry) {
 
-  auto citation = wikiopencite::proto::ExtractedCitation();
+  auto citation = proto::ExtractedCitation();
 
   for (const auto& param : entry.params) {
     auto key = algo::trim_copy(param.key);
@@ -91,9 +94,74 @@ wikiopencite::proto::ExtractedCitation Parser::ParserImpl::buildCitation(
       if (key == "title") {
         citation.set_title(algo::trim_copy(param.value.value()));
       }
+      // Identifiers
+      // NOLINTNEXTLINE(whitespace/newline, readability/braces)
+      else if (key == "doi") {
+        citation.mutable_identifiers()->set_doi(
+            this->parseDoi(algo::trim_copy(param.value.value())));
+      } else if (key == "isbn") {
+        citation.mutable_identifiers()->set_isbn(
+            algo::trim_copy(param.value.value()));
+      } else if (key == "pmid") {
+        try {
+          citation.mutable_identifiers()->set_pmid(
+              this->strToIntIdent(algo::trim_copy(param.value.value())));
+        } catch (const TemplateParseException& e) {
+          if (!this->getOptions().ignore_invalid_ident)
+            throw e;
+        }
+      } else if (key == "pmc") {
+        try {
+          citation.mutable_identifiers()->set_pmcid(
+              this->parsePmcid(algo::trim_copy(param.value.value())));
+        } catch (const TemplateParseException& e) {
+          if (!this->getOptions().ignore_invalid_ident)
+            throw e;
+        }
+      } else if (key == "issn") {
+        citation.mutable_identifiers()->set_issn(
+            algo::trim_copy(param.value.value()));
+      }
+      // URLs
+      // NOLINTNEXTLINE(whitespace/newline, readability/braces)
+      else if (key == "url") {
+        auto url_message = citation.add_urls();
+        url_message->set_type(proto::UrlType::URL_TYPE_DEFAULT);
+        url_message->set_url(algo::trim_copy(param.value.value()));
+      } else if (key == "archive-url") {
+        auto url_message = citation.add_urls();
+        url_message->set_type(proto::UrlType::URL_TYPE_ARCHIVE);
+        url_message->set_url(algo::trim_copy(param.value.value()));
+      }
     }
   }
 
   return citation;
+}
+
+std::string Parser::ParserImpl::parseDoi(std::string doi) {
+  if (doi.starts_with("https://doi.org/")) {
+    return algo::erase_first_copy(doi, "https://doi.org/");
+  }
+  return doi;
+}
+
+int Parser::ParserImpl::parsePmcid(std::string pmcid) {
+  if (pmcid.starts_with("PMC")) {
+    return strToIntIdent(algo::erase_first_copy(pmcid, "PMC"));
+  }
+  return strToIntIdent(pmcid);
+}
+
+int Parser::ParserImpl::strToIntIdent(std::string ident) {
+  try {
+    return std::stoi(ident);
+  } catch (std::invalid_argument const& ex) {
+    throw TemplateParseException("Failed to parse ident: " +
+                                 std::string(ex.what()));
+  } catch (std::out_of_range const& ex) {
+    throw TemplateParseException("Failed to parse ident: " +
+                                 std::string(ex.what()));
+  }
 }
 }  // namespace wikiopencite::citescoop
