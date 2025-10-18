@@ -1,10 +1,9 @@
 # SPDX-FileCopyrightText: 2025 https://github.com/friendlyanon
 # SPDX-License-Identifier: Unlicense
 
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.28)
 
 include(cmake/prelude.cmake)
-list(APPEND CMAKE_PREFIX_PATH "./third_party/install")
 
 project(
     citescoop
