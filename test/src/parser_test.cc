@@ -81,6 +81,10 @@ TEST_CASE("Numeric identifiers that cannot be cast", "[parser]") {
                       cs::TemplateParseException);
     REQUIRE_THROWS_AS(parser_throws.parse("{{cite journal|pmid = abc123}}"),
                       cs::TemplateParseException);
+
+    // Int too big
+    REQUIRE_THROWS_AS(parser_throws.parse("{{cite journal|pmid = 2147483648}}"),
+                      cs::TemplateParseException);
   }
   SECTION("ignore invalid idents") {
     cs::ParserOptions options{.ignore_invalid_ident = true};
