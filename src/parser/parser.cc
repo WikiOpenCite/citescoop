@@ -12,7 +12,16 @@ namespace wikiopencite::citescoop {
 Parser::Parser() : Parser([](auto) { return true; }) {}
 
 Parser::Parser(std::function<bool(const std::string&)> filter)
-    : impl_(std::make_unique<ParserImpl>(filter)) {}
+    // NOLINTNEXTLINE(whitespace/indent_namespace)
+    : Parser(filter, ParserOptions()) {}
+
+Parser::Parser(ParserOptions options)
+    // NOLINTNEXTLINE(whitespace/indent_namespace)
+    : Parser([](auto) { return true; }, options) {}
+
+Parser::Parser(std::function<bool(const std::string&)> filter,
+               ParserOptions options)
+    : impl_(std::make_unique<ParserImpl>(filter, options)) {}
 
 Parser::~Parser() = default;
 
@@ -22,4 +31,7 @@ std::vector<wikiopencite::proto::ExtractedCitation> Parser::parse(
   return this->impl_->parse(text);
 }
 
+ParserOptions Parser::getOptions() {
+  return this->impl_->getOptions();
+}
 }  // namespace wikiopencite::citescoop

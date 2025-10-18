@@ -49,9 +49,10 @@ BOOST_PARSER_DEFINE_RULES(kTemplateTypeRule, kKeyRule, kValRule, kParamRule,
                           kTemplateRule, kWikitextRule);
 }  // namespace
 
-Parser::ParserImpl::ParserImpl(std::function<bool(const std::string&)> filter)
+Parser::ParserImpl::ParserImpl(std::function<bool(const std::string&)> filter,
+                               ParserOptions options)
     // NOLINTNEXTLINE(whitespace/indent_namespace)
-    : filter_(filter) {}
+    : filter_(filter), options_(options) {}
 
 std::vector<wikiopencite::proto::ExtractedCitation> Parser::ParserImpl::parse(
     const std::string& text) {
@@ -90,10 +91,61 @@ wikiopencite::proto::ExtractedCitation Parser::ParserImpl::buildCitation(
     if (param.value.has_value()) {
       if (key == "title") {
         citation.set_title(algo::trim_copy(param.value.value()));
+      } else if (key == "doi") {
+        citation.mutable_identifiers()->set_doi(
+            this->parseDoi(algo::trim_copy(param.value.value())));
+      } else if (key == "isbn") {
+        citation.mutable_identifiers()->set_isbn(
+            algo::trim_copy(param.value.value()));
+      } else if (key == "pmid") {
+        try {
+          citation.mutable_identifiers()->set_pmid(
+              this->strToIntIdent(algo::trim_copy(param.value.value())));
+        } catch (const TemplateParseException& e) {
+          if (!this->getOptions().ignore_invalid_ident)
+            throw e;
+        }
+      } else if (key == "pmc") {
+        try {
+          citation.mutable_identifiers()->set_pmcid(
+              this->parsePmcid(algo::trim_copy(param.value.value())));
+        } catch (const TemplateParseException& e) {
+          if (!this->getOptions().ignore_invalid_ident)
+            throw e;
+        }
+      } else if (key == "issn") {
+        citation.mutable_identifiers()->set_issn(
+            algo::trim_copy(param.value.value()));
       }
     }
   }
 
   return citation;
+}
+
+std::string Parser::ParserImpl::parseDoi(std::string doi) {
+  if (doi.starts_with("https://doi.org/")) {
+    return algo::erase_first_copy(doi, "https://doi.org/");
+  }
+  return doi;
+}
+
+int Parser::ParserImpl::parsePmcid(std::string pmcid) {
+  if (pmcid.starts_with("PMC")) {
+    return strToIntIdent(algo::erase_first_copy(pmcid, "PMC"));
+  }
+  return strToIntIdent(pmcid);
+}
+
+int Parser::ParserImpl::strToIntIdent(std::string ident) {
+  try {
+    return std::stoi(ident);
+  } catch (std::invalid_argument const& ex) {
+    throw TemplateParseException("Failed to parse ident: " +
+                                 std::string(ex.what()));
+  } catch (std::out_of_range const& ex) {
+    throw TemplateParseException("Failed to parse ident: " +
+                                 std::string(ex.what()));
+  }
 }
 }  // namespace wikiopencite::citescoop

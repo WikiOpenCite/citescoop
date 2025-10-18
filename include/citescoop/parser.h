@@ -15,6 +15,16 @@
 
 namespace wikiopencite::citescoop {
 
+struct CITESCOOP_EXPORT ParserOptions {
+  /// @brief Should invalid identifiers be ignored?
+  ///
+  /// If set, the parser will not throw an exception if it can't process
+  /// an identifier. E.g. if it encounters abc123 for pmid (which needs
+  /// to be numeric), this identifier will be ignored and not included
+  /// in the resulting citation.
+  bool ignore_invalid_ident = false;
+};
+
 /// @brief A WikiText parser to extract citations, optionally filtering by
 /// citation template type.
 ///
@@ -31,7 +41,7 @@ namespace wikiopencite::citescoop {
 /// @endcode
 class CITESCOOP_EXPORT Parser {
  public:
-  /// @brief Construct a parser that has no filter.
+  /// @brief Construct a parser that has no filter and no options.
   ///
   /// Parsers with no filter will return all citations no matter their type.
   Parser();
@@ -60,6 +70,26 @@ class CITESCOOP_EXPORT Parser {
   /// @endcode
   explicit Parser(std::function<bool(const std::string&)> filter);
 
+  /// @brief Construct a new parser with parser options and no filter.
+  ///
+  /// @param options Parser options to configure parser with.
+  explicit Parser(ParserOptions options);
+
+  /// @brief Construct a new parser with a filter and parser options.
+  ///
+  /// Parsers may optionally filter based upon the citation type they
+  /// encounter. This may be useful if you wish to exclude all citation
+  /// templates that aren't @c "citation book" for example.
+  ///
+  /// @param filter Filter function to apply to citation types. The
+  /// function is passed a normalized string (lower case, additional
+  /// whitespace removed) of the first argument in a WikiText citation
+  /// (see <a
+  /// href="https://en.wikipedia.org/wiki/Wikipedia:Citation_templates">
+  /// Wikipedia - Citation Templates</a> for more details).
+  /// @param options Parser options to configure parser with.
+  Parser(std::function<bool(const std::string&)> filter, ParserOptions options);
+
   ~Parser();
 
   /// @brief Parse a given input string to extract citations.
@@ -73,6 +103,10 @@ class CITESCOOP_EXPORT Parser {
   /// @sa Parser(std::function<bool(const std::string&)> filter)
   std::vector<wikiopencite::proto::ExtractedCitation> parse(
       const std::string& text);
+
+  /// @brief Get configured parser options.
+  /// @return Configured parser options.
+  ParserOptions getOptions();
 
  private:
   class ParserImpl;
