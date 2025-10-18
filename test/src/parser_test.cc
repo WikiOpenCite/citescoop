@@ -3,11 +3,13 @@
 
 #include <string>
 
-#include "citescoop/parser.h"
-
 #include <catch2/catch_test_macros.hpp>
 
+#include "citescoop/parser.h"
+#include "citescoop/proto/url.pb.h"
+
 namespace cs = wikiopencite::citescoop;
+namespace proto = wikiopencite::proto;
 
 /// Check that the parser can handle successfully extract the title from
 /// a citation.
@@ -58,6 +60,24 @@ TEST_CASE("Extract identifiers", "[parser]") {
   REQUIRE(identifiers.pmid() == 17322060);
   REQUIRE(identifiers.pmcid() == 345678);
   REQUIRE(identifiers.issn() == "2049-3630");
+}
+
+/// Check that the parser can correctly extract the selected types of
+/// URL.
+TEST_CASE("Extract URLs", "[parser]") {
+  auto parser = cs::Parser();
+
+  auto result = parser.parse(
+      "{{cite journal | url=https://abc.com | "
+      "archive-url=https://archive.com}}");
+
+  REQUIRE(result.at(0).urls_size() == 2);
+
+  auto urls = result.at(0).urls();
+  REQUIRE(urls.at(0).type() == proto::UrlType::URL_TYPE_DEFAULT);
+  REQUIRE(urls.at(0).url() == "https://abc.com");
+  REQUIRE(urls.at(1).type() == proto::UrlType::URL_TYPE_ARCHIVE);
+  REQUIRE(urls.at(1).url() == "https://archive.com");
 }
 
 /// Check the parser can correctly cast a PMC ID containing the PMC

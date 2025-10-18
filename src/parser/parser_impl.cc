@@ -10,8 +10,10 @@
 #include "boost/parser/parser.hpp"
 
 #include "citescoop/proto/extracted_citation.pb.h"
+#include "citescoop/proto/url.pb.h"
 
 namespace algo = boost::algorithm;
+namespace proto = wikiopencite::proto;
 
 namespace wikiopencite::citescoop {
 
@@ -54,9 +56,9 @@ Parser::ParserImpl::ParserImpl(std::function<bool(const std::string&)> filter,
     // NOLINTNEXTLINE(whitespace/indent_namespace)
     : filter_(filter), options_(options) {}
 
-std::vector<wikiopencite::proto::ExtractedCitation> Parser::ParserImpl::parse(
+std::vector<proto::ExtractedCitation> Parser::ParserImpl::parse(
     const std::string& text) {
-  std::vector<wikiopencite::proto::ExtractedCitation> citations = {};
+  std::vector<proto::ExtractedCitation> citations = {};
 
   auto first = text.begin();
   auto last = text.end();
@@ -79,10 +81,10 @@ std::vector<wikiopencite::proto::ExtractedCitation> Parser::ParserImpl::parse(
   return citations;
 }
 
-wikiopencite::proto::ExtractedCitation Parser::ParserImpl::buildCitation(
+proto::ExtractedCitation Parser::ParserImpl::buildCitation(
     const TemplateEntry& entry) {
 
-  auto citation = wikiopencite::proto::ExtractedCitation();
+  auto citation = proto::ExtractedCitation();
 
   for (const auto& param : entry.params) {
     auto key = algo::trim_copy(param.key);
@@ -91,7 +93,10 @@ wikiopencite::proto::ExtractedCitation Parser::ParserImpl::buildCitation(
     if (param.value.has_value()) {
       if (key == "title") {
         citation.set_title(algo::trim_copy(param.value.value()));
-      } else if (key == "doi") {
+      }
+      // Identifiers
+      // NOLINTNEXTLINE(whitespace/newline, readability/braces)
+      else if (key == "doi") {
         citation.mutable_identifiers()->set_doi(
             this->parseDoi(algo::trim_copy(param.value.value())));
       } else if (key == "isbn") {
@@ -116,6 +121,17 @@ wikiopencite::proto::ExtractedCitation Parser::ParserImpl::buildCitation(
       } else if (key == "issn") {
         citation.mutable_identifiers()->set_issn(
             algo::trim_copy(param.value.value()));
+      }
+      // URLs
+      // NOLINTNEXTLINE(whitespace/newline, readability/braces)
+      else if (key == "url") {
+        auto url_message = citation.add_urls();
+        url_message->set_type(proto::UrlType::URL_TYPE_DEFAULT);
+        url_message->set_url(algo::trim_copy(param.value.value()));
+      } else if (key == "archive-url") {
+        auto url_message = citation.add_urls();
+        url_message->set_type(proto::UrlType::URL_TYPE_ARCHIVE);
+        url_message->set_url(algo::trim_copy(param.value.value()));
       }
     }
   }
