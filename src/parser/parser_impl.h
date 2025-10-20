@@ -12,6 +12,7 @@
 
 #include "citescoop/parser.h"
 #include "citescoop/proto/extracted_citation.pb.h"
+#include "citescoop/proto/revision_citations.pb.h"
 
 namespace wikiopencite::citescoop {
 
@@ -36,8 +37,7 @@ class Parser::ParserImpl {
   /// @param text WikiText input.
   ///
   /// @return List of the extracted citations.
-  std::vector<wikiopencite::proto::ExtractedCitation> parse(
-      const std::string& text);
+  wikiopencite::proto::RevisionCitations parse(const std::string& text);
 
   /// @brief Get configured parser options.
   ///
@@ -45,17 +45,16 @@ class Parser::ParserImpl {
   ParserOptions getOptions() { return this->options_; }
 
  private:
-  /// @brief Build a new @link wikiopencite::proto::ExtractedCitation
+  /// @brief Fill in an existing @link wikiopencite::proto::ExtractedCitation
   /// from the parse result.
   ///
   /// Will iterate through the parameters of the template, extracting
   /// any that are relevant to us to construct the citation.
   ///
   /// @param entry Parser result.
-  ///
-  /// @return Citation including relevant parameter values.
-  wikiopencite::proto::ExtractedCitation buildCitation(
-      const TemplateEntry& entry);
+  /// @param citation Citation to complete.
+  void buildCitation(const TemplateEntry& entry,
+                     proto::ExtractedCitation* citation);
 
   /// @brief Parse a DOI into it's short form.
   ///
