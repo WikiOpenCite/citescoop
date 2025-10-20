@@ -72,7 +72,7 @@
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
 
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;citescoop/citescoop_export.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;citescoop/proto/extracted_citation.pb.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;citescoop/proto/revision_citations.pb.h&quot;</span>
 
 <span class="k">namespace</span><span class="w"> </span><span class="nn">wikiopencite</span><span class="o">::</span><span class="nn">citescoop</span><span class="w"> </span><span class="p">{</span>
 
@@ -92,8 +92,7 @@
 
 <span class="w">  </span><span class="o">~</span><span class="n">Parser</span><span class="p">();</span>
 
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">wikiopencite</span><span class="o">::</span><span class="n">proto</span><span class="o">::</span><span class="n">ExtractedCitation</span><span class="o">&gt;</span><span class="w"> </span><span class="n">parse</span><span class="p">(</span>
-<span class="w">      </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">text</span><span class="p">);</span>
+<span class="w">  </span><span class="n">wikiopencite</span><span class="o">::</span><span class="n">proto</span><span class="o">::</span><span class="n">RevisionCitations</span><span class="w"> </span><span class="nf">parse</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">text</span><span class="p">);</span>
 
 <span class="w">  </span><span class="n">ParserOptions</span><span class="w"> </span><span class="nf">getOptions</span><span class="p">();</span>
 
