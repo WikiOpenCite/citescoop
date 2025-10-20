@@ -25,13 +25,13 @@ Parser::Parser(std::function<bool(const std::string&)> filter,
 
 Parser::~Parser() = default;
 
-std::vector<wikiopencite::proto::ExtractedCitation> Parser::parse(
+std::vector<wikiopencite::proto::ExtractedCitation> Parser::Parse(
     const std::string& text) {
 
-  return this->impl_->parse(text);
+  return this->impl_->Parse(text);
 }
 
-ParserOptions Parser::getOptions() {
-  return this->impl_->getOptions();
+ParserOptions Parser::options() {
+  return this->impl_->options();
 }
 }  // namespace wikiopencite::citescoop

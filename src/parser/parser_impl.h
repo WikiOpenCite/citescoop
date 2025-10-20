@@ -36,13 +36,13 @@ class Parser::ParserImpl {
   /// @param text WikiText input.
   ///
   /// @return List of the extracted citations.
-  std::vector<wikiopencite::proto::ExtractedCitation> parse(
+  std::vector<wikiopencite::proto::ExtractedCitation> Parse(
       const std::string& text);
 
   /// @brief Get configured parser options.
   ///
   /// @returns Parsers configuration.
-  ParserOptions getOptions() { return this->options_; }
+  ParserOptions options() { return this->options_; }
 
  private:
   /// @brief Build a new @link wikiopencite::proto::ExtractedCitation
@@ -54,7 +54,7 @@ class Parser::ParserImpl {
   /// @param entry Parser result.
   ///
   /// @return Citation including relevant parameter values.
-  wikiopencite::proto::ExtractedCitation buildCitation(
+  wikiopencite::proto::ExtractedCitation BuildCitation(
       const TemplateEntry& entry);
 
   /// @brief Parse a DOI into it's short form.
@@ -63,7 +63,7 @@ class Parser::ParserImpl {
   ///
   /// @param doi DOI to parse.
   /// @return Normalized DOI.
-  std::string parseDoi(std::string doi);
+  std::string ParseDoi(std::string doi);
 
   /// @brief Parse the PMC Id.
   ///
@@ -74,7 +74,7 @@ class Parser::ParserImpl {
   ///
   /// @param pmcid PMC Id to parse.
   /// @return Resulting PMC Id.
-  int parsePmcid(std::string pmcid);
+  int ParsePmcId(std::string pmcid);
 
   /// @brief Parse an integer identifier as an int.
   ///
@@ -83,7 +83,7 @@ class Parser::ParserImpl {
   ///
   /// @param ident Identifier to parse.
   /// @return Result
-  int strToIntIdent(std::string ident);
+  int StrToIntIdent(std::string ident);
 
   /// @brief Filter function to filter citations by template type.
   std::function<bool(const std::string&)> filter_;
