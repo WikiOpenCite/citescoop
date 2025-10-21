@@ -11,8 +11,16 @@
       "version>=": "1.89.0"
     },
     {
+      "name": "boost-iostreams",
+      "version>=": "1.89.0"
+    },
+    {
       "name": "citescoop-proto",
       "version>=": "0.2.0"
+    },
+    {
+      "name": "libxmlpp",
+      "version>=": "5.4.0"
     }
   ],
   "default-features": [],

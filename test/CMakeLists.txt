@@ -21,7 +21,8 @@ include(Catch)
 # ---- Tests ----
 
 add_executable(citescoop_test
-  src/parser_test.cc
+  src/extract/bz2extractor_test.cc
+  src/parser/parser_test.cc
 )
 target_link_libraries(
     citescoop_test PRIVATE
