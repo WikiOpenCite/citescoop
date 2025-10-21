@@ -20,7 +20,6 @@ include(cmake/variables.cmake)
 
 add_library(
     citescoop_citescoop
-    src/citescoop.cc
     src/parser/parser.cc
     src/parser/parser_impl.cc
     src/parser/exceptions.cc
