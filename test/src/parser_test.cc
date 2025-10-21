@@ -16,7 +16,7 @@ namespace proto = wikiopencite::proto;
 TEST_CASE("Single citation with title", "[parser]") {
   auto parser = wikiopencite::citescoop::Parser();
 
-  auto result = parser.parse("{{cite journal | title=Parsing in Practice}}");
+  auto result = parser.Parse("{{cite journal | title=Parsing in Practice}}");
 
   REQUIRE(result.citations_size() == 1);
   auto citation = result.citations().at(0);
@@ -32,12 +32,12 @@ TEST_CASE("Single citation with title", "[parser]") {
 TEST_CASE("Consistent DOI formats", "[parser]") {
   auto parser = wikiopencite::citescoop::Parser();
 
-  auto result1 = parser.parse("{{cite journal | doi=10.1007/b62130}}");
+  auto result1 = parser.Parse("{{cite journal | doi=10.1007/b62130}}");
   auto citation1 = result1.citations().at(0);
   REQUIRE(citation1.identifiers().doi() == "10.1007/b62130");
 
   auto result2 =
-      parser.parse("{{cite journal | doi=https://doi.org/10.1007/b62130}}");
+      parser.Parse("{{cite journal | doi=https://doi.org/10.1007/b62130}}");
   auto citation2 = result2.citations().at(0);
   REQUIRE(citation2.identifiers().doi() == "10.1007/b62130");
 }
@@ -47,7 +47,7 @@ TEST_CASE("Consistent DOI formats", "[parser]") {
 TEST_CASE("Extract identifiers", "[parser]") {
   auto parser = wikiopencite::citescoop::Parser();
 
-  auto result = parser.parse(
+  auto result = parser.Parse(
       "{{cite journal | doi=10.1007/b62130 | isbn=0-786918-50-0 | "
       "pmid=17322060 | pmc=345678 | issn=2049-3630}}");
 
@@ -67,7 +67,7 @@ TEST_CASE("Extract identifiers", "[parser]") {
 TEST_CASE("Extract URLs", "[parser]") {
   auto parser = cs::Parser();
 
-  auto result = parser.parse(
+  auto result = parser.Parse(
       "{{cite journal | url=https://abc.com | "
       "archive-url=https://archive.com}}");
 
@@ -85,7 +85,7 @@ TEST_CASE("Extract URLs", "[parser]") {
 TEST_CASE("PMC ID containing PMC prefix") {
   auto parser = wikiopencite::citescoop::Parser();
 
-  auto result = parser.parse("{{cite journal|pmc = PMC345678}}");
+  auto result = parser.Parse("{{cite journal|pmc = PMC345678}}");
   auto citation = result.citations().at(0);
 
   REQUIRE(citation.identifiers().pmcid() == 345678);
@@ -97,13 +97,13 @@ TEST_CASE("Numeric identifiers that cannot be cast", "[parser]") {
   SECTION("throw an exception") {
     // We expect the default to be throwing an exception
     auto parser_throws = cs::Parser();
-    REQUIRE_THROWS_AS(parser_throws.parse("{{cite journal|pmc = abc123}}"),
+    REQUIRE_THROWS_AS(parser_throws.Parse("{{cite journal|pmc = abc123}}"),
                       cs::TemplateParseException);
-    REQUIRE_THROWS_AS(parser_throws.parse("{{cite journal|pmid = abc123}}"),
+    REQUIRE_THROWS_AS(parser_throws.Parse("{{cite journal|pmid = abc123}}"),
                       cs::TemplateParseException);
 
     // Int too big
-    REQUIRE_THROWS_AS(parser_throws.parse("{{cite journal|pmid = 2147483648}}"),
+    REQUIRE_THROWS_AS(parser_throws.Parse("{{cite journal|pmid = 2147483648}}"),
                       cs::TemplateParseException);
   }
   SECTION("ignore invalid idents") {
@@ -111,7 +111,7 @@ TEST_CASE("Numeric identifiers that cannot be cast", "[parser]") {
     auto parser_no_throw = cs::Parser(options);
 
     auto result =
-        parser_no_throw.parse("{{cite journal|pmc = abc123|pmid=abc123}}");
+        parser_no_throw.Parse("{{cite journal|pmc = abc123|pmid=abc123}}");
     auto citation = result.citations().at(0);
 
     REQUIRE_FALSE(citation.identifiers().has_pmid());
@@ -124,7 +124,7 @@ TEST_CASE("Numeric identifiers that cannot be cast", "[parser]") {
 TEST_CASE("Additional whitespace", "[parser]") {
   auto parser = wikiopencite::citescoop::Parser();
 
-  auto result = parser.parse(
+  auto result = parser.Parse(
       "{{    cite    journal   |   title = Parsing in Practice }}");
   auto citation = result.citations().at(0);
 
@@ -137,7 +137,7 @@ TEST_CASE("Additional whitespace", "[parser]") {
 TEST_CASE("Minimum whitespace", "[parser]") {
   auto parser = wikiopencite::citescoop::Parser();
 
-  auto result = parser.parse("{{cite journal|title = Parsing in Practice}}");
+  auto result = parser.Parse("{{cite journal|title = Parsing in Practice}}");
   auto citation = result.citations().at(0);
 
   REQUIRE(citation.has_title());
@@ -148,7 +148,7 @@ TEST_CASE("Minimum whitespace", "[parser]") {
 TEST_CASE("Multiple citations in text block", "[parser]") {
   auto parser = wikiopencite::citescoop::Parser();
 
-  auto result = parser.parse(
+  auto result = parser.Parse(
       "Urban beekeeping, the practice of keeping bee colonies in towns and "
       "cities, has grown in popularity over recent years due to increasing "
       "awareness of pollinator decline and interest in sustainable food "
@@ -181,14 +181,14 @@ TEST_CASE("Multiple citations in text block", "[parser]") {
 TEST_CASE("Get options", "[parser]") {
   SECTION("Get default options no filter") {
     auto parser = cs::Parser();
-    auto options = parser.getOptions();
+    auto options = parser.options();
 
     REQUIRE_FALSE(options.ignore_invalid_ident);
   }
 
   SECTION("Get default options with filter") {
     auto parser = cs::Parser([](auto) { return true; });
-    auto options = parser.getOptions();
+    auto options = parser.options();
 
     REQUIRE_FALSE(options.ignore_invalid_ident);
   }
@@ -197,13 +197,13 @@ TEST_CASE("Get options", "[parser]") {
     cs::ParserOptions options = {.ignore_invalid_ident = true};
     auto parser = cs::Parser(options);
 
-    REQUIRE(parser.getOptions().ignore_invalid_ident);
+    REQUIRE(parser.options().ignore_invalid_ident);
   }
 
   SECTION("Set custom options with filter") {
     cs::ParserOptions options = {.ignore_invalid_ident = true};
     auto parser = cs::Parser([](auto) { return true; }, options);
 
-    REQUIRE(parser.getOptions().ignore_invalid_ident);
+    REQUIRE(parser.options().ignore_invalid_ident);
   }
 }

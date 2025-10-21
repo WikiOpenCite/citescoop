@@ -101,11 +101,11 @@ class CITESCOOP_EXPORT Parser {
   /// @return Citation protobuf representations.
   ///
   /// @sa Parser(std::function<bool(const std::string&)> filter)
-  wikiopencite::proto::RevisionCitations parse(const std::string& text);
+  wikiopencite::proto::RevisionCitations Parse(const std::string& text);
 
   /// @brief Get configured parser options.
   /// @return Configured parser options.
-  ParserOptions getOptions();
+  ParserOptions options();
 
  private:
   class ParserImpl;

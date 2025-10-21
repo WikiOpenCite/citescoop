@@ -57,7 +57,7 @@ Parser::ParserImpl::ParserImpl(std::function<bool(const std::string&)> filter,
     // NOLINTNEXTLINE(whitespace/indent_namespace)
     : filter_(filter), options_(options) {}
 
-proto::RevisionCitations Parser::ParserImpl::parse(const std::string& text) {
+proto::RevisionCitations Parser::ParserImpl::Parse(const std::string& text) {
   auto citations = proto::RevisionCitations();
 
   auto first = text.begin();
@@ -72,7 +72,7 @@ proto::RevisionCitations Parser::ParserImpl::parse(const std::string& text) {
 
       if (this->filter_(normalised_name)) {
         auto citation = citations.add_citations();
-        this->buildCitation(result, citation);
+        this->BuildCitation(result, citation);
       }
     }
 
@@ -82,7 +82,7 @@ proto::RevisionCitations Parser::ParserImpl::parse(const std::string& text) {
   return citations;
 }
 
-void Parser::ParserImpl::buildCitation(const TemplateEntry& entry,
+void Parser::ParserImpl::BuildCitation(const TemplateEntry& entry,
                                        proto::ExtractedCitation* citation) {
   for (const auto& param : entry.params) {
     auto key = algo::trim_copy(param.key);
@@ -96,24 +96,24 @@ void Parser::ParserImpl::buildCitation(const TemplateEntry& entry,
       // NOLINTNEXTLINE(whitespace/newline, readability/braces)
       else if (key == "doi") {
         citation->mutable_identifiers()->set_doi(
-            this->parseDoi(algo::trim_copy(param.value.value())));
+            this->ParseDoi(algo::trim_copy(param.value.value())));
       } else if (key == "isbn") {
         citation->mutable_identifiers()->set_isbn(
             algo::trim_copy(param.value.value()));
       } else if (key == "pmid") {
         try {
           citation->mutable_identifiers()->set_pmid(
-              this->strToIntIdent(algo::trim_copy(param.value.value())));
+              this->StrToIntIdent(algo::trim_copy(param.value.value())));
         } catch (const TemplateParseException& e) {
-          if (!this->getOptions().ignore_invalid_ident)
+          if (!this->options().ignore_invalid_ident)
             throw e;
         }
       } else if (key == "pmc") {
         try {
           citation->mutable_identifiers()->set_pmcid(
-              this->parsePmcid(algo::trim_copy(param.value.value())));
+              this->ParsePmcId(algo::trim_copy(param.value.value())));
         } catch (const TemplateParseException& e) {
-          if (!this->getOptions().ignore_invalid_ident)
+          if (!this->options().ignore_invalid_ident)
             throw e;
         }
       } else if (key == "issn") {
@@ -135,21 +135,21 @@ void Parser::ParserImpl::buildCitation(const TemplateEntry& entry,
   }
 }
 
-std::string Parser::ParserImpl::parseDoi(std::string doi) {
+std::string Parser::ParserImpl::ParseDoi(std::string doi) {
   if (doi.starts_with("https://doi.org/")) {
     return algo::erase_first_copy(doi, "https://doi.org/");
   }
   return doi;
 }
 
-int Parser::ParserImpl::parsePmcid(std::string pmcid) {
+int Parser::ParserImpl::ParsePmcId(std::string pmcid) {
   if (pmcid.starts_with("PMC")) {
-    return strToIntIdent(algo::erase_first_copy(pmcid, "PMC"));
+    return StrToIntIdent(algo::erase_first_copy(pmcid, "PMC"));
   }
-  return strToIntIdent(pmcid);
+  return StrToIntIdent(pmcid);
 }
 
-int Parser::ParserImpl::strToIntIdent(std::string ident) {
+int Parser::ParserImpl::StrToIntIdent(std::string ident) {
   try {
     return std::stoi(ident);
   } catch (std::invalid_argument const& ex) {
