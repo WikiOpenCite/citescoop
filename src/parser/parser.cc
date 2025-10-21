@@ -25,9 +25,7 @@ Parser::Parser(std::function<bool(const std::string&)> filter,
 
 Parser::~Parser() = default;
 
-std::vector<wikiopencite::proto::ExtractedCitation> Parser::Parse(
-    const std::string& text) {
-
+wikiopencite::proto::RevisionCitations Parser::Parse(const std::string& text) {
   return this->impl_->Parse(text);
 }
 

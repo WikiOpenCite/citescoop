@@ -18,13 +18,13 @@ TEST_CASE("Single citation with title", "[parser]") {
 
   auto result = parser.Parse("{{cite journal | title=Parsing in Practice}}");
 
-  REQUIRE(result.size() == 1);
-  auto citation = result.at(0);
+  REQUIRE(result.citations_size() == 1);
+  auto citation = result.citations().at(0);
 
   REQUIRE(citation.has_title());
   REQUIRE(citation.title() == "Parsing in Practice");
   REQUIRE(!citation.has_identifiers());
-  REQUIRE(result.at(0).urls_size() == 0);
+  REQUIRE(citation.urls_size() == 0);
 }
 
 /// Ensure that DOI formats are always in the short form (i.e. missing
@@ -33,12 +33,12 @@ TEST_CASE("Consistent DOI formats", "[parser]") {
   auto parser = wikiopencite::citescoop::Parser();
 
   auto result1 = parser.Parse("{{cite journal | doi=10.1007/b62130}}");
-  auto citation1 = result1.at(0);
+  auto citation1 = result1.citations().at(0);
   REQUIRE(citation1.identifiers().doi() == "10.1007/b62130");
 
   auto result2 =
       parser.Parse("{{cite journal | doi=https://doi.org/10.1007/b62130}}");
-  auto citation2 = result2.at(0);
+  auto citation2 = result2.citations().at(0);
   REQUIRE(citation2.identifiers().doi() == "10.1007/b62130");
 }
 
@@ -51,7 +51,7 @@ TEST_CASE("Extract identifiers", "[parser]") {
       "{{cite journal | doi=10.1007/b62130 | isbn=0-786918-50-0 | "
       "pmid=17322060 | pmc=345678 | issn=2049-3630}}");
 
-  auto citation = result.at(0);
+  auto citation = result.citations().at(0);
   REQUIRE(citation.has_identifiers());
   auto identifiers = citation.identifiers();
 
@@ -71,9 +71,9 @@ TEST_CASE("Extract URLs", "[parser]") {
       "{{cite journal | url=https://abc.com | "
       "archive-url=https://archive.com}}");
 
-  REQUIRE(result.at(0).urls_size() == 2);
+  REQUIRE(result.citations().at(0).urls_size() == 2);
 
-  auto urls = result.at(0).urls();
+  auto urls = result.citations().at(0).urls();
   REQUIRE(urls.at(0).type() == proto::UrlType::URL_TYPE_DEFAULT);
   REQUIRE(urls.at(0).url() == "https://abc.com");
   REQUIRE(urls.at(1).type() == proto::UrlType::URL_TYPE_ARCHIVE);
@@ -86,7 +86,7 @@ TEST_CASE("PMC ID containing PMC prefix") {
   auto parser = wikiopencite::citescoop::Parser();
 
   auto result = parser.Parse("{{cite journal|pmc = PMC345678}}");
-  auto citation = result.at(0);
+  auto citation = result.citations().at(0);
 
   REQUIRE(citation.identifiers().pmcid() == 345678);
 }
@@ -112,7 +112,7 @@ TEST_CASE("Numeric identifiers that cannot be cast", "[parser]") {
 
     auto result =
         parser_no_throw.Parse("{{cite journal|pmc = abc123|pmid=abc123}}");
-    auto citation = result.at(0);
+    auto citation = result.citations().at(0);
 
     REQUIRE_FALSE(citation.identifiers().has_pmid());
     REQUIRE_FALSE(citation.identifiers().has_pmcid());
@@ -126,7 +126,7 @@ TEST_CASE("Additional whitespace", "[parser]") {
 
   auto result = parser.Parse(
       "{{    cite    journal   |   title = Parsing in Practice }}");
-  auto citation = result.at(0);
+  auto citation = result.citations().at(0);
 
   REQUIRE(citation.has_title());
   REQUIRE(citation.title() == "Parsing in Practice");
@@ -138,7 +138,7 @@ TEST_CASE("Minimum whitespace", "[parser]") {
   auto parser = wikiopencite::citescoop::Parser();
 
   auto result = parser.Parse("{{cite journal|title = Parsing in Practice}}");
-  auto citation = result.at(0);
+  auto citation = result.citations().at(0);
 
   REQUIRE(citation.has_title());
   REQUIRE(citation.title() == "Parsing in Practice");
@@ -174,7 +174,7 @@ TEST_CASE("Multiple citations in text block", "[parser]") {
       "Evolution |volume=2 |issue=8 |pages=1245–1247 |year=2018 "
       "|doi=10.1038/s41559-018-0602-5}}</ref>");
 
-  REQUIRE(result.size() == 3);
+  REQUIRE(result.citations_size() == 3);
 }
 
 /// Check that we can correctly set and retrieve parser options.

@@ -11,7 +11,7 @@
 #include <vector>
 
 #include "citescoop/citescoop_export.h"
-#include "citescoop/proto/extracted_citation.pb.h"
+#include "citescoop/proto/revision_citations.pb.h"
 
 namespace wikiopencite::citescoop {
 
@@ -101,8 +101,7 @@ class CITESCOOP_EXPORT Parser {
   /// @return Citation protobuf representations.
   ///
   /// @sa Parser(std::function<bool(const std::string&)> filter)
-  std::vector<wikiopencite::proto::ExtractedCitation> Parse(
-      const std::string& text);
+  wikiopencite::proto::RevisionCitations Parse(const std::string& text);
 
   /// @brief Get configured parser options.
   /// @return Configured parser options.
