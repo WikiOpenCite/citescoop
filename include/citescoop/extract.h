@@ -17,7 +17,7 @@ class CITESCOOP_EXPORT Extractor {
  public:
   virtual ~Extractor();
   virtual std::unique_ptr<std::vector<wikiopencite::proto::Page>> Extract(
-      std::istream& stream);
+      std::istream& stream) = 0;
 };
 
 class CITESCOOP_EXPORT TextExtractor : public Extractor {
