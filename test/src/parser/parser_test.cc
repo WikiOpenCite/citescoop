@@ -8,12 +8,14 @@
 #include "citescoop/parser.h"
 #include "citescoop/proto/url.pb.h"
 
+const std::string TEST_NAME_PREFIX = "[Parser] ";
+
 namespace cs = wikiopencite::citescoop;
 namespace proto = wikiopencite::proto;
 
 /// Check that the parser can handle successfully extract the title from
 /// a citation.
-TEST_CASE("Single citation with title", "[parser]") {
+TEST_CASE(TEST_NAME_PREFIX + "Single citation with title", "[parser]") {
   auto parser = wikiopencite::citescoop::Parser();
 
   auto result = parser.Parse("{{cite journal | title=Parsing in Practice}}");
@@ -29,7 +31,7 @@ TEST_CASE("Single citation with title", "[parser]") {
 
 /// Ensure that DOI formats are always in the short form (i.e. missing
 /// the https://doi.org/ prefix).
-TEST_CASE("Consistent DOI formats", "[parser]") {
+TEST_CASE(TEST_NAME_PREFIX + "Consistent DOI formats", "[parser]") {
   auto parser = wikiopencite::citescoop::Parser();
 
   auto result1 = parser.Parse("{{cite journal | doi=10.1007/b62130}}");
@@ -44,7 +46,7 @@ TEST_CASE("Consistent DOI formats", "[parser]") {
 
 /// Check that identifiers can be correctly extracted, and where
 /// required cast.
-TEST_CASE("Extract identifiers", "[parser]") {
+TEST_CASE(TEST_NAME_PREFIX + "Extract identifiers", "[parser]") {
   auto parser = wikiopencite::citescoop::Parser();
 
   auto result = parser.Parse(
@@ -64,7 +66,7 @@ TEST_CASE("Extract identifiers", "[parser]") {
 
 /// Check that the parser can correctly extract the selected types of
 /// URL.
-TEST_CASE("Extract URLs", "[parser]") {
+TEST_CASE(TEST_NAME_PREFIX + "Extract URLs", "[parser]") {
   auto parser = cs::Parser();
 
   auto result = parser.Parse(
@@ -82,7 +84,7 @@ TEST_CASE("Extract URLs", "[parser]") {
 
 /// Check the parser can correctly cast a PMC ID containing the PMC
 /// prefix to an integer.
-TEST_CASE("PMC ID containing PMC prefix") {
+TEST_CASE(TEST_NAME_PREFIX + "PMC ID containing PMC prefix") {
   auto parser = wikiopencite::citescoop::Parser();
 
   auto result = parser.Parse("{{cite journal|pmc = PMC345678}}");
@@ -93,7 +95,8 @@ TEST_CASE("PMC ID containing PMC prefix") {
 
 /// Check that the parser can correctly throw / not throw an exception
 /// on invalid numerical idents dependent upon configuration.
-TEST_CASE("Numeric identifiers that cannot be cast", "[parser]") {
+TEST_CASE(TEST_NAME_PREFIX + "Numeric identifiers that cannot be cast",
+          "[parser]") {
   SECTION("throw an exception") {
     // We expect the default to be throwing an exception
     auto parser_throws = cs::Parser();
@@ -121,7 +124,7 @@ TEST_CASE("Numeric identifiers that cannot be cast", "[parser]") {
 
 /// Ensure that the parser can handle additional whitespace around the
 /// template.
-TEST_CASE("Additional whitespace", "[parser]") {
+TEST_CASE(TEST_NAME_PREFIX + "Additional whitespace", "[parser]") {
   auto parser = wikiopencite::citescoop::Parser();
 
   auto result = parser.Parse(
@@ -134,7 +137,7 @@ TEST_CASE("Additional whitespace", "[parser]") {
 
 /// Ensure that the parser can handle minimum whitespace around the
 /// template.
-TEST_CASE("Minimum whitespace", "[parser]") {
+TEST_CASE(TEST_NAME_PREFIX + "Minimum whitespace", "[parser]") {
   auto parser = wikiopencite::citescoop::Parser();
 
   auto result = parser.Parse("{{cite journal|title = Parsing in Practice}}");
@@ -145,7 +148,7 @@ TEST_CASE("Minimum whitespace", "[parser]") {
 }
 
 /// Ensure the parser can extract multiple citations from a block of WikiText.
-TEST_CASE("Multiple citations in text block", "[parser]") {
+TEST_CASE(TEST_NAME_PREFIX + "Multiple citations in text block", "[parser]") {
   auto parser = wikiopencite::citescoop::Parser();
 
   auto result = parser.Parse(
@@ -178,7 +181,7 @@ TEST_CASE("Multiple citations in text block", "[parser]") {
 }
 
 /// Check that we can correctly set and retrieve parser options.
-TEST_CASE("Get options", "[parser]") {
+TEST_CASE(TEST_NAME_PREFIX + "Get options", "[parser]") {
   SECTION("Get default options no filter") {
     auto parser = cs::Parser();
     auto options = parser.options();
