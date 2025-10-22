@@ -5,7 +5,7 @@
 
 #include "citescoop/extract.h"
 #include "citescoop/parser.h"
-#include "citescoop/proto/revisions_group.pb.h"
+#include "citescoop/proto/page.pb.h"
 
 #include "bz2extractor_impl.h"
 
@@ -19,7 +19,8 @@ Bz2Extractor::Bz2Extractor(
 
 Bz2Extractor::~Bz2Extractor() = default;
 
-proto::RevisionsGroup Bz2Extractor::Extract(std::istream& stream) {
+std::unique_ptr<std::vector<proto::Page>> Bz2Extractor::Extract(
+    std::istream& stream) {
   return impl_->Extract(stream);
 }
 

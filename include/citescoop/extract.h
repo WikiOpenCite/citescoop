@@ -6,23 +6,26 @@
 
 #include <istream>
 #include <memory>
+#include <vector>
 
 #include "citescoop/citescoop_export.h"
 #include "citescoop/parser.h"
-#include "citescoop/proto/revisions_group.pb.h"
+#include "citescoop/proto/page.pb.h"
 
 namespace wikiopencite::citescoop {
 class CITESCOOP_EXPORT Extractor {
  public:
   virtual ~Extractor();
-  virtual wikiopencite::proto::RevisionsGroup Extract(std::istream& stream);
+  virtual std::unique_ptr<std::vector<wikiopencite::proto::Page>> Extract(
+      std::istream& stream);
 };
 
 class CITESCOOP_EXPORT TextExtractor : public Extractor {
  public:
   explicit TextExtractor(std::shared_ptr<Parser> parser);
   ~TextExtractor();
-  wikiopencite::proto::RevisionsGroup Extract(std::istream& stream) override;
+  std::unique_ptr<std::vector<wikiopencite::proto::Page>> Extract(
+      std::istream& stream) override;
 
  private:
   class TextExtractorImpl;
@@ -33,7 +36,8 @@ class CITESCOOP_EXPORT Bz2Extractor : public Extractor {
  public:
   explicit Bz2Extractor(std::shared_ptr<Parser> parser);
   ~Bz2Extractor();
-  wikiopencite::proto::RevisionsGroup Extract(std::istream& stream) override;
+  std::unique_ptr<std::vector<wikiopencite::proto::Page>> Extract(
+      std::istream& stream) override;
 
  private:
   class Bz2ExtractorImpl;

@@ -45,16 +45,15 @@ class Parser::ParserImpl {
   ParserOptions options() { return this->options_; }
 
  private:
-  /// @brief Fill in an existing @link wikiopencite::proto::ExtractedCitation
+  /// @brief Build a @link wikiopencite::proto::ExtractedCitation
   /// from the parse result.
   ///
   /// Will iterate through the parameters of the template, extracting
   /// any that are relevant to us to construct the citation.
   ///
   /// @param entry Parser result.
-  /// @param citation Citation to complete.
-  void BuildCitation(const TemplateEntry& entry,
-                     proto::ExtractedCitation* citation);
+  wikiopencite::proto::ExtractedCitation BuildCitation(
+      const TemplateEntry& entry);
 
   /// @brief Parse a DOI into it's short form.
   ///

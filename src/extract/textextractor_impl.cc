@@ -7,7 +7,7 @@
 #include <memory>
 
 #include "citescoop/parser.h"
-#include "citescoop/proto/revisions_group.pb.h"
+#include "citescoop/proto/page.pb.h"
 
 #include "base_extractor.h"
 
@@ -19,9 +19,8 @@ TextExtractor::TextExtractorImpl::TextExtractorImpl(
     // NOLINTNEXTLINE(whitespace/indent_namespace)
     : BaseExtractor(parser) {}
 
-proto::RevisionsGroup TextExtractor::TextExtractorImpl::Extract(
-    std::istream& stream) {
-
+std::unique_ptr<std::vector<proto::Page>>
+TextExtractor::TextExtractorImpl::Extract(std::istream& stream) {
   return xml_parser_.ParseXML(stream);
 }
 }  // namespace wikiopencite::citescoop

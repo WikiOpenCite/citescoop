@@ -5,8 +5,9 @@
 
 #include <istream>
 #include <memory>
+#include <vector>
 
-#include "citescoop/proto/revisions_group.pb.h"
+#include "citescoop/proto/page.pb.h"
 
 namespace wikiopencite::citescoop {
 namespace proto = wikiopencite::proto;
@@ -14,7 +15,9 @@ namespace proto = wikiopencite::proto;
 DumpParser::DumpParser(std::shared_ptr<wikiopencite::citescoop::Parser> parser)
     : parser_(parser) {}
 
-proto::RevisionsGroup DumpParser::ParseXML(std::istream& stream) {
+std::unique_ptr<std::vector<proto::Page>> DumpParser::ParseXML(
+    std::istream& stream) {
+  std::unique_ptr<std::vector<proto::Page>> pages(new std::vector<proto::Page>);
   char buf[64];
   const size_t buf_size = sizeof(buf) / sizeof(char);
 
@@ -29,7 +32,7 @@ proto::RevisionsGroup DumpParser::ParseXML(std::istream& stream) {
 
   finish_chunk_parsing();
 
-  return wikiopencite::proto::RevisionsGroup();
+  return pages;
 }
 
 }  // namespace wikiopencite::citescoop

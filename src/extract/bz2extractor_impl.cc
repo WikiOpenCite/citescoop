@@ -9,7 +9,7 @@
 #include "boost/iostreams/filter/bzip2.hpp"
 #include "boost/iostreams/filtering_streambuf.hpp"
 
-#include "citescoop/proto/revisions_group.pb.h"
+#include "citescoop/proto/page.pb.h"
 
 #include "base_extractor.h"
 
@@ -22,9 +22,8 @@ Bz2Extractor::Bz2ExtractorImpl::Bz2ExtractorImpl(
     // NOLINTNEXTLINE(whitespace/indent_namespace)
     : BaseExtractor(parser) {}
 
-proto::RevisionsGroup Bz2Extractor::Bz2ExtractorImpl::Extract(
-    std::istream& stream) {
-
+std::unique_ptr<std::vector<proto::Page>>
+Bz2Extractor::Bz2ExtractorImpl::Extract(std::istream& stream) {
   bio::filtering_streambuf<bio::input> in;
   in.push(bio::bzip2_decompressor());
   in.push(stream);

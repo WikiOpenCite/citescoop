@@ -7,17 +7,19 @@
 #include <iostream>
 #include <istream>
 #include <memory>
+#include <vector>
 
 #include "libxml++/libxml++.h"
 
 #include "citescoop/parser.h"
-#include "citescoop/proto/revisions_group.pb.h"
+#include "citescoop/proto/page.pb.h"
 
 namespace wikiopencite::citescoop {
 class DumpParser : public xmlpp::SaxParser {
  public:
   explicit DumpParser(std::shared_ptr<wikiopencite::citescoop::Parser> parser);
-  wikiopencite::proto::RevisionsGroup ParseXML(std::istream& stream);
+  std::unique_ptr<std::vector<wikiopencite::proto::Page>> ParseXML(
+      std::istream& stream);
 
  protected:
   // SAX parser overrides
