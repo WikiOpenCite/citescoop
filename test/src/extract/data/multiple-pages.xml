@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mediawiki xmlns="http://www.mediawiki.org/xml/export-0.11/"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mediawiki.org/xml/export-0.11/
+http://www.mediawiki.org/xml/export-0.11.xsd" version="0.11" xml:lang="en">
+
+  <siteinfo>
+    <sitename>Wikipedia</sitename>
+    <dbname>enwiki</dbname>
+    <base>https://en.wikipedia.org/wiki/Main_Page</base>
+    <generator>MediaWiki 1.45.0-wmf.12</generator>
+    <case>first-letter</case>
+    <namespaces>
+      <namespace key="-1" case="first-letter">Special</namespace>
+      <namespace key="0" case="first-letter" />
+      <namespace key="1" case="first-letter">Talk</namespace>
+    </namespaces>
+  </siteinfo>
+
+  <page>
+    <title>My Page</title>
+    <ns>0</ns>
+    <id>1</id>
+    <revision>
+      <id>5</id>
+      <timestamp>2002-02-25T15:00:22Z</timestamp>
+      <contributor>
+        <username>A User</username>
+        <id>123456</id>
+      </contributor>
+      <comment>Some Data</comment>
+      <origin>5</origin>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text bytes="9546" sha1="07sqam7073877kptdznnip3viznphpy" xml:space="preserve">
+{{cite journal | title=Parsing in Practice | doi=10.1007/b62130}}
+      </text>
+      <sha1>07sqam7073877kptdznnip3viznphpy</sha1>
+    </revision>
+  </page>
+
+  <page>
+    <title>My Second Page</title>
+    <ns>0</ns>
+    <id>2</id>
+    <revision>
+      <id>8</id>
+      <timestamp>2002-02-25T15:00:22Z</timestamp>
+      <contributor>
+        <username>A User</username>
+        <id>123456</id>
+      </contributor>
+      <comment>Some Data</comment>
+      <origin>8</origin>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text bytes="9546" sha1="07sqam7073877kptdznnip3viznphpy" xml:space="preserve">
+{{cite journal | title=Parsing in Practice | doi=10.1007/b62130}}
+      </text>
+      <sha1>07sqam7073877kptdznnip3viznphpy</sha1>
+    </revision>
+  </page>
+</mediawiki>
