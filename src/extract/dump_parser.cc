@@ -130,7 +130,7 @@ void DumpParser::on_fatal_error(const xmlpp::ustring& text) {
 }
 
 void DumpParser::MakePageCitationList() {
-  // First sort revisions by date
+  // Sort revisions by date
   std::ranges::sort(all_page_citations_, [](const proto::RevisionCitations& a,
                                             const proto::RevisionCitations& b) {
     return a.revision().timestamp().seconds() ==
@@ -141,11 +141,13 @@ void DumpParser::MakePageCitationList() {
                      b.revision().timestamp().seconds();
   });
 
-  auto deduplicated_citations = std::map<std::string, proto::Citation>();
+  auto discovered_citations = std::map<std::string, proto::Citation>();
+  auto revisions_ref_count = std::map<int64_t, int>();
 
-  // Then for each revision go through each citation
   for (auto& revision : all_page_citations_) {
-    for (auto& [key, citation] : deduplicated_citations) {
+    // Make sure that all citations we have already found are here,
+    // otherwise mark them as deleted
+    for (auto& [key, citation] : discovered_citations) {
       if (revision.citations().contains(key)) {
         revision.mutable_citations()->erase(key);
 
@@ -153,28 +155,40 @@ void DumpParser::MakePageCitationList() {
         // is a slight technical limitation, if a citation is removed
         // from a article and then re-added, we won't detect that is was
         // re-added and will just show that it continues to be there.
-        citation.clear_revision_removed();
+        if (citation.has_revision_removed()) {
+          revisions_ref_count[citation.revision_removed()]--;
+          if (revisions_ref_count.at(citation.revision_removed()) <= 0) {
+            revisions_->mutable_revisions()->erase(citation.revision_removed());
+          }
+
+          citation.clear_revision_removed();
+        }
       } else {
         if (!citation.has_revision_removed()) {
           auto id = revision.revision().revision_id();
           citation.set_revision_removed(id);
           revisions_->mutable_revisions()->insert({id, page_revisions_.at(id)});
+          revisions_ref_count[id]++;
         }
       }
     }
+
+    // Add any new citations from this revision to the discovered citations
     for (const auto& [key, extracted_citation] : revision.citations()) {
-      if (!deduplicated_citations.contains(key)) {
+      if (!discovered_citations.contains(key)) {
         auto citation = proto::Citation();
         auto id = revision.revision().revision_id();
         citation.set_revision_added(id);
         revisions_->mutable_revisions()->insert({id, page_revisions_.at(id)});
+        revisions_ref_count[id]++;
         citation.mutable_citation()->CopyFrom(extracted_citation);
-        deduplicated_citations.insert({key, citation});
+        discovered_citations.insert({key, citation});
       }
     }
   }
 
-  for (const auto& [key, citation] : deduplicated_citations) {
+  // Copy the complete set of citations into the page.
+  for (const auto& [key, citation] : discovered_citations) {
     auto added_citation = current_page_.add_citations();
     added_citation->CopyFrom(citation);
   }

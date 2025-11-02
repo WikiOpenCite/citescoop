@@ -222,6 +222,23 @@ TEST_CASE(TEST_NAME_PREFIX + "Multiple pages", "[extract][extract/Extractor]") {
   REQUIRE(revision2.revision_id() == 8);
 }
 
+/// Check the extractor will not include revisions in the revision map
+/// that are not referenced.
+TEST_CASE(TEST_NAME_PREFIX + "Orphaned revision inclusion",
+          "[extract][extract/Extractor]") {
+  auto parser = std::make_shared<cs::Parser>();
+  auto extractor = cs::TextExtractor(parser);
+
+  std::ifstream file(GetTestFilePath("orphaned-revision-included.xml"));
+  REQUIRE(file.is_open());
+
+  auto pair = extractor.Extract(file);
+  auto revisions = std::move(pair.second);
+  REQUIRE(revisions->revisions_size() == 1);
+  auto revision = revisions->revisions().at(5);
+  REQUIRE(revision.revision_id() == 5);
+}
+
 /// Check the extractor can correctly throw an error when an issue occurs.
 TEST_CASE(TEST_NAME_PREFIX + "Malformed XML", "[extract][extract/Extractor]") {
   auto parser = std::make_shared<cs::Parser>();
