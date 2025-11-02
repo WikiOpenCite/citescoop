@@ -10,17 +10,12 @@
 #include "citescoop/extract.h"
 #include "citescoop/parser.h"
 
+#include "util.h"
+
 const std::string TEST_NAME_PREFIX = "[Extractor] ";
 
 namespace cs = wikiopencite::citescoop;
 namespace proto = wikiopencite::proto;
-
-static std::string GetTestFilePath(const std::string& filename) {
-  // __FILE__ gives the current source file path
-  std::string path = __FILE__;
-  auto pos = path.find_last_of("/\\");
-  return path.substr(0, pos + 1) + "data/" + filename;
-}
 
 /// Check that the extractor can handle extracting a single citation
 /// from a single page containing a single revision.
@@ -104,6 +99,32 @@ TEST_CASE(TEST_NAME_PREFIX + "Multiple revisions in non-chronological order",
   REQUIRE(citation.revision_added() == 5);
   REQUIRE(citation.has_revision_removed());
   REQUIRE(citation.revision_removed() == 6);
+}
+
+/// Check that the extractor, when presented with two revisions of the
+/// same timestamp, will just use the order in which they appear.
+TEST_CASE(TEST_NAME_PREFIX + "Multiple revisions with same timestamp",
+          "[extract][extract/Extractor]") {
+  auto parser = std::make_shared<cs::Parser>();
+  auto extractor = cs::TextExtractor(parser);
+
+  std::ifstream file(GetTestFilePath("multiple-revision-same-timestamp.xml"));
+  REQUIRE(file.is_open());
+
+  auto pair = extractor.Extract(file);
+  auto result = std::move(pair.first);
+
+  REQUIRE(result->size() == 1);
+
+  auto page = result->at(0);
+  REQUIRE(page.title() == "My Page");
+  REQUIRE(page.page_id() == 1);
+  REQUIRE(page.citations_size() == 1);
+
+  auto citation = page.citations().at(0);
+  REQUIRE(citation.has_revision_added());
+  REQUIRE(citation.revision_added() == 6);
+  REQUIRE_FALSE(citation.has_revision_removed());
 }
 
 /// Check that the order of revisions is not determined by ID and is
