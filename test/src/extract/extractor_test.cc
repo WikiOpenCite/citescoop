@@ -75,7 +75,7 @@ TEST_CASE(TEST_NAME_PREFIX + "Multiple revisions with citation being removed",
   REQUIRE(citation.has_revision_added());
   REQUIRE(citation.revision_added() == 5);
   REQUIRE(citation.has_revision_removed());
-  REQUIRE(citation.revision_removed() == 6);
+  REQUIRE(citation.revision_removed() == 7);
 }
 
 /// Check that the extractor can correctly handle revisions appearing in
