@@ -20,6 +20,13 @@ include(cmake/variables.cmake)
 
 add_library(
     citescoop_citescoop
+    src/extract/bz2extractor_impl.cc
+    src/extract/bz2extractor.cc
+    src/extract/dump_parser.cc
+    src/extract/exceptions.cc
+    src/extract/extractor.cc
+    src/extract/textextractor_impl.cc
+    src/extract/textextractor.cc
     src/parser/parser.cc
     src/parser/parser_impl.cc
     src/parser/exceptions.cc
@@ -62,12 +69,18 @@ target_include_directories(
 
 target_compile_features(citescoop_citescoop PUBLIC cxx_std_20)
 
-find_package(Boost REQUIRED COMPONENTS parser algorithm)
+find_package(Boost REQUIRED COMPONENTS parser algorithm iostreams)
 find_package(citescoop-proto REQUIRED)
+
+find_package(PkgConfig REQUIRED)
+# Then use pkg-config for locate specific package
+pkg_check_modules(LIBXMLXX REQUIRED IMPORTED_TARGET libxml++-5.0)
 
 target_link_libraries(citescoop_citescoop PRIVATE
   Boost::parser
   Boost::algorithm
+  Boost::iostreams
+  PkgConfig::LIBXMLXX
   wikiopencite::citescoop-proto
 )
 

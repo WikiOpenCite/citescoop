@@ -21,7 +21,10 @@ include(Catch)
 # ---- Tests ----
 
 add_executable(citescoop_test
-  src/parser_test.cc
+  src/extract/bz2extractor_test.cc
+  src/extract/textextractor_test.cc
+  src/extract/extractor_test.cc
+  src/parser/parser_test.cc
 )
 target_link_libraries(
     citescoop_test PRIVATE
@@ -30,7 +33,7 @@ target_link_libraries(
 )
 target_compile_features(citescoop_test PRIVATE cxx_std_20)
 
-catch_discover_tests(citescoop_test)
+catch_discover_tests(citescoop_test WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
 # ---- End-of-file commands ----
 
