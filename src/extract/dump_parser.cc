@@ -13,6 +13,7 @@
 #include "google/protobuf/timestamp.pb.h"
 #include "google/protobuf/util/time_util.h"
 
+#include "citescoop/extract.h"
 #include "citescoop/proto/page.pb.h"
 #include "citescoop/proto/revision_map.pb.h"
 
@@ -30,20 +31,8 @@ DumpParser::ParseXML(std::istream& stream) {
       std::unique_ptr<std::vector<proto::Page>>(new std::vector<proto::Page>);
   revisions_ = std::unique_ptr<proto::RevisionMap>(new proto::RevisionMap);
 
-  char buf[64];
-  const size_t buf_size = sizeof(buf) / sizeof(char);
-
   set_substitute_entities(true);
-  do {
-    std::memset(buf, 0, buf_size);
-    stream.read(buf, buf_size - 1);
-    if (stream.gcount()) {
-      xmlpp::ustring input(buf, buf + stream.gcount());
-      parse_chunk(input);
-    }
-  } while (stream);
-
-  finish_chunk_parsing();
+  parse_stream(stream);
 
   return std::make_pair(std::move(pages_), std::move(revisions_));
 }
@@ -122,25 +111,21 @@ void DumpParser::on_end_element(const xmlpp::ustring& name) {
     should_store_ = false;
 }
 
-void DumpParser::on_characters(const xmlpp::ustring& text) {
+void DumpParser::on_characters(const xmlpp::ustring& characters) {
   if (should_store_)
-    text_buf_ += text;
-}
-
-void DumpParser::on_comment(const xmlpp::ustring& text) {
-  // TODO(@Computroniks): Handle errors
+    text_buf_ += characters;
 }
 
 void DumpParser::on_warning(const xmlpp::ustring& text) {
-  // TODO(@Computroniks): Handle errors
+  throw DumpParseException(text);
 }
 
 void DumpParser::on_error(const xmlpp::ustring& text) {
-  // TODO(@Computroniks): Handle errors
+  throw DumpParseException(text);
 }
 
 void DumpParser::on_fatal_error(const xmlpp::ustring& text) {
-  // TODO(@Computroniks): Handle errors
+  throw DumpParseException(text);
 }
 
 void DumpParser::MakePageCitationList() {

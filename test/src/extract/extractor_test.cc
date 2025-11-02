@@ -187,3 +187,14 @@ TEST_CASE(TEST_NAME_PREFIX + "Multiple pages", "[extract][extract/Extractor]") {
   REQUIRE(citation2.revision_added() == 8);
   REQUIRE_FALSE(citation2.has_revision_removed());
 }
+
+/// Check the extractor can correctly throw an error when an issue occurs.
+TEST_CASE(TEST_NAME_PREFIX + "Malformed XML", "[extract][extract/Extractor]") {
+  auto parser = std::make_shared<cs::Parser>();
+  auto extractor = cs::TextExtractor(parser);
+
+  std::ifstream file(GetTestFilePath("malformed.xml"));
+  REQUIRE(file.is_open());
+
+  REQUIRE_THROWS_AS(extractor.Extract(file), cs::DumpParseException);
+}

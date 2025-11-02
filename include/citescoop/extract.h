@@ -6,6 +6,7 @@
 
 #include <istream>
 #include <memory>
+#include <string>
 #include <tuple>
 #include <utility>
 #include <vector>
@@ -48,6 +49,22 @@ class CITESCOOP_EXPORT Bz2Extractor : public Extractor {
  private:
   class Bz2ExtractorImpl;
   std::unique_ptr<Bz2ExtractorImpl> impl_;
+};
+
+/// @brief Exception thrown when dump parsing fails.
+///
+/// This exception is thrown when the parser cannot successfully parse
+/// the input dump.
+class CITESCOOP_EXPORT DumpParseException : public std::runtime_error {
+ public:
+  /// @brief Constructs a DumpParseException with a descriptive message.
+  ///
+  /// @param message Description of the parse failure.
+  explicit DumpParseException(const std::string& message);
+
+  /// @brief Virtual destructor to ensure proper cleanup in inheritance
+  /// hierarchies.
+  ~DumpParseException() noexcept override = default;
 };
 }  // namespace wikiopencite::citescoop
 

@@ -1,7 +1,7 @@
 <mediawiki xmlns="http://www.mediawiki.org/xml/export-0.11/"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mediawiki.org/xml/export-0.11/
 http://www.mediawiki.org/xml/export-0.11.xsd" version="0.11" xml:lang="en">
-  <!-- HERE IS A COMMENT -->
+
   <siteinfo>
     <sitename>Wikipedia</sitename>
     <dbname>enwiki</dbname>
@@ -20,23 +20,6 @@ http://www.mediawiki.org/xml/export-0.11.xsd" version="0.11" xml:lang="en">
     <ns>0</ns>
     <id>1</id>
     <revision>
-      <id>6</id>
-      <parentid>5</parentid>
-      <timestamp>2002-02-25T15:00:22Z</timestamp>
-      <contributor>
-        <username>Another User</username>
-        <id>654321</id>
-      </contributor>
-      <comment>Some Data</comment>
-      <origin>6</origin>
-      <model>wikitext</model>
-      <format>text/x-wiki</format>
-      <text bytes="9546" sha1="07sqam7073877kptdznnip3viznphpy" xml:space="preserve">
-{{cite journal | title=Parsing in Practice | doi=10.1007/b62130}}      </text>
-      <sha1>07sqam7073877kptdznnip3viznphpy</sha1>
-    </revision>
-
-    <revision>
       <id>5</id>
       <timestamp>2002-02-25T15:00:22Z</timestamp>
       <contributor>
@@ -53,4 +36,3 @@ http://www.mediawiki.org/xml/export-0.11.xsd" version="0.11" xml:lang="en">
       <sha1>07sqam7073877kptdznnip3viznphpy</sha1>
     </revision>
   </page>
-</mediawiki>

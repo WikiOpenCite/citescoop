@@ -34,7 +34,6 @@ class DumpParser : public xmlpp::SaxParser {
                         const AttributeList& properties) override;
   void on_end_element(const xmlpp::ustring& name) override;
   void on_characters(const xmlpp::ustring& characters) override;
-  void on_comment(const xmlpp::ustring& text) override;
   void on_warning(const xmlpp::ustring& text) override;
   void on_error(const xmlpp::ustring& text) override;
   void on_fatal_error(const xmlpp::ustring& text) override;
