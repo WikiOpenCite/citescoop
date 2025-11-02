@@ -18,17 +18,25 @@
 #include "base_extractor.h"
 
 namespace wikiopencite::citescoop {
+
+/// @brief Implementation for the bzip extractor.
 class Bz2Extractor::Bz2ExtractorImpl : BaseExtractor {
  public:
+  /// @brief Create a new bzip extractor.
+  /// @param parser Citations parser to use.
   explicit Bz2ExtractorImpl(
       std::shared_ptr<wikiopencite::citescoop::Parser> parser);
+
+  /// @brief Extract implementation. This will decompress the input
+  /// stream and pass it off to the XML parser.
+  ///
+  /// @param stream Input compressed bzip stream.
+  /// @return Pages and the referenced revisions.
   std::pair<std::unique_ptr<std::vector<wikiopencite::proto::Page>>,
             std::unique_ptr<wikiopencite::proto::RevisionMap>>
   Extract(std::istream& stream);
-
- private:
-  std::shared_ptr<wikiopencite::citescoop::Parser> parser_;
 };
+
 }  // namespace wikiopencite::citescoop
 
 #endif  // SRC_EXTRACT_BZ2EXTRACTOR_IMPL_H_

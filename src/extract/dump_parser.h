@@ -20,9 +20,19 @@
 #include "citescoop/proto/revision_map.pb.h"
 
 namespace wikiopencite::citescoop {
+
+/// @brief MediaWiki XML dump parser.
 class DumpParser : public xmlpp::SaxParser {
  public:
+  /// @brief Construct a new dumps parser.
+  /// @param parser The citation parser to use.
   explicit DumpParser(std::shared_ptr<wikiopencite::citescoop::Parser> parser);
+
+  /// @brief Parse the dump XML.
+  /// @param stream An input stream of plain XML. NOTE: if you are
+  /// dealing with a compressed dump, this must have already been
+  /// decompressed by this point.
+  /// @return Pages and referenced revisions.
   std::pair<std::unique_ptr<std::vector<wikiopencite::proto::Page>>,
             std::unique_ptr<wikiopencite::proto::RevisionMap>>
   ParseXML(std::istream& stream);
@@ -59,6 +69,10 @@ class DumpParser : public xmlpp::SaxParser {
   std::unique_ptr<std::vector<wikiopencite::proto::Page>> pages_;
   std::unique_ptr<wikiopencite::proto::RevisionMap> revisions_;
 
+  /// @brief Complete the pages citations.
+  ///
+  /// Will deduplicate the citations and make sure only the first and
+  /// last revision is referenced by the citation.
   void MakePageCitationList();
 };
 }  // namespace wikiopencite::citescoop
