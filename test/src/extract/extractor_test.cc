@@ -41,6 +41,7 @@ TEST_CASE(TEST_NAME_PREFIX + "Extract single citation from single revision",
   REQUIRE(citation.revision_added() == 5);
   REQUIRE_FALSE(citation.has_revision_removed());
 
+  REQUIRE(pair.second->revisions_size() == 1);
   auto revision = pair.second->revisions().at(5);
   REQUIRE(revision.revision_id() == 5);
 }
@@ -71,6 +72,13 @@ TEST_CASE(TEST_NAME_PREFIX + "Multiple revisions with citation being removed",
   REQUIRE(citation.revision_added() == 5);
   REQUIRE(citation.has_revision_removed());
   REQUIRE(citation.revision_removed() == 7);
+
+  REQUIRE(pair.second->revisions_size() == 2);
+
+  auto revision1 = pair.second->revisions().at(5);
+  REQUIRE(revision1.revision_id() == 5);
+  auto revision2 = pair.second->revisions().at(7);
+  REQUIRE(revision2.revision_id() == 7);
 }
 
 /// Check that the extractor can correctly handle revisions appearing in
@@ -99,6 +107,13 @@ TEST_CASE(TEST_NAME_PREFIX + "Multiple revisions in non-chronological order",
   REQUIRE(citation.revision_added() == 5);
   REQUIRE(citation.has_revision_removed());
   REQUIRE(citation.revision_removed() == 6);
+
+  REQUIRE(pair.second->revisions_size() == 2);
+
+  auto revision1 = pair.second->revisions().at(5);
+  REQUIRE(revision1.revision_id() == 5);
+  auto revision2 = pair.second->revisions().at(6);
+  REQUIRE(revision2.revision_id() == 6);
 }
 
 /// Check that the extractor, when presented with two revisions of the
@@ -125,6 +140,11 @@ TEST_CASE(TEST_NAME_PREFIX + "Multiple revisions with same timestamp",
   REQUIRE(citation.has_revision_added());
   REQUIRE(citation.revision_added() == 6);
   REQUIRE_FALSE(citation.has_revision_removed());
+
+  REQUIRE(pair.second->revisions_size() == 1);
+
+  auto revision = pair.second->revisions().at(6);
+  REQUIRE(revision.revision_id() == 6);
 }
 
 /// Check that the order of revisions is not determined by ID and is
@@ -152,6 +172,13 @@ TEST_CASE(TEST_NAME_PREFIX + "Order not determined by ID",
   REQUIRE(citation.revision_added() == 6);
   REQUIRE(citation.has_revision_removed());
   REQUIRE(citation.revision_removed() == 5);
+
+  REQUIRE(pair.second->revisions_size() == 2);
+
+  auto revision1 = pair.second->revisions().at(5);
+  REQUIRE(revision1.revision_id() == 5);
+  auto revision2 = pair.second->revisions().at(6);
+  REQUIRE(revision2.revision_id() == 6);
 }
 
 /// Check the extractor can correctly handle multiple pages.
@@ -186,6 +213,13 @@ TEST_CASE(TEST_NAME_PREFIX + "Multiple pages", "[extract][extract/Extractor]") {
   REQUIRE(citation2.has_revision_added());
   REQUIRE(citation2.revision_added() == 8);
   REQUIRE_FALSE(citation2.has_revision_removed());
+
+  REQUIRE(pair.second->revisions_size() == 2);
+
+  auto revision1 = pair.second->revisions().at(5);
+  REQUIRE(revision1.revision_id() == 5);
+  auto revision2 = pair.second->revisions().at(8);
+  REQUIRE(revision2.revision_id() == 8);
 }
 
 /// Check the extractor can correctly throw an error when an issue occurs.

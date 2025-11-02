@@ -30,6 +30,7 @@ DumpParser::ParseXML(std::istream& stream) {
   pages_ =
       std::unique_ptr<std::vector<proto::Page>>(new std::vector<proto::Page>);
   revisions_ = std::unique_ptr<proto::RevisionMap>(new proto::RevisionMap);
+  page_revisions_ = std::map<int64_t, proto::Revision>();
 
   set_substitute_entities(true);
   parse_stream(stream);
@@ -57,6 +58,7 @@ void DumpParser::on_start_element(const xmlpp::ustring& name,
     in_page_ = true;
     current_page_ = proto::Page();
     all_page_citations_ = std::vector<proto::RevisionCitations>();
+    page_revisions_.clear();
   } else if (name == "revision") {
     in_revision_ = true;
     current_revision_ = proto::Revision();
@@ -88,9 +90,8 @@ void DumpParser::on_end_element(const xmlpp::ustring& name) {
     revision_citations_.mutable_revision()->CopyFrom(current_revision_);
     all_page_citations_.push_back(revision_citations_);
 
-    revisions_->mutable_revisions()->insert(
+    page_revisions_.insert(
         {current_revision_.revision_id(), current_revision_});
-
   } else if (in_revision_ && !in_contributor_ && name == "id") {
     current_revision_.set_revision_id(std::stol(text_buf_));
   } else if (in_revision_ && name == "parentid") {
@@ -155,14 +156,18 @@ void DumpParser::MakePageCitationList() {
         citation.clear_revision_removed();
       } else {
         if (!citation.has_revision_removed()) {
-          citation.set_revision_removed(revision.revision().revision_id());
+          auto id = revision.revision().revision_id();
+          citation.set_revision_removed(id);
+          revisions_->mutable_revisions()->insert({id, page_revisions_.at(id)});
         }
       }
     }
     for (const auto& [key, extracted_citation] : revision.citations()) {
       if (!deduplicated_citations.contains(key)) {
         auto citation = proto::Citation();
-        citation.set_revision_added(revision.revision().revision_id());
+        auto id = revision.revision().revision_id();
+        citation.set_revision_added(id);
+        revisions_->mutable_revisions()->insert({id, page_revisions_.at(id)});
         citation.mutable_citation()->CopyFrom(extracted_citation);
         deduplicated_citations.insert({key, citation});
       }

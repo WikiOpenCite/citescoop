@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <istream>
+#include <map>
 #include <memory>
 #include <string>
 #include <tuple>
@@ -46,12 +47,14 @@ class DumpParser : public xmlpp::SaxParser {
   bool in_revision_;
   bool in_contributor_;
   bool should_store_;
+  bool store_revision_;
 
   std::string text_buf_;
   std::vector<wikiopencite::proto::RevisionCitations> all_page_citations_;
   wikiopencite::proto::RevisionCitations revision_citations_;
   wikiopencite::proto::Page current_page_;
   wikiopencite::proto::Revision current_revision_;
+  std::map<int64_t, wikiopencite::proto::Revision> page_revisions_;
 
   std::unique_ptr<std::vector<wikiopencite::proto::Page>> pages_;
   std::unique_ptr<wikiopencite::proto::RevisionMap> revisions_;
