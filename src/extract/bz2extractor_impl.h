@@ -6,11 +6,14 @@
 
 #include <istream>
 #include <memory>
+#include <tuple>
+#include <utility>
 #include <vector>
 
 #include "citescoop/extract.h"
 #include "citescoop/parser.h"
 #include "citescoop/proto/page.pb.h"
+#include "citescoop/proto/revision_map.pb.h"
 
 #include "base_extractor.h"
 
@@ -19,8 +22,9 @@ class Bz2Extractor::Bz2ExtractorImpl : BaseExtractor {
  public:
   explicit Bz2ExtractorImpl(
       std::shared_ptr<wikiopencite::citescoop::Parser> parser);
-  std::unique_ptr<std::vector<wikiopencite::proto::Page>> Extract(
-      std::istream& stream);
+  std::pair<std::unique_ptr<std::vector<wikiopencite::proto::Page>>,
+            std::unique_ptr<wikiopencite::proto::RevisionMap>>
+  Extract(std::istream& stream);
 
  private:
   std::shared_ptr<wikiopencite::citescoop::Parser> parser_;

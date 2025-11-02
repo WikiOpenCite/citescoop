@@ -3,6 +3,7 @@
 
 #include <istream>
 #include <memory>
+#include <utility>
 #include <vector>
 
 #include "citescoop/extract.h"
@@ -21,8 +22,9 @@ TextExtractor::TextExtractor(
 
 TextExtractor::~TextExtractor() = default;
 
-std::unique_ptr<std::vector<wikiopencite::proto::Page>> TextExtractor::Extract(
-    std::istream& stream) {
+std::pair<std::unique_ptr<std::vector<proto::Page>>,
+          std::unique_ptr<proto::RevisionMap>>
+TextExtractor::Extract(std::istream& stream) {
   return impl_->Extract(stream);
 }
 

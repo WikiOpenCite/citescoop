@@ -32,7 +32,8 @@ TEST_CASE(TEST_NAME_PREFIX + "Extract single citation from single revision",
   std::ifstream file(GetTestFilePath("single-revision-single-citation.xml"));
   REQUIRE(file.is_open());
 
-  auto result = extractor.Extract(file);
+  auto pair = extractor.Extract(file);
+  auto result = std::move(pair.first);
   REQUIRE(result->size() == 1);
 
   auto page = result->at(0);
@@ -42,8 +43,11 @@ TEST_CASE(TEST_NAME_PREFIX + "Extract single citation from single revision",
 
   auto citation = page.citations().at(0);
   REQUIRE(citation.has_revision_added());
-  REQUIRE(citation.revision_added().revision_id() == 5);
+  REQUIRE(citation.revision_added() == 5);
   REQUIRE_FALSE(citation.has_revision_removed());
+
+  auto revision = pair.second->revisions().at(5);
+  REQUIRE(revision.revision_id() == 5);
 }
 
 /// Check that the extractor can handle a citation being added in one
@@ -57,7 +61,9 @@ TEST_CASE(TEST_NAME_PREFIX + "Multiple revisions with citation being removed",
   std::ifstream file(GetTestFilePath("multiple-revision-citation-removed.xml"));
   REQUIRE(file.is_open());
 
-  auto result = extractor.Extract(file);
+  auto pair = extractor.Extract(file);
+  auto result = std::move(pair.first);
+
   REQUIRE(result->size() == 1);
 
   auto page = result->at(0);
@@ -67,9 +73,9 @@ TEST_CASE(TEST_NAME_PREFIX + "Multiple revisions with citation being removed",
 
   auto citation = page.citations().at(0);
   REQUIRE(citation.has_revision_added());
-  REQUIRE(citation.revision_added().revision_id() == 5);
+  REQUIRE(citation.revision_added() == 5);
   REQUIRE(citation.has_revision_removed());
-  REQUIRE(citation.revision_removed().revision_id() == 6);
+  REQUIRE(citation.revision_removed() == 6);
 }
 
 /// Check that the extractor can correctly handle revisions appearing in
@@ -83,7 +89,9 @@ TEST_CASE(TEST_NAME_PREFIX + "Multiple revisions in non-chronological order",
       GetTestFilePath("multiple-revision-not-chronological.xml"));
   REQUIRE(file.is_open());
 
-  auto result = extractor.Extract(file);
+  auto pair = extractor.Extract(file);
+  auto result = std::move(pair.first);
+
   REQUIRE(result->size() == 1);
 
   auto page = result->at(0);
@@ -93,9 +101,9 @@ TEST_CASE(TEST_NAME_PREFIX + "Multiple revisions in non-chronological order",
 
   auto citation = page.citations().at(0);
   REQUIRE(citation.has_revision_added());
-  REQUIRE(citation.revision_added().revision_id() == 5);
+  REQUIRE(citation.revision_added() == 5);
   REQUIRE(citation.has_revision_removed());
-  REQUIRE(citation.revision_removed().revision_id() == 6);
+  REQUIRE(citation.revision_removed() == 6);
 }
 
 /// Check that the order of revisions is not determined by ID and is
@@ -108,7 +116,9 @@ TEST_CASE(TEST_NAME_PREFIX + "Order not determined by ID",
   std::ifstream file(GetTestFilePath("multiple-revision-order-not-by-id.xml"));
   REQUIRE(file.is_open());
 
-  auto result = extractor.Extract(file);
+  auto pair = extractor.Extract(file);
+  auto result = std::move(pair.first);
+
   REQUIRE(result->size() == 1);
 
   auto page = result->at(0);
@@ -118,9 +128,9 @@ TEST_CASE(TEST_NAME_PREFIX + "Order not determined by ID",
 
   auto citation = page.citations().at(0);
   REQUIRE(citation.has_revision_added());
-  REQUIRE(citation.revision_added().revision_id() == 6);
+  REQUIRE(citation.revision_added() == 6);
   REQUIRE(citation.has_revision_removed());
-  REQUIRE(citation.revision_removed().revision_id() == 5);
+  REQUIRE(citation.revision_removed() == 5);
 }
 
 /// Check the extractor can correctly handle multiple pages.
@@ -131,8 +141,10 @@ TEST_CASE(TEST_NAME_PREFIX + "Multiple pages", "[extract][extract/Extractor]") {
   std::ifstream file(GetTestFilePath("multiple-pages.xml"));
   REQUIRE(file.is_open());
 
-  auto result = extractor.Extract(file);
-  REQUIRE(result->size() == 1);
+  auto pair = extractor.Extract(file);
+  auto result = std::move(pair.first);
+
+  REQUIRE(result->size() == 2);
 
   auto page1 = result->at(0);
   REQUIRE(page1.title() == "My Page");
@@ -141,16 +153,16 @@ TEST_CASE(TEST_NAME_PREFIX + "Multiple pages", "[extract][extract/Extractor]") {
 
   auto citation1 = page1.citations().at(0);
   REQUIRE(citation1.has_revision_added());
-  REQUIRE_FALSE(citation1.revision_added().revision_id() == 5);
-  REQUIRE(citation1.has_revision_removed());
+  REQUIRE(citation1.revision_added() == 5);
+  REQUIRE_FALSE(citation1.has_revision_removed());
 
-  auto page2 = result->at(0);
+  auto page2 = result->at(1);
   REQUIRE(page2.title() == "My Second Page");
-  REQUIRE(page2.page_id() == 1);
+  REQUIRE(page2.page_id() == 2);
   REQUIRE(page2.citations_size() == 1);
 
-  auto citation2 = page2.citations().at(1);
+  auto citation2 = page2.citations().at(0);
   REQUIRE(citation2.has_revision_added());
-  REQUIRE(citation2.revision_added().revision_id() == 8);
+  REQUIRE(citation2.revision_added() == 8);
   REQUIRE_FALSE(citation2.has_revision_removed());
 }

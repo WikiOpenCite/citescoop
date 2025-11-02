@@ -6,6 +6,7 @@
 
 #include <istream>
 #include <memory>
+#include <utility>
 #include <vector>
 
 #include "citescoop/extract.h"
@@ -19,8 +20,10 @@ class TextExtractor::TextExtractorImpl : BaseExtractor {
  public:
   explicit TextExtractorImpl(
       std::shared_ptr<wikiopencite::citescoop::Parser> parser);
-  std::unique_ptr<std::vector<wikiopencite::proto::Page>> Extract(
-      std::istream& stream);
+
+  std::pair<std::unique_ptr<std::vector<wikiopencite::proto::Page>>,
+            std::unique_ptr<wikiopencite::proto::RevisionMap>>
+  Extract(std::istream& stream);
 
  private:
   std::shared_ptr<wikiopencite::citescoop::Parser> parser_;

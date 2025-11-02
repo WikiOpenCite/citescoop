@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include <memory>
+#include <utility>
 
 #include "citescoop/extract.h"
 #include "citescoop/parser.h"
@@ -19,8 +20,9 @@ Bz2Extractor::Bz2Extractor(
 
 Bz2Extractor::~Bz2Extractor() = default;
 
-std::unique_ptr<std::vector<proto::Page>> Bz2Extractor::Extract(
-    std::istream& stream) {
+std::pair<std::unique_ptr<std::vector<proto::Page>>,
+          std::unique_ptr<proto::RevisionMap>>
+Bz2Extractor::Extract(std::istream& stream) {
   return impl_->Extract(stream);
 }
 

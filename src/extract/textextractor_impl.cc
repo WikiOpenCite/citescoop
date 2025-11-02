@@ -5,6 +5,7 @@
 
 #include <istream>
 #include <memory>
+#include <utility>
 
 #include "citescoop/parser.h"
 #include "citescoop/proto/page.pb.h"
@@ -19,7 +20,9 @@ TextExtractor::TextExtractorImpl::TextExtractorImpl(
     // NOLINTNEXTLINE(whitespace/indent_namespace)
     : BaseExtractor(parser) {}
 
-std::unique_ptr<std::vector<proto::Page>>
+std::pair<std::unique_ptr<std::vector<proto::Page>>,
+          // NOLINTNEXTLINE(whitespace/indent_namespace)
+          std::unique_ptr<proto::RevisionMap>>
 TextExtractor::TextExtractorImpl::Extract(std::istream& stream) {
   return xml_parser_.ParseXML(stream);
 }
