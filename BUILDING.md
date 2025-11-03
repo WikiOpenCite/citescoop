@@ -18,7 +18,7 @@ Here are the steps for building in release mode with a single-configuration
 generator, like the Unix Makefiles one:
 
 ```sh
-cmake -S . -B build -D CMAKE_BUILD_TYPE=Release
+cmake -S . -B build -D CMAKE_BUILD_TYPE=Release -D CMAKE_TOOLCHAIN_FILE=${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake
 cmake --build build
 ```
 
@@ -71,7 +71,7 @@ This project exports a CMake package to be used with the [`find_package`][3]
 command of CMake:
 
 - Package name: `citescoop`
-- Target name: `citescoop::citescoop`
+- Target name: `wikiopencite::citescoop`
 
 Example usage:
 
@@ -81,7 +81,7 @@ find_package(citescoop REQUIRED)
 # project_target is a target created in the consuming project
 target_link_libraries(
     project_target PRIVATE
-    citescoop::citescoop
+    wikiopencite::citescoop
 )
 ```
 

@@ -3,7 +3,7 @@
 
 if(PROJECT_IS_TOP_LEVEL)
   set(
-      CMAKE_INSTALL_INCLUDEDIR "include/citescoop-${PROJECT_VERSION}"
+      CMAKE_INSTALL_INCLUDEDIR "include/citescoop"
       CACHE STRING ""
   )
   set_property(CACHE CMAKE_INSTALL_INCLUDEDIR PROPERTY TYPE PATH)
@@ -66,7 +66,7 @@ install(
 
 install(
     EXPORT citescoopTargets
-    NAMESPACE citescoop::
+    NAMESPACE wikiopencite::
     DESTINATION "${citescoop_INSTALL_CMAKEDIR}"
     COMPONENT citescoop_Development
 )
