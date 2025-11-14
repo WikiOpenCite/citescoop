@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>wikiopencite::citescoop namespace | citescoop</title>
+  <title>wikiopencite::citescoop::MessageWriter class | citescoop</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400i,600,600i%7CSource+Code+Pro:400,400i,600" />
   <link rel="stylesheet" href="m-dark+documentation.compiled.css" />
   <link rel="icon" href="favicon-dark.png" type="image/png" />
@@ -49,60 +49,83 @@
     <div class="m-row">
       <div class="m-col-l-10 m-push-l-1">
         <h1>
-          <span class="m-breadcrumb"><a href="namespacewikiopencite.html">wikiopencite</a>::<wbr/></span>citescoop <span class="m-thin">namespace</span>
+          <span class="m-breadcrumb"><a href="namespacewikiopencite.html">wikiopencite</a>::<wbr/></span><span class="m-breadcrumb"><a href="namespacewikiopencite_1_1citescoop.html">citescoop</a>::<wbr/></span>MessageWriter <span class="m-thin">class</span>
+          <div class="m-doc-include m-code m-inverted m-text-right"><span class="cp">#include</span> <a class="cpf" href="io_8h.html">&lt;citescoop/io.h&gt;</a></div>
         </h1>
-        <p><span></span></p>
+        <p>Writer for PBF formatted streams.</p>
         <nav class="m-block m-default">
           <h3>Contents</h3>
           <ul>
             <li>
               Reference
               <ul>
-                <li><a href="#nested-classes">Classes</a></li>
+                <li><a href="#typeless-methods">Constructors, destructors, conversion operators</a></li>
+                <li><a href="#pub-methods">Public functions</a></li>
               </ul>
             </li>
           </ul>
         </nav>
-        <section id="nested-classes">
-          <h2><a href="#nested-classes">Classes</a></h2>
+<p>PBF files have the following format: uint32_t Size of next message in network byte order Message</p>
+        <section id="typeless-methods">
+          <h2><a href="#typeless-methods">Constructors, destructors, conversion operators</a></h2>
           <dl class="m-doc">
             <dt>
-              class <a href="classwikiopencite_1_1citescoop_1_1Bz2Extractor.html" class="m-doc">Bz2Extractor</a>
+              <span class="m-doc-wrap-bumper"><a href="#abe4f3fd771a1d14d4b3a48084434f36f" class="m-doc">MessageWriter</a>(</span><span class="m-doc-wrap">std::shared_ptr&lt;std::ostream&gt; output) <span class="m-label m-flat m-info">explicit</span> </span>
             </dt>
-            <dd>A bzip2 extractor designed to work with the bz2 Wikipedia dumps.</dd>
-            <dt>
-              class <a href="classwikiopencite_1_1citescoop_1_1DumpParseException.html" class="m-doc">DumpParseException</a>
-            </dt>
-            <dd>Exception thrown when dump parsing fails.</dd>
-            <dt>
-              class <a href="classwikiopencite_1_1citescoop_1_1Extractor.html" class="m-doc">Extractor</a>
-            </dt>
-            <dd>An abstract Wikimedia XML dumps parser to parse citations.</dd>
-            <dt>
-              class <a href="classwikiopencite_1_1citescoop_1_1MessageReader.html" class="m-doc">MessageReader</a>
-            </dt>
-            <dd>Read protobuf messages from a PBF formatted stream.</dd>
-            <dt>
-              class <a href="classwikiopencite_1_1citescoop_1_1MessageWriter.html" class="m-doc">MessageWriter</a>
-            </dt>
-            <dd>Writer for PBF formatted streams.</dd>
-            <dt>
-              class <a href="classwikiopencite_1_1citescoop_1_1Parser.html" class="m-doc">Parser</a>
-            </dt>
-            <dd><span></span></dd>
-            <dt>
-              struct <a href="structwikiopencite_1_1citescoop_1_1ParserOptions.html" class="m-doc">ParserOptions</a>
-            </dt>
-            <dd><span></span></dd>
-            <dt>
-              class <a href="classwikiopencite_1_1citescoop_1_1TemplateParseException.html" class="m-doc">TemplateParseException</a>
-            </dt>
-            <dd>Exception thrown when citation parsing fails.</dd>
-            <dt>
-              class <a href="classwikiopencite_1_1citescoop_1_1TextExtractor.html" class="m-doc">TextExtractor</a>
-            </dt>
-            <dd><a href="classwikiopencite_1_1citescoop_1_1Extractor.html" class="m-doc">Extractor</a> for text based input streams.</dd>
+            <dd>Construct a new writer.</dd>
           </dl>
+        </section>
+        <section id="pub-methods">
+          <h2><a href="#pub-methods">Public functions</a></h2>
+          <dl class="m-doc">
+            <dt>
+              <span class="m-doc-wrap-bumper">auto <a href="#a2fc7119a64b855749d4334b1a65992c1" class="m-doc">WriteMessage</a>(</span><span class="m-doc-wrap">const google::protobuf::Message&amp; message) -&gt; uint32_t</span>
+            </dt>
+            <dd>Write a message to the output stream.</dd>
+          </dl>
+        </section>
+        <section>
+          <h2>Function documentation</h2>
+          <section class="m-doc-details" id="abe4f3fd771a1d14d4b3a48084434f36f"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper"> wikiopencite::<wbr />citescoop::<wbr />MessageWriter::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#abe4f3fd771a1d14d4b3a48084434f36f" class="m-doc-self">MessageWriter</a>(</span><span class="m-doc-wrap">std::shared_ptr&lt;std::ostream&gt; output) <span class="m-label m-info">explicit</span> </span></span>
+            </h3>
+            <p>Construct a new writer.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <thead>
+                <tr><th colspan="2">Parameters</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="width: 1%">output</td>
+                  <td>Output stream to write messages to.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div></section>
+          <section class="m-doc-details" id="a2fc7119a64b855749d4334b1a65992c1"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper">uint32_t wikiopencite::<wbr />citescoop::<wbr />MessageWriter::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#a2fc7119a64b855749d4334b1a65992c1" class="m-doc-self">WriteMessage</a>(</span><span class="m-doc-wrap">const google::protobuf::Message&amp; message)</span></span>
+            </h3>
+            <p>Write a message to the output stream.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <thead>
+                <tr><th colspan="2">Parameters</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="width: 1%">message</td>
+                  <td>Message to write.</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>Returns</th>
+                  <td>Size of message written. Note: this does not include the size of the uint32_t size written immediately before the serialized message.</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div></section>
         </section>
       </div>
     </div>
