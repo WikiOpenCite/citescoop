@@ -19,8 +19,11 @@
 
 namespace wikiopencite::citescoop {
 
+/// @brief Read protobuf messages from a PBF formatted stream.
 class CITESCOOP_EXPORT MessageReader {
  public:
+  /// @brief Construct a new message reader.
+  /// @param input Input stream to read messages from.
   explicit MessageReader(std::shared_ptr<std::istream> input) {
     zero_copy_stream =
         std::make_shared<google::protobuf::io::IstreamInputStream>(input.get());
@@ -28,6 +31,10 @@ class CITESCOOP_EXPORT MessageReader {
         zero_copy_stream.get());
   }
 
+  /// @brief Read a message from the input stream.
+  /// @tparam T Protobuf message to read. Must inherit from
+  /// google::protobuf::Message
+  /// @return The parses message.
   template <class T, typename std::enable_if<std::is_base_of<
                          google::protobuf::Message, T>::value>::type* = nullptr>
   std::unique_ptr<T> ReadMessage() {
@@ -48,12 +55,24 @@ class CITESCOOP_EXPORT MessageReader {
   std::unique_ptr<google::protobuf::io::CodedInputStream> coded_stream;
 };
 
+/// @brief Writer for PBF formatted streams.
+///
+/// PBF files have the following format:
+/// uint32_t Size of next message in network byte order
+/// Message
 class CITESCOOP_EXPORT MessageWriter {
  public:
+  /// @brief Construct a new writer.
+  /// @param output Output stream to write messages to.
   explicit MessageWriter(std::shared_ptr<std::ostream> output) {
     output_stream = output;
   }
 
+  /// @brief Write a message to the output stream.
+  /// @param message Message to write.
+  /// @return Size of message written. Note: this does not include the
+  /// size of the uint32_t size written immediately before the
+  /// serialized message.
   uint32_t WriteMessage(const google::protobuf::Message& message) {
     uint32_t size = static_cast<uint32_t>(message.ByteSizeLong());
     uint32_t network_size = htonl(size);
