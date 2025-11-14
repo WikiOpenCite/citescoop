@@ -25,6 +25,7 @@ add_executable(citescoop_test
   src/extract/textextractor_test.cc
   src/extract/extractor_test.cc
   src/parser/parser_test.cc
+  src/io_test.cc
 )
 target_link_libraries(
     citescoop_test PRIVATE
