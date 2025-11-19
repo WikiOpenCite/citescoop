@@ -15,7 +15,7 @@
 
 #include "citescoop/extract.h"
 #include "citescoop/proto/page.pb.h"
-#include "citescoop/proto/revision_map.pb.h"
+#include "citescoop/proto/revision.pb.h"
 
 namespace wikiopencite::citescoop {
 namespace proto = wikiopencite::proto;
@@ -25,11 +25,12 @@ DumpParser::DumpParser(std::shared_ptr<wikiopencite::citescoop::Parser> parser)
 
 std::pair<std::unique_ptr<std::vector<proto::Page>>,
           // NOLINTNEXTLINE(whitespace/indent_namespace)
-          std::unique_ptr<proto::RevisionMap>>
+          std::unique_ptr<std::map<uint64_t, proto::Revision>>>
 DumpParser::ParseXML(std::istream& stream) {
   pages_ =
       std::unique_ptr<std::vector<proto::Page>>(new std::vector<proto::Page>);
-  revisions_ = std::unique_ptr<proto::RevisionMap>(new proto::RevisionMap);
+  revisions_ = std::unique_ptr<std::map<uint64_t, proto::Revision>>(
+      new std::map<uint64_t, proto::Revision>);
   page_revisions_ = std::map<int64_t, proto::Revision>();
 
   set_substitute_entities(true);
@@ -158,7 +159,7 @@ void DumpParser::MakePageCitationList() {
         if (citation.has_revision_removed()) {
           revisions_ref_count[citation.revision_removed()]--;
           if (revisions_ref_count.at(citation.revision_removed()) <= 0) {
-            revisions_->mutable_revisions()->erase(citation.revision_removed());
+            revisions_->erase(citation.revision_removed());
           }
 
           citation.clear_revision_removed();
@@ -167,7 +168,7 @@ void DumpParser::MakePageCitationList() {
         if (!citation.has_revision_removed()) {
           auto id = revision.revision().revision_id();
           citation.set_revision_removed(id);
-          revisions_->mutable_revisions()->insert({id, page_revisions_.at(id)});
+          revisions_->insert({id, page_revisions_.at(id)});
           revisions_ref_count[id]++;
         }
       }
@@ -179,7 +180,7 @@ void DumpParser::MakePageCitationList() {
         auto citation = proto::Citation();
         auto id = revision.revision().revision_id();
         citation.set_revision_added(id);
-        revisions_->mutable_revisions()->insert({id, page_revisions_.at(id)});
+        revisions_->insert({id, page_revisions_.at(id)});
         revisions_ref_count[id]++;
         citation.mutable_citation()->CopyFrom(extracted_citation);
         discovered_citations.insert({key, citation});

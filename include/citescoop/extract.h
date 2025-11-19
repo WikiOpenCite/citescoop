@@ -5,6 +5,7 @@
 #define INCLUDE_CITESCOOP_EXTRACT_H_
 
 #include <istream>
+#include <map>
 #include <memory>
 #include <string>
 #include <tuple>
@@ -14,7 +15,7 @@
 #include "citescoop/citescoop_export.h"
 #include "citescoop/parser.h"
 #include "citescoop/proto/page.pb.h"
-#include "citescoop/proto/revision_map.pb.h"
+#include "citescoop/proto/revision.pb.h"
 
 namespace wikiopencite::citescoop {
 
@@ -32,8 +33,9 @@ class CITESCOOP_EXPORT Extractor {
   /// @param stream Input stream to extract citations from.
   /// @return A vector of citations by page and a map of revisions
   /// referenced by citations.
-  virtual std::pair<std::unique_ptr<std::vector<wikiopencite::proto::Page>>,
-                    std::unique_ptr<wikiopencite::proto::RevisionMap>>
+  virtual std::pair<
+      std::unique_ptr<std::vector<wikiopencite::proto::Page>>,
+      std::unique_ptr<std::map<uint64_t, wikiopencite::proto::Revision>>>
   Extract(std::istream& stream) = 0;
 };
 
@@ -51,7 +53,7 @@ class CITESCOOP_EXPORT TextExtractor : public Extractor {
   /// @return  A vector of citations by page and a map of revisions
   /// referenced by citations.
   std::pair<std::unique_ptr<std::vector<wikiopencite::proto::Page>>,
-            std::unique_ptr<wikiopencite::proto::RevisionMap>>
+            std::unique_ptr<std::map<uint64_t, wikiopencite::proto::Revision>>>
   Extract(std::istream& stream) override;
 
  private:
@@ -73,7 +75,7 @@ class CITESCOOP_EXPORT Bz2Extractor : public Extractor {
   /// @return A vector of citations by page and a map of revisions
   /// referenced by citations.
   std::pair<std::unique_ptr<std::vector<wikiopencite::proto::Page>>,
-            std::unique_ptr<wikiopencite::proto::RevisionMap>>
+            std::unique_ptr<std::map<uint64_t, wikiopencite::proto::Revision>>>
   Extract(std::istream& stream) override;
 
  private:

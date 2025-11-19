@@ -4,6 +4,7 @@
 #include "bz2extractor_impl.h"
 
 #include <istream>
+#include <map>
 #include <memory>
 #include <tuple>
 #include <utility>
@@ -12,7 +13,7 @@
 #include "boost/iostreams/filtering_streambuf.hpp"
 
 #include "citescoop/proto/page.pb.h"
-#include "citescoop/proto/revision_map.pb.h"
+#include "citescoop/proto/revision.pb.h"
 
 #include "base_extractor.h"
 
@@ -27,7 +28,7 @@ Bz2Extractor::Bz2ExtractorImpl::Bz2ExtractorImpl(
 
 std::pair<std::unique_ptr<std::vector<proto::Page>>,
           // NOLINTNEXTLINE(whitespace/indent_namespace)
-          std::unique_ptr<proto::RevisionMap>>
+          std::unique_ptr<std::map<uint64_t, proto::Revision>>>
 Bz2Extractor::Bz2ExtractorImpl::Extract(std::istream& stream) {
   bio::filtering_streambuf<bio::input> in;
   in.push(bio::bzip2_decompressor());

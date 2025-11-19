@@ -4,11 +4,13 @@
 #include "textextractor_impl.h"
 
 #include <istream>
+#include <map>
 #include <memory>
 #include <utility>
 
 #include "citescoop/parser.h"
 #include "citescoop/proto/page.pb.h"
+#include "citescoop/proto/revision.pb.h"
 
 #include "base_extractor.h"
 
@@ -22,7 +24,7 @@ TextExtractor::TextExtractorImpl::TextExtractorImpl(
 
 std::pair<std::unique_ptr<std::vector<proto::Page>>,
           // NOLINTNEXTLINE(whitespace/indent_namespace)
-          std::unique_ptr<proto::RevisionMap>>
+          std::unique_ptr<std::map<uint64_t, proto::Revision>>>
 TextExtractor::TextExtractorImpl::Extract(std::istream& stream) {
   return xml_parser_.ParseXML(stream);
 }
