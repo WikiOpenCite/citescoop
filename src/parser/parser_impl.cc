@@ -104,16 +104,16 @@ proto::ExtractedCitation Parser::ParserImpl::BuildCitation(
             algo::trim_copy(param.value.value()));
       } else if (key == "pmid") {
         try {
-          citation.mutable_identifiers()->set_pmid(
-              this->StrToIntIdent(algo::trim_copy(param.value.value())));
+          citation.mutable_identifiers()->set_pmid(static_cast<uint32_t>(
+              this->StrToIntIdent(algo::trim_copy(param.value.value()))));
         } catch (const TemplateParseException& e) {
           if (!this->options().ignore_invalid_ident)
             throw e;
         }
       } else if (key == "pmc") {
         try {
-          citation.mutable_identifiers()->set_pmcid(
-              this->ParsePmcId(algo::trim_copy(param.value.value())));
+          citation.mutable_identifiers()->set_pmcid(static_cast<uint32_t>(
+              this->ParsePmcId(algo::trim_copy(param.value.value()))));
         } catch (const TemplateParseException& e) {
           if (!this->options().ignore_invalid_ident)
             throw e;

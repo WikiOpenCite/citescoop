@@ -17,7 +17,7 @@
 
 #include "citescoop/parser.h"
 #include "citescoop/proto/page.pb.h"
-#include "citescoop/proto/revision_map.pb.h"
+#include "citescoop/proto/revision.pb.h"
 
 namespace wikiopencite::citescoop {
 
@@ -34,7 +34,7 @@ class DumpParser : public xmlpp::SaxParser {
   /// decompressed by this point.
   /// @return Pages and referenced revisions.
   std::pair<std::unique_ptr<std::vector<wikiopencite::proto::Page>>,
-            std::unique_ptr<wikiopencite::proto::RevisionMap>>
+            std::unique_ptr<std::map<uint64_t, proto::Revision>>>
   ParseXML(std::istream& stream);
 
  protected:
@@ -67,7 +67,7 @@ class DumpParser : public xmlpp::SaxParser {
   std::map<int64_t, wikiopencite::proto::Revision> page_revisions_;
 
   std::unique_ptr<std::vector<wikiopencite::proto::Page>> pages_;
-  std::unique_ptr<wikiopencite::proto::RevisionMap> revisions_;
+  std::unique_ptr<std::map<uint64_t, wikiopencite::proto::Revision>> revisions_;
 
   /// @brief Complete the pages citations.
   ///

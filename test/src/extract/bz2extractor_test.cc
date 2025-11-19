@@ -41,6 +41,6 @@ TEST_CASE(TEST_NAME_PREFIX + "Extract single citation from single revision",
   REQUIRE(citation.revision_added() == 5);
   REQUIRE_FALSE(citation.has_revision_removed());
 
-  auto revision = pair.second->revisions().at(5);
+  auto revision = pair.second->at(5);
   REQUIRE(revision.revision_id() == 5);
 }

@@ -5,6 +5,7 @@
 #define SRC_EXTRACT_TEXTEXTRACTOR_IMPL_H_
 
 #include <istream>
+#include <map>
 #include <memory>
 #include <utility>
 #include <vector>
@@ -12,6 +13,7 @@
 #include "citescoop/extract.h"
 #include "citescoop/parser.h"
 #include "citescoop/proto/page.pb.h"
+#include "citescoop/proto/revision.pb.h"
 
 #include "base_extractor.h"
 
@@ -29,7 +31,7 @@ class TextExtractor::TextExtractorImpl : BaseExtractor {
   /// @param stream Stream to parse.
   /// @return Pages and referenced revisions.
   std::pair<std::unique_ptr<std::vector<wikiopencite::proto::Page>>,
-            std::unique_ptr<wikiopencite::proto::RevisionMap>>
+            std::unique_ptr<std::map<uint64_t, wikiopencite::proto::Revision>>>
   Extract(std::istream& stream);
 
  private:

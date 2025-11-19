@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include <istream>
+#include <map>
 #include <memory>
 #include <utility>
 #include <vector>
@@ -9,6 +10,7 @@
 #include "citescoop/extract.h"
 #include "citescoop/parser.h"
 #include "citescoop/proto/page.pb.h"
+#include "citescoop/proto/revision.pb.h"
 
 #include "textextractor_impl.h"
 
@@ -23,7 +25,7 @@ TextExtractor::TextExtractor(
 TextExtractor::~TextExtractor() = default;
 
 std::pair<std::unique_ptr<std::vector<proto::Page>>,
-          std::unique_ptr<proto::RevisionMap>>
+          std::unique_ptr<std::map<uint64_t, proto::Revision>>>
 TextExtractor::Extract(std::istream& stream) {
   return impl_->Extract(stream);
 }
