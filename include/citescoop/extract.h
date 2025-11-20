@@ -37,6 +37,15 @@ class CITESCOOP_EXPORT Extractor {
       std::unique_ptr<std::vector<wikiopencite::proto::Page>>,
       std::unique_ptr<std::map<uint64_t, wikiopencite::proto::Revision>>>
   Extract(std::istream& stream) = 0;
+
+  /// @brief Extract citations a given input stream.
+  /// @param input XML stream to extract from.
+  /// @param pages_output Output stream for pages.
+  /// @param revisions_output Output stream for revisions.
+  /// @return Number of pages followed by number of revisions written.
+  virtual std::pair<uint64_t, uint64_t> Extract(
+      std::istream& input, std::shared_ptr<std::ostream> pages_output,
+      std::shared_ptr<std::ostream> revisions_output) = 0;
 };
 
 /// @brief Extractor for text based input streams.
@@ -55,6 +64,15 @@ class CITESCOOP_EXPORT TextExtractor : public Extractor {
   std::pair<std::unique_ptr<std::vector<wikiopencite::proto::Page>>,
             std::unique_ptr<std::map<uint64_t, wikiopencite::proto::Revision>>>
   Extract(std::istream& stream) override;
+
+  /// @brief Extract citations a text based input stream.
+  /// @param input XML stream to extract from.
+  /// @param pages_output Output stream for pages.
+  /// @param revisions_output Output stream for revisions.
+  /// @return Number of pages followed by number of revisions written.
+  std::pair<uint64_t, uint64_t> Extract(
+      std::istream& input, std::shared_ptr<std::ostream> pages_output,
+      std::shared_ptr<std::ostream> revisions_output) override;
 
  private:
   class TextExtractorImpl;
@@ -77,6 +95,15 @@ class CITESCOOP_EXPORT Bz2Extractor : public Extractor {
   std::pair<std::unique_ptr<std::vector<wikiopencite::proto::Page>>,
             std::unique_ptr<std::map<uint64_t, wikiopencite::proto::Revision>>>
   Extract(std::istream& stream) override;
+
+  /// @brief Extract citations from a bzip2 compressed data dump.
+  /// @param input Stream of a bzip2 compressed XML data dump.
+  /// @param pages_output Output stream for pages.
+  /// @param revisions_output Output stream for revisions.
+  /// @return Number of pages followed by number of revisions written.
+  std::pair<uint64_t, uint64_t> Extract(
+      std::istream& input, std::shared_ptr<std::ostream> pages_output,
+      std::shared_ptr<std::ostream> revisions_output) override;
 
  private:
   class Bz2ExtractorImpl;
