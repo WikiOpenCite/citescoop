@@ -95,6 +95,12 @@
               <span class="m-doc-wrap-bumper">auto <a href="#aacde3f98aa5b19dfcbe2c3c7ecd9f027" class="m-doc">Extract</a>(</span><span class="m-doc-wrap">std::istream&amp; stream) -&gt; std::pair&lt;std::unique_ptr&lt;std::vector&lt;wikiopencite::proto::Page&gt;&gt;, std::unique_ptr&lt;std::map&lt;uint64_t, wikiopencite::proto::Revision&gt;&gt;&gt; <span class="m-label m-flat m-warning">override</span></span>
             </dt>
             <dd>Extract citations from text based streams.</dd>
+            <dt>
+              <span class="m-doc-wrap-bumper">auto <a href="#ad8165cbea789d78e809622e9e669e6eb" class="m-doc">Extract</a>(</span><span class="m-doc-wrap">std::istream&amp; input,
+              std::shared_ptr&lt;std::ostream&gt; pages_output,
+              std::shared_ptr&lt;std::ostream&gt; revisions_output) -&gt; std::pair&lt;uint64_t, uint64_t&gt; <span class="m-label m-flat m-warning">override</span></span>
+            </dt>
+            <dd>Extract citations a text based input stream.</dd>
           </dl>
         </section>
         <section>
@@ -135,6 +141,39 @@
                 <tr>
                   <th>Returns</th>
                   <td>A vector of citations by page and a map of revisions referenced by citations.</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div></section>
+          <section class="m-doc-details" id="ad8165cbea789d78e809622e9e669e6eb"><div>
+            <h3>
+              <span class="m-doc-wrap-bumper">std::pair&lt;uint64_t, uint64_t&gt; wikiopencite::<wbr />citescoop::<wbr />TextExtractor::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#ad8165cbea789d78e809622e9e669e6eb" class="m-doc-self">Extract</a>(</span><span class="m-doc-wrap">std::istream&amp; input,
+              std::shared_ptr&lt;std::ostream&gt; pages_output,
+              std::shared_ptr&lt;std::ostream&gt; revisions_output) <span class="m-label m-warning">override</span></span></span>
+            </h3>
+            <p>Extract citations a text based input stream.</p>
+            <table class="m-table m-fullwidth m-flat">
+              <thead>
+                <tr><th colspan="2">Parameters</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="width: 1%">input</td>
+                  <td>XML stream to extract from.</td>
+                </tr>
+                <tr>
+                  <td>pages_output</td>
+                  <td>Output stream for pages.</td>
+                </tr>
+                <tr>
+                  <td>revisions_output</td>
+                  <td>Output stream for revisions.</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>Returns</th>
+                  <td>Number of pages followed by number of revisions written.</td>
                 </tr>
               </tfoot>
             </table>
