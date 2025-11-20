@@ -13,6 +13,8 @@
 #include "citescoop/proto/revision.pb.h"
 
 #include "base_extractor.h"
+#include "dump_parser.h"
+#include "streaming_dump_parser.h"
 
 namespace wikiopencite::citescoop {
 namespace proto = wikiopencite::proto;
@@ -26,6 +28,14 @@ std::pair<std::unique_ptr<std::vector<proto::Page>>,
           // NOLINTNEXTLINE(whitespace/indent_namespace)
           std::unique_ptr<std::map<uint64_t, proto::Revision>>>
 TextExtractor::TextExtractorImpl::Extract(std::istream& stream) {
-  return xml_parser_.ParseXML(stream);
+  auto xml_parser = DumpParser(citation_parser_);
+  return xml_parser.ParseXML(stream);
+}
+
+std::pair<uint64_t, uint64_t> TextExtractor::TextExtractorImpl::Extract(
+    std::istream& input, std::shared_ptr<std::ostream> pages_output,
+    std::shared_ptr<std::ostream> revisions_output) {
+  auto xml_parser = StreamingDumpParser(citation_parser_);
+  return xml_parser.ParseXML(input, pages_output, revisions_output);
 }
 }  // namespace wikiopencite::citescoop

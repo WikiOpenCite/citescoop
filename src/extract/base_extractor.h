@@ -19,15 +19,11 @@ class BaseExtractor {
   /// dump parser for you.
   /// @param citation_parser Citation parser to use.
   explicit BaseExtractor(std::shared_ptr<Parser> citation_parser)
-      : citation_parser_(citation_parser),
-        xml_parser_(DumpParser(citation_parser)) {}
+      : citation_parser_(citation_parser) {}
 
  protected:
   /// Citation parser to use
   std::shared_ptr<Parser> citation_parser_;
-
-  /// XML parser to use
-  DumpParser xml_parser_;
 };
 }  // namespace wikiopencite::citescoop
 

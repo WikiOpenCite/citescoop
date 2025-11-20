@@ -16,6 +16,8 @@
 #include "citescoop/proto/revision.pb.h"
 
 #include "base_extractor.h"
+#include "dump_parser.h"
+#include "streaming_dump_parser.h"
 
 namespace wikiopencite::citescoop {
 namespace proto = wikiopencite::proto;
@@ -36,6 +38,20 @@ Bz2Extractor::Bz2ExtractorImpl::Extract(std::istream& stream) {
 
   std::istream decompressed_stream(&in);
 
-  return xml_parser_.ParseXML(decompressed_stream);
+  auto xml_parser = DumpParser(citation_parser_);
+  return xml_parser.ParseXML(decompressed_stream);
+}
+
+std::pair<uint64_t, uint64_t> Bz2Extractor::Bz2ExtractorImpl::Extract(
+    std::istream& input, std::shared_ptr<std::ostream> pages_output,
+    std::shared_ptr<std::ostream> revisions_output) {
+  bio::filtering_streambuf<bio::input> in;
+  in.push(bio::bzip2_decompressor());
+  in.push(input);
+
+  std::istream decompressed_stream(&in);
+  auto xml_parser = StreamingDumpParser(citation_parser_);
+  return xml_parser.ParseXML(decompressed_stream, pages_output,
+                             revisions_output);
 }
 }  // namespace wikiopencite::citescoop

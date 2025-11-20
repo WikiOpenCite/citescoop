@@ -27,42 +27,19 @@ std::pair<std::unique_ptr<std::vector<proto::Page>>,
           // NOLINTNEXTLINE(whitespace/indent_namespace)
           std::unique_ptr<std::map<uint64_t, proto::Revision>>>
 DumpParser::ParseXML(std::istream& stream) {
-  pages_ =
-      std::unique_ptr<std::vector<proto::Page>>(new std::vector<proto::Page>);
-  revisions_ = std::unique_ptr<std::map<uint64_t, proto::Revision>>(
-      new std::map<uint64_t, proto::Revision>);
-  page_revisions_ = std::map<int64_t, proto::Revision>();
-
-  set_substitute_entities(true);
-  parse_stream(stream);
-
-  return std::make_pair(std::move(pages_), std::move(revisions_));
-}
-
-void DumpParser::on_start_document() {
-  // Reset all our flags to make sure
-  in_page_ = false;
-  in_revision_ = false;
-  in_contributor_ = false;
-  should_store_ = false;
-}
-
-void DumpParser::on_end_document() {
-  // std::cout << "on_end_document()" << std::endl;
+  stored_pages_ = std::make_unique<std::vector<proto::Page>>();
+  stored_revisions_ = std::make_unique<std::map<uint64_t, proto::Revision>>();
+  StartParser(stream);
+  return std::make_pair(std::move(stored_pages_), std::move(stored_revisions_));
 }
 
 void DumpParser::on_start_element(const xmlpp::ustring& name,
                                   const AttributeList&) {
   text_buf_ = "";
-
   if (name == "page") {
     in_page_ = true;
-    current_page_ = proto::Page();
-    all_page_citations_ = std::vector<proto::RevisionCitations>();
-    page_revisions_.clear();
   } else if (name == "revision") {
     in_revision_ = true;
-    current_revision_ = proto::Revision();
   } else if (name == "contributor") {
     in_contributor_ = true;
   } else if ((in_page_ && name == "title") || (in_page_ && name == "id") ||
@@ -77,36 +54,13 @@ void DumpParser::on_start_element(const xmlpp::ustring& name,
 
 void DumpParser::on_end_element(const xmlpp::ustring& name) {
   if (name == "page") {
-    in_page_ = false;
-    MakePageCitationList();
-    pages_->push_back(current_page_);
-
-  } else if (in_page_ && name == "title") {
-    current_page_.set_title(text_buf_);
-  } else if (in_page_ && !in_revision_ && !in_contributor_ && name == "id") {
-    current_page_.set_page_id(std::stol(text_buf_));
+    OnEndPage();
   } else if (name == "revision") {
-    in_revision_ = false;
-
-    revision_citations_.mutable_revision()->CopyFrom(current_revision_);
-    all_page_citations_.push_back(revision_citations_);
-
-    page_revisions_.insert(
-        {current_revision_.revision_id(), current_revision_});
-  } else if (in_revision_ && !in_contributor_ && name == "id") {
-    current_revision_.set_revision_id(std::stol(text_buf_));
-  } else if (in_revision_ && name == "parentid") {
-    current_revision_.set_parent_id(std::stol(text_buf_));
-  } else if (in_revision_ && name == "username") {
-    current_revision_.set_user(text_buf_);
-  } else if (in_revision_ && name == "text") {
-    revision_citations_ = parser_->Parse(text_buf_);
-  } else if (in_revision_ && name == "timestamp") {
-    auto timestamp = google::protobuf::Timestamp();
-    google::protobuf::util::TimeUtil::FromString(text_buf_, &timestamp);
-    current_revision_.mutable_timestamp()->CopyFrom(timestamp);
+    OnEndRevision();
   } else if (name == "contributor") {
     in_contributor_ = false;
+  } else {
+    OnEndField(name);
   }
 
   if (should_store_)
@@ -130,62 +84,98 @@ void DumpParser::on_fatal_error(const xmlpp::ustring& text) {
   throw DumpParseException(text);
 }
 
+void DumpParser::Store(const std::map<uint64_t, proto::Revision>& revisions,
+                       const proto::Page& page) {
+  stored_pages_->push_back(page);
+  stored_revisions_->insert(revisions.begin(), revisions.end());
+}
+
+void DumpParser::StartParser(std::istream& stream) {
+  InitializeParser();
+  set_substitute_entities(true);
+  parse_stream(stream);
+}
+
+void DumpParser::InitializeParser() {
+  revisions_to_store_ = std::map<uint64_t, proto::Revision>();
+  current_page_ = proto::Page();
+  current_revision_ = proto::Revision();
+  current_page_revisions_ = std::map<uint64_t, proto::Revision>();
+  citations_by_revision_ = std::vector<proto::RevisionCitations>();
+  ResetState();
+}
+
+void DumpParser::CheckExistingCitations(
+    proto::RevisionCitations* revision,
+    std::map<std::string, proto::Citation>* discovered_citations,
+    std::map<uint64_t, int>* ref_count) {
+
+  for (auto& [key, citation] : *discovered_citations) {
+    if (revision->citations().contains(key)) {
+      revision->mutable_citations()->erase(key);
+
+      // Just make sure that we don't mark it as removed. NOTE: This
+      // is a slight technical limitation, if a citation is removed
+      // from a article and then re-added, we won't detect that is was
+      // re-added and will just show that it continues to be there.
+      if (citation.has_revision_removed()) {
+        (*ref_count)[citation.revision_removed()]--;
+        if (ref_count->at(citation.revision_removed()) <= 0) {
+          revisions_to_store_.erase(citation.revision_removed());
+        }
+
+        citation.clear_revision_removed();
+      }
+    } else {
+      if (!citation.has_revision_removed()) {
+        auto id = revision->revision().revision_id();
+        citation.set_revision_removed(id);
+        revisions_to_store_.insert({id, current_page_revisions_.at(id)});
+        (*ref_count)[id]++;
+      }
+    }
+  }
+}
+
+void DumpParser::AddNewCitations(
+    wikiopencite::proto::RevisionCitations* citations,
+    std::map<std::string, wikiopencite::proto::Citation>* discovered_citations,
+    std::map<uint64_t, int>* ref_count) {
+  for (const auto& [key, extracted_citation] : citations->citations()) {
+    if (!discovered_citations->contains(key)) {
+      auto citation = proto::Citation();
+      auto id = citations->revision().revision_id();
+      citation.set_revision_added(id);
+
+      revisions_to_store_.insert({id, current_page_revisions_.at(id)});
+      (*ref_count)[id]++;
+
+      citation.mutable_citation()->CopyFrom(extracted_citation);
+      discovered_citations->insert({key, citation});
+    }
+  }
+}
+
 void DumpParser::MakePageCitationList() {
   // Sort revisions by date
-  std::ranges::sort(all_page_citations_, [](const proto::RevisionCitations& a,
-                                            const proto::RevisionCitations& b) {
-    return a.revision().timestamp().seconds() ==
-                   b.revision().timestamp().seconds()
-               ? a.revision().timestamp().nanos() <
-                     b.revision().timestamp().nanos()
-               : a.revision().timestamp().seconds() <
-                     b.revision().timestamp().seconds();
-  });
+  std::ranges::sort(
+      citations_by_revision_,
+      [](const proto::RevisionCitations& a, const proto::RevisionCitations& b) {
+        return a.revision().timestamp().seconds() ==
+                       b.revision().timestamp().seconds()
+                   ? a.revision().timestamp().nanos() <
+                         b.revision().timestamp().nanos()
+                   : a.revision().timestamp().seconds() <
+                         b.revision().timestamp().seconds();
+      });
 
   auto discovered_citations = std::map<std::string, proto::Citation>();
-  auto revisions_ref_count = std::map<int64_t, int>();
+  auto revisions_ref_count = std::map<uint64_t, int>();
 
-  for (auto& revision : all_page_citations_) {
-    // Make sure that all citations we have already found are here,
-    // otherwise mark them as deleted
-    for (auto& [key, citation] : discovered_citations) {
-      if (revision.citations().contains(key)) {
-        revision.mutable_citations()->erase(key);
-
-        // Just make sure that we don't mark it as removed. NOTE: This
-        // is a slight technical limitation, if a citation is removed
-        // from a article and then re-added, we won't detect that is was
-        // re-added and will just show that it continues to be there.
-        if (citation.has_revision_removed()) {
-          revisions_ref_count[citation.revision_removed()]--;
-          if (revisions_ref_count.at(citation.revision_removed()) <= 0) {
-            revisions_->erase(citation.revision_removed());
-          }
-
-          citation.clear_revision_removed();
-        }
-      } else {
-        if (!citation.has_revision_removed()) {
-          auto id = revision.revision().revision_id();
-          citation.set_revision_removed(id);
-          revisions_->insert({id, page_revisions_.at(id)});
-          revisions_ref_count[id]++;
-        }
-      }
-    }
-
-    // Add any new citations from this revision to the discovered citations
-    for (const auto& [key, extracted_citation] : revision.citations()) {
-      if (!discovered_citations.contains(key)) {
-        auto citation = proto::Citation();
-        auto id = revision.revision().revision_id();
-        citation.set_revision_added(id);
-        revisions_->insert({id, page_revisions_.at(id)});
-        revisions_ref_count[id]++;
-        citation.mutable_citation()->CopyFrom(extracted_citation);
-        discovered_citations.insert({key, citation});
-      }
-    }
+  for (auto& citations : citations_by_revision_) {
+    CheckExistingCitations(&citations, &discovered_citations,
+                           &revisions_ref_count);
+    AddNewCitations(&citations, &discovered_citations, &revisions_ref_count);
   }
 
   // Copy the complete set of citations into the page.
@@ -193,6 +183,58 @@ void DumpParser::MakePageCitationList() {
     auto added_citation = current_page_.add_citations();
     added_citation->CopyFrom(citation);
   }
+}
+
+void DumpParser::ResetState() {
+  in_page_ = false;
+  in_revision_ = false;
+  in_contributor_ = false;
+  should_store_ = false;
+}
+
+void DumpParser::OnEndField(const xmlpp::ustring& field_name) {
+  if (in_page_ && field_name == "title") {
+    current_page_.set_title(text_buf_);
+  } else if (in_page_ && !in_revision_ && !in_contributor_ &&
+             field_name == "id") {
+    current_page_.set_page_id(static_cast<uint64_t>(std::stol(text_buf_)));
+  } else if (in_revision_ && !in_contributor_ && field_name == "id") {
+    current_revision_.set_revision_id(
+        static_cast<uint64_t>(std::stol(text_buf_)));
+  } else if (in_revision_ && field_name == "parentid") {
+    current_revision_.set_parent_id(
+        static_cast<uint64_t>(std::stol(text_buf_)));
+  } else if (in_revision_ && field_name == "username") {
+    current_revision_.set_user(text_buf_);
+  } else if (in_revision_ && field_name == "text") {
+    current_citations_ = parser_->Parse(text_buf_);
+  } else if (in_revision_ && field_name == "timestamp") {
+    auto timestamp = google::protobuf::Timestamp();
+    google::protobuf::util::TimeUtil::FromString(text_buf_, &timestamp);
+    current_revision_.mutable_timestamp()->CopyFrom(timestamp);
+  }
+}
+
+void DumpParser::OnEndPage() {
+  in_page_ = false;
+  MakePageCitationList();
+
+  Store(revisions_to_store_, current_page_);
+
+  // Clear everything up
+  current_page_.Clear();
+  current_page_revisions_.clear();
+  citations_by_revision_.clear();
+}
+
+void DumpParser::OnEndRevision() {
+  in_revision_ = false;
+  current_citations_.mutable_revision()->CopyFrom(current_revision_);
+  citations_by_revision_.push_back(current_citations_);
+  current_page_revisions_.insert(
+      {current_revision_.revision_id(), current_revision_});
+
+  current_revision_.Clear();
 }
 
 }  // namespace wikiopencite::citescoop

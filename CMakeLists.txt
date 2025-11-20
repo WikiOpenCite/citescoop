@@ -23,6 +23,7 @@ add_library(
     src/extract/bz2extractor_impl.cc
     src/extract/bz2extractor.cc
     src/extract/dump_parser.cc
+    src/extract/streaming_dump_parser.cc
     src/extract/exceptions.cc
     src/extract/extractor.cc
     src/extract/textextractor_impl.cc
