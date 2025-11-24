@@ -5,10 +5,9 @@
 #define SRC_PARSER_PARSER_IMPL_H_
 
 #include <functional>
+#include <optional>
 #include <string>
 #include <vector>
-
-#include "boost/parser/parser.hpp"
 
 #include "citescoop/parser.h"
 #include "citescoop/proto/extracted_citation.pb.h"
@@ -72,7 +71,7 @@ class Parser::ParserImpl {
   ///
   /// @param pmcid PMC Id to parse.
   /// @return Resulting PMC Id.
-  int ParsePmcId(std::string pmcid);
+  int ParsePmcId(const std::string& pmcid);
 
   /// @brief Parse an integer identifier as an int.
   ///
@@ -81,7 +80,45 @@ class Parser::ParserImpl {
   ///
   /// @param ident Identifier to parse.
   /// @return Result
-  int StrToIntIdent(std::string ident);
+  int StrToIntIdent(const std::string& ident);
+
+  /// @brief Check if the key is for an identifier. If so, add to the
+  /// citation.
+  /// @param citation Citation to modify if the key contains an identifier.
+  /// @param key Name of key.
+  /// @param value Value of key.
+  /// @return Has an update been made?
+  bool CheckForIdentKey(wikiopencite::proto::ExtractedCitation* citation,
+                        const std::string& key, const std::string& value);
+
+  /// @brief Check if the key is for a URL. If so, add to the
+  /// citation.
+  /// @param citation Citation to modify if the key contains an identifier.
+  /// @param key Name of key.
+  /// @param value Value of key.
+  /// @return Has an update been made?
+  bool CheckForUrlKey(wikiopencite::proto::ExtractedCitation* citation,
+                      const std::string& key, const std::string& value);
+
+  /// @brief Handle setting the PMC ID for a citation.
+  /// Will attempt to parse the PMC ID. If it cannot parse the PMC ID it
+  /// will either throw an exception or if the ignore invalid
+  /// identifiers is set, will simply ignore.
+  /// @param citation Citation to modify.
+  /// @param value Value of PMC ID key.
+  /// @return Has an update been made?
+  bool HandlePmcIdKey(wikiopencite::proto::ExtractedCitation* citation,
+                      const std::string& value);
+
+  /// @brief Handle setting the PM ID for a citation.
+  /// Will attempt to parse the PM ID. If it cannot parse the PM ID it
+  /// will either throw an exception or if the ignore invalid
+  /// identifiers is set, will simply ignore.
+  /// @param citation Citation to modify.
+  /// @param value Value of PM ID key.
+  /// @return Has an update been made?
+  bool HandlePmIdKey(wikiopencite::proto::ExtractedCitation* citation,
+                     const std::string& value);
 
   /// @brief Filter function to filter citations by template type.
   std::function<bool(const std::string&)> filter_;
