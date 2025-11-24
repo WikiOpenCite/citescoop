@@ -24,12 +24,8 @@ class CITESCOOP_EXPORT MessageReader {
  public:
   /// @brief Construct a new message reader.
   /// @param input Input stream to read messages from.
-  explicit MessageReader(std::shared_ptr<std::istream> input) {
-    zero_copy_stream =
-        std::make_shared<google::protobuf::io::IstreamInputStream>(input.get());
-    coded_stream = std::make_unique<google::protobuf::io::CodedInputStream>(
-        zero_copy_stream.get());
-  }
+  explicit MessageReader(std::istream* input)
+      : zero_copy_stream(input), coded_stream(&zero_copy_stream) {}
 
   /// @brief Read a message from the input stream.
   /// @tparam T Protobuf message to read. Must inherit from
@@ -39,20 +35,20 @@ class CITESCOOP_EXPORT MessageReader {
                          google::protobuf::Message, T>::value>::type* = nullptr>
   std::unique_ptr<T> ReadMessage() {
     uint32_t size;
-    coded_stream->ReadRaw(&size, sizeof(size));
+    coded_stream.ReadRaw(&size, sizeof(size));
     size = ntohl(size);
 
     auto message = std::make_unique<T>();
-    auto limit = coded_stream->PushLimit(static_cast<int>(size));
-    message->ParseFromCodedStream(coded_stream.get());
-    coded_stream->PopLimit(limit);
+    auto limit = coded_stream.PushLimit(static_cast<int>(size));
+    message->ParseFromCodedStream(&coded_stream);
+    coded_stream.PopLimit(limit);
 
     return message;
   }
 
  private:
-  std::shared_ptr<google::protobuf::io::ZeroCopyInputStream> zero_copy_stream;
-  std::unique_ptr<google::protobuf::io::CodedInputStream> coded_stream;
+  google::protobuf::io::IstreamInputStream zero_copy_stream;
+  google::protobuf::io::CodedInputStream coded_stream;
 };
 
 /// @brief Writer for PBF formatted streams.
@@ -64,9 +60,7 @@ class CITESCOOP_EXPORT MessageWriter {
  public:
   /// @brief Construct a new writer.
   /// @param output Output stream to write messages to.
-  explicit MessageWriter(std::shared_ptr<std::ostream> output) {
-    output_stream = output;
-  }
+  explicit MessageWriter(std::ostream* output) : output_stream(output) {}
 
   /// @brief Write a message to the output stream.
   /// @param message Message to write.
@@ -79,12 +73,12 @@ class CITESCOOP_EXPORT MessageWriter {
     output_stream->write(reinterpret_cast<char*>(&network_size),
                          sizeof(network_size));
 
-    message.SerializeToOstream(output_stream.get());
+    message.SerializeToOstream(output_stream);
     return size;
   }
 
  private:
-  std::shared_ptr<std::ostream> output_stream;
+  std::ostream* output_stream;
 };
 }  // namespace wikiopencite::citescoop
 

@@ -9,6 +9,7 @@
 
 #include "citescoop/extract.h"
 #include "citescoop/io.h"
+#include "citescoop/proto/page.pb.h"
 
 #include "util.h"
 
@@ -52,28 +53,28 @@ TEST_CASE(TEST_NAME_PREFIX + "Streaming input / output",
   auto parser = std::make_shared<cs::Parser>();
   auto extractor = cs::Bz2Extractor(parser);
 
-  auto pages_stream = std::make_shared<std::stringstream>(
-      std::ios::binary | std::ios::in | std::ios::out);
-  auto page_reader = cs::MessageReader(pages_stream);
-  pages_stream->clear();
+  auto pages_stream =
+      std::stringstream(std::ios::binary | std::ios::in | std::ios::out);
+  auto page_reader = cs::MessageReader(&pages_stream);
+  pages_stream.clear();
 
-  auto revisions_stream = std::make_shared<std::stringstream>(
-      std::ios::binary | std::ios::in | std::ios::out);
-  auto revision_reader = cs::MessageReader(revisions_stream);
-  revisions_stream->clear();
+  auto revisions_stream =
+      std::stringstream(std::ios::binary | std::ios::in | std::ios::out);
+  auto revision_reader = cs::MessageReader(&revisions_stream);
+  revisions_stream.clear();
 
   std::ifstream file(
       GetTestFilePath("single-revision-single-citation.xml.bz2"));
   REQUIRE(file.is_open());
 
-  auto pair = extractor.Extract(file, pages_stream, revisions_stream);
+  auto pair = extractor.Extract(file, &pages_stream, &revisions_stream);
   REQUIRE(pair.first == 1);
   REQUIRE(pair.second == 1);
 
-  pages_stream->clear();
-  pages_stream->seekg(0);
-  revisions_stream->clear();
-  revisions_stream->seekg(0);
+  pages_stream.clear();
+  pages_stream.seekg(0);
+  revisions_stream.clear();
+  revisions_stream.seekg(0);
 
   auto page = page_reader.ReadMessage<proto::Page>();
   REQUIRE(page->title() == "My Page");

@@ -31,8 +31,8 @@ TextExtractor::Extract(std::istream& stream) {
 }
 
 std::pair<uint64_t, uint64_t> TextExtractor::Extract(
-    std::istream& input, std::shared_ptr<std::ostream> pages_output,
-    std::shared_ptr<std::ostream> revisions_output) {
+    std::istream& input, std::ostream* pages_output,
+    std::ostream* revisions_output) {
   return impl_->Extract(input, pages_output, revisions_output);
 }
 }  // namespace wikiopencite::citescoop

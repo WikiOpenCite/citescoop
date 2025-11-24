@@ -25,8 +25,8 @@ StreamingDumpParser::StreamingDumpParser(
     : DumpParser(parser) {}
 
 std::pair<uint64_t, uint64_t> StreamingDumpParser::ParseXML(
-    std::istream& input, std::shared_ptr<std::ostream> pages_output,
-    std::shared_ptr<std::ostream> revisions_output) {
+    std::istream& input, std::ostream* pages_output,
+    std::ostream* revisions_output) {
   page_writer_ = std::make_unique<MessageWriter>(pages_output);
   revision_writer_ = std::make_unique<MessageWriter>(revisions_output);
 

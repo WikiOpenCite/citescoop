@@ -43,9 +43,9 @@ class Bz2Extractor::Bz2ExtractorImpl : BaseExtractor {
   /// @param pages_output Output stream for pages.
   /// @param revisions_output Output stream for revisions.
   /// @return The number of pages written, then the number of revisions written.
-  std::pair<uint64_t, uint64_t> Extract(
-      std::istream& input, std::shared_ptr<std::ostream> pages_output,
-      std::shared_ptr<std::ostream> revisions_output);
+  std::pair<uint64_t, uint64_t> Extract(std::istream& input,
+                                        std::ostream* pages_output,
+                                        std::ostream* revisions_output);
 };
 
 }  // namespace wikiopencite::citescoop

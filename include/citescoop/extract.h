@@ -44,8 +44,8 @@ class CITESCOOP_EXPORT Extractor {
   /// @param revisions_output Output stream for revisions.
   /// @return Number of pages followed by number of revisions written.
   virtual std::pair<uint64_t, uint64_t> Extract(
-      std::istream& input, std::shared_ptr<std::ostream> pages_output,
-      std::shared_ptr<std::ostream> revisions_output) = 0;
+      std::istream& input, std::ostream* pages_output,
+      std::ostream* revisions_output) = 0;
 };
 
 /// @brief Extractor for text based input streams.
@@ -71,8 +71,8 @@ class CITESCOOP_EXPORT TextExtractor : public Extractor {
   /// @param revisions_output Output stream for revisions.
   /// @return Number of pages followed by number of revisions written.
   std::pair<uint64_t, uint64_t> Extract(
-      std::istream& input, std::shared_ptr<std::ostream> pages_output,
-      std::shared_ptr<std::ostream> revisions_output) override;
+      std::istream& input, std::ostream* pages_output,
+      std::ostream* revisions_output) override;
 
  private:
   class TextExtractorImpl;
@@ -102,8 +102,8 @@ class CITESCOOP_EXPORT Bz2Extractor : public Extractor {
   /// @param revisions_output Output stream for revisions.
   /// @return Number of pages followed by number of revisions written.
   std::pair<uint64_t, uint64_t> Extract(
-      std::istream& input, std::shared_ptr<std::ostream> pages_output,
-      std::shared_ptr<std::ostream> revisions_output) override;
+      std::istream& input, std::ostream* pages_output,
+      std::ostream* revisions_output) override;
 
  private:
   class Bz2ExtractorImpl;

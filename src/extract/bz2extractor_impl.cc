@@ -43,8 +43,8 @@ Bz2Extractor::Bz2ExtractorImpl::Extract(std::istream& stream) {
 }
 
 std::pair<uint64_t, uint64_t> Bz2Extractor::Bz2ExtractorImpl::Extract(
-    std::istream& input, std::shared_ptr<std::ostream> pages_output,
-    std::shared_ptr<std::ostream> revisions_output) {
+    std::istream& input, std::ostream* pages_output,
+    std::ostream* revisions_output) {
   bio::filtering_streambuf<bio::input> in;
   in.push(bio::bzip2_decompressor());
   in.push(input);

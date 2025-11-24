@@ -33,8 +33,8 @@ TextExtractor::TextExtractorImpl::Extract(std::istream& stream) {
 }
 
 std::pair<uint64_t, uint64_t> TextExtractor::TextExtractorImpl::Extract(
-    std::istream& input, std::shared_ptr<std::ostream> pages_output,
-    std::shared_ptr<std::ostream> revisions_output) {
+    std::istream& input, std::ostream* pages_output,
+    std::ostream* revisions_output) {
   auto xml_parser = StreamingDumpParser(citation_parser_);
   return xml_parser.ParseXML(input, pages_output, revisions_output);
 }
