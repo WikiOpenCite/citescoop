@@ -60,7 +60,7 @@ class Parser::ParserImpl {
   ///
   /// @param doi DOI to parse.
   /// @return Normalized DOI.
-  std::string ParseDoi(std::string doi);
+  static std::string ParseDoi(std::string doi);
 
   /// @brief Parse the PMC Id.
   ///
@@ -71,7 +71,7 @@ class Parser::ParserImpl {
   ///
   /// @param pmcid PMC Id to parse.
   /// @return Resulting PMC Id.
-  int ParsePmcId(const std::string& pmcid);
+  static int ParsePmcId(const std::string& pmcid);
 
   /// @brief Parse an integer identifier as an int.
   ///
@@ -80,7 +80,7 @@ class Parser::ParserImpl {
   ///
   /// @param ident Identifier to parse.
   /// @return Result
-  int StrToIntIdent(const std::string& ident);
+  static int StrToIntIdent(const std::string& ident);
 
   /// @brief Check if the key is for an identifier. If so, add to the
   /// citation.
@@ -97,8 +97,8 @@ class Parser::ParserImpl {
   /// @param key Name of key.
   /// @param value Value of key.
   /// @return Has an update been made?
-  bool CheckForUrlKey(wikiopencite::proto::ExtractedCitation* citation,
-                      const std::string& key, const std::string& value);
+  static bool CheckForUrlKey(wikiopencite::proto::ExtractedCitation* citation,
+                             const std::string& key, const std::string& value);
 
   /// @brief Handle setting the PMC ID for a citation.
   /// Will attempt to parse the PMC ID. If it cannot parse the PMC ID it

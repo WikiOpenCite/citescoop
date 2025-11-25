@@ -3,11 +3,15 @@
 
 #include "textextractor_impl.h"
 
+#include <cstdint>
 #include <istream>
 #include <map>
 #include <memory>
+#include <ostream>
 #include <utility>
+#include <vector>
 
+#include "citescoop/extract.h"
 #include "citescoop/parser.h"
 #include "citescoop/proto/page.pb.h"
 #include "citescoop/proto/revision.pb.h"
@@ -22,7 +26,7 @@ namespace proto = wikiopencite::proto;
 TextExtractor::TextExtractorImpl::TextExtractorImpl(
     std::shared_ptr<wikiopencite::citescoop::Parser> parser)
     // NOLINTNEXTLINE(whitespace/indent_namespace)
-    : BaseExtractor(parser) {}
+    : BaseExtractor(std::move(parser)) {}
 
 std::pair<std::unique_ptr<std::vector<proto::Page>>,
           // NOLINTNEXTLINE(whitespace/indent_namespace)

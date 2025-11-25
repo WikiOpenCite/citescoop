@@ -8,14 +8,14 @@
 #include "citescoop/parser.h"
 #include "citescoop/proto/url.pb.h"
 
-const std::string TEST_NAME_PREFIX = "[Parser] ";
+const std::string kTestNamePrefix = "[Parser] ";
 
 namespace cs = wikiopencite::citescoop;
 namespace proto = wikiopencite::proto;
 
 /// Check that the parser can handle successfully extract the title from
 /// a citation.
-TEST_CASE(TEST_NAME_PREFIX + "Single citation with title", "[parser]") {
+TEST_CASE(kTestNamePrefix + "Single citation with title", "[parser]") {
   auto parser = wikiopencite::citescoop::Parser();
 
   auto result = parser.Parse("{{cite journal | title=Parsing in Practice}}");
@@ -31,7 +31,7 @@ TEST_CASE(TEST_NAME_PREFIX + "Single citation with title", "[parser]") {
 
 /// Ensure that DOI formats are always in the short form (i.e. missing
 /// the https://doi.org/ prefix).
-TEST_CASE(TEST_NAME_PREFIX + "Consistent DOI formats", "[parser]") {
+TEST_CASE(kTestNamePrefix + "Consistent DOI formats", "[parser]") {
   auto parser = wikiopencite::citescoop::Parser();
 
   auto result1 = parser.Parse("{{cite journal | doi=10.1007/b62130}}");
@@ -46,7 +46,7 @@ TEST_CASE(TEST_NAME_PREFIX + "Consistent DOI formats", "[parser]") {
 
 /// Check that identifiers can be correctly extracted, and where
 /// required cast.
-TEST_CASE(TEST_NAME_PREFIX + "Extract identifiers", "[parser]") {
+TEST_CASE(kTestNamePrefix + "Extract identifiers", "[parser]") {
   auto parser = wikiopencite::citescoop::Parser();
 
   auto result = parser.Parse(
@@ -55,7 +55,7 @@ TEST_CASE(TEST_NAME_PREFIX + "Extract identifiers", "[parser]") {
 
   auto citation = result.citations().begin()->second;
   REQUIRE(citation.has_identifiers());
-  auto identifiers = citation.identifiers();
+  const auto& identifiers = citation.identifiers();
 
   REQUIRE(identifiers.doi() == "10.1007/b62130");
   REQUIRE(identifiers.isbn() == "0-786918-50-0");
@@ -66,7 +66,7 @@ TEST_CASE(TEST_NAME_PREFIX + "Extract identifiers", "[parser]") {
 
 /// Check that the parser can correctly extract the selected types of
 /// URL.
-TEST_CASE(TEST_NAME_PREFIX + "Extract URLs", "[parser]") {
+TEST_CASE(kTestNamePrefix + "Extract URLs", "[parser]") {
   auto parser = cs::Parser();
 
   auto result = parser.Parse(
@@ -84,7 +84,7 @@ TEST_CASE(TEST_NAME_PREFIX + "Extract URLs", "[parser]") {
 
 /// Check the parser can correctly cast a PMC ID containing the PMC
 /// prefix to an integer.
-TEST_CASE(TEST_NAME_PREFIX + "PMC ID containing PMC prefix") {
+TEST_CASE(kTestNamePrefix + "PMC ID containing PMC prefix") {
   auto parser = wikiopencite::citescoop::Parser();
 
   auto result = parser.Parse("{{cite journal|pmc = PMC345678}}");
@@ -95,7 +95,7 @@ TEST_CASE(TEST_NAME_PREFIX + "PMC ID containing PMC prefix") {
 
 /// Check that the parser can correctly throw / not throw an exception
 /// on invalid numerical idents dependent upon configuration.
-TEST_CASE(TEST_NAME_PREFIX + "Numeric identifiers that cannot be cast",
+TEST_CASE(kTestNamePrefix + "Numeric identifiers that cannot be cast",
           "[parser]") {
   SECTION("throw an exception") {
     // We expect the default to be throwing an exception
@@ -110,8 +110,8 @@ TEST_CASE(TEST_NAME_PREFIX + "Numeric identifiers that cannot be cast",
                       cs::TemplateParseException);
   }
   SECTION("ignore invalid idents") {
-    cs::ParserOptions options{.ignore_invalid_ident = true};
-    auto parser_no_throw = cs::Parser(options);
+    const cs::ParserOptions kOptions{.ignore_invalid_ident = true};
+    auto parser_no_throw = cs::Parser(kOptions);
 
     auto result =
         parser_no_throw.Parse("{{cite journal|pmc = abc123|pmid=abc123}}");
@@ -124,7 +124,7 @@ TEST_CASE(TEST_NAME_PREFIX + "Numeric identifiers that cannot be cast",
 
 /// Ensure that the parser can handle additional whitespace around the
 /// template.
-TEST_CASE(TEST_NAME_PREFIX + "Additional whitespace", "[parser]") {
+TEST_CASE(kTestNamePrefix + "Additional whitespace", "[parser]") {
   auto parser = wikiopencite::citescoop::Parser();
 
   auto result = parser.Parse(
@@ -137,7 +137,7 @@ TEST_CASE(TEST_NAME_PREFIX + "Additional whitespace", "[parser]") {
 
 /// Ensure that the parser can handle minimum whitespace around the
 /// template.
-TEST_CASE(TEST_NAME_PREFIX + "Minimum whitespace", "[parser]") {
+TEST_CASE(kTestNamePrefix + "Minimum whitespace", "[parser]") {
   auto parser = wikiopencite::citescoop::Parser();
 
   auto result = parser.Parse("{{cite journal|title = Parsing in Practice}}");
@@ -148,7 +148,7 @@ TEST_CASE(TEST_NAME_PREFIX + "Minimum whitespace", "[parser]") {
 }
 
 /// Ensure the parser can extract multiple citations from a block of WikiText.
-TEST_CASE(TEST_NAME_PREFIX + "Multiple citations in text block", "[parser]") {
+TEST_CASE(kTestNamePrefix + "Multiple citations in text block", "[parser]") {
   auto parser = wikiopencite::citescoop::Parser();
 
   auto result = parser.Parse(
@@ -180,8 +180,9 @@ TEST_CASE(TEST_NAME_PREFIX + "Multiple citations in text block", "[parser]") {
   REQUIRE(result.citations_size() == 3);
 }
 
+// NOLINTBEGIN(readability-function-cognitive-complexity)
 /// Check that we can correctly set and retrieve parser options.
-TEST_CASE(TEST_NAME_PREFIX + "Get options", "[parser]") {
+TEST_CASE(kTestNamePrefix + "Get options", "[parser]") {
   SECTION("Get default options no filter") {
     auto parser = cs::Parser();
     auto options = parser.options();
@@ -190,23 +191,25 @@ TEST_CASE(TEST_NAME_PREFIX + "Get options", "[parser]") {
   }
 
   SECTION("Get default options with filter") {
-    auto parser = cs::Parser([](auto) { return true; });
+    auto parser = cs::Parser([](const auto&) { return true; });
     auto options = parser.options();
 
     REQUIRE_FALSE(options.ignore_invalid_ident);
   }
 
   SECTION("Set custom options no filter") {
-    cs::ParserOptions options = {.ignore_invalid_ident = true};
-    auto parser = cs::Parser(options);
+    const cs::ParserOptions kOptions = {.ignore_invalid_ident = true};
+    auto parser = cs::Parser(kOptions);
 
     REQUIRE(parser.options().ignore_invalid_ident);
   }
 
   SECTION("Set custom options with filter") {
-    cs::ParserOptions options = {.ignore_invalid_ident = true};
-    auto parser = cs::Parser([](auto) { return true; }, options);
+    const cs::ParserOptions kOptions = {.ignore_invalid_ident = true};
+    auto parser = cs::Parser([](const auto&) { return true; }, kOptions);
 
     REQUIRE(parser.options().ignore_invalid_ident);
   }
 }
+
+// NOLINTEND(readability-function-cognitive-complexity)

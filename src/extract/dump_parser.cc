@@ -3,6 +3,8 @@
 
 #include "dump_parser.h"
 
+#include <algorithm>
+#include <cstdint>
 #include <istream>
 #include <map>
 #include <memory>
@@ -10,18 +12,21 @@
 #include <utility>
 #include <vector>
 
-#include "google/protobuf/timestamp.pb.h"
-#include "google/protobuf/util/time_util.h"
-
 #include "citescoop/extract.h"
+#include "citescoop/parser.h"
+#include "citescoop/proto/citation.pb.h"
 #include "citescoop/proto/page.pb.h"
 #include "citescoop/proto/revision.pb.h"
+#include "citescoop/proto/revision_citations.pb.h"
+#include "google/protobuf/timestamp.pb.h"
+#include "google/protobuf/util/time_util.h"
+#include "libxml++/ustring.h"
 
 namespace wikiopencite::citescoop {
 namespace proto = wikiopencite::proto;
 
 DumpParser::DumpParser(std::shared_ptr<wikiopencite::citescoop::Parser> parser)
-    : parser_(parser) {}
+    : parser_(std::move(parser)) {}
 
 std::pair<std::unique_ptr<std::vector<proto::Page>>,
           // NOLINTNEXTLINE(whitespace/indent_namespace)
@@ -128,10 +133,11 @@ void DumpParser::CheckExistingCitations(
       }
     } else {
       if (!citation.has_revision_removed()) {
-        auto id = revision->revision().revision_id();
-        citation.set_revision_removed(id);
-        revisions_to_store_.insert({id, current_page_revisions_.at(id)});
-        (*ref_count)[id]++;
+        auto revision_id = revision->revision().revision_id();
+        citation.set_revision_removed(revision_id);
+        revisions_to_store_.insert(
+            {revision_id, current_page_revisions_.at(revision_id)});
+        (*ref_count)[revision_id]++;
       }
     }
   }
@@ -144,11 +150,12 @@ void DumpParser::AddNewCitations(
   for (const auto& [key, extracted_citation] : citations->citations()) {
     if (!discovered_citations->contains(key)) {
       auto citation = proto::Citation();
-      auto id = citations->revision().revision_id();
-      citation.set_revision_added(id);
+      auto revision_id = citations->revision().revision_id();
+      citation.set_revision_added(revision_id);
 
-      revisions_to_store_.insert({id, current_page_revisions_.at(id)});
-      (*ref_count)[id]++;
+      revisions_to_store_.insert(
+          {revision_id, current_page_revisions_.at(revision_id)});
+      (*ref_count)[revision_id]++;
 
       citation.mutable_citation()->CopyFrom(extracted_citation);
       discovered_citations->insert({key, citation});
@@ -158,16 +165,16 @@ void DumpParser::AddNewCitations(
 
 void DumpParser::MakePageCitationList() {
   // Sort revisions by date
-  std::ranges::sort(
-      citations_by_revision_,
-      [](const proto::RevisionCitations& a, const proto::RevisionCitations& b) {
-        return a.revision().timestamp().seconds() ==
-                       b.revision().timestamp().seconds()
-                   ? a.revision().timestamp().nanos() <
-                         b.revision().timestamp().nanos()
-                   : a.revision().timestamp().seconds() <
-                         b.revision().timestamp().seconds();
-      });
+  std::ranges::sort(citations_by_revision_,
+                    [](const proto::RevisionCitations& first,
+                       const proto::RevisionCitations& second) {
+                      return first.revision().timestamp().seconds() ==
+                                     second.revision().timestamp().seconds()
+                                 ? first.revision().timestamp().nanos() <
+                                       second.revision().timestamp().nanos()
+                                 : first.revision().timestamp().seconds() <
+                                       second.revision().timestamp().seconds();
+                    });
 
   auto discovered_citations = std::map<std::string, proto::Citation>();
   auto revisions_ref_count = std::map<uint64_t, int>();
@@ -180,7 +187,7 @@ void DumpParser::MakePageCitationList() {
 
   // Copy the complete set of citations into the page.
   for (const auto& [key, citation] : discovered_citations) {
-    auto added_citation = current_page_.add_citations();
+    auto* added_citation = current_page_.add_citations();
     added_citation->CopyFrom(citation);
   }
 }

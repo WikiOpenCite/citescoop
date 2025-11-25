@@ -4,9 +4,11 @@
 #ifndef SRC_EXTRACT_TEXTEXTRACTOR_IMPL_H_
 #define SRC_EXTRACT_TEXTEXTRACTOR_IMPL_H_
 
+#include <cstdint>
 #include <istream>
 #include <map>
 #include <memory>
+#include <ostream>
 #include <utility>
 #include <vector>
 

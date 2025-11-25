@@ -67,6 +67,8 @@ proto::RevisionCitations Parser::ParserImpl::Parse(const std::string& text) {
 
   auto first = text.begin();
   auto last = text.end();
+  // Value changes each method call.
+  // NOLINTNEXTLINE(readability-identifier-naming)
   auto const results =
       bp::prefix_parse(first, last, kWikitextRule, bp::ws, bp::trace::off);
 
@@ -75,8 +77,8 @@ proto::RevisionCitations Parser::ParserImpl::Parse(const std::string& text) {
       auto normalised_name = algo::trim_copy(result.name);
       algo::to_lower(normalised_name);
 
-      if (this->filter_(normalised_name)) {
-        auto citation = this->BuildCitation(result);
+      if (filter_(normalised_name)) {
+        auto citation = BuildCitation(result);
         citations.mutable_citations()->insert({citation.title(), citation});
       }
     }
@@ -135,22 +137,30 @@ int Parser::ParserImpl::StrToIntIdent(const std::string& ident) {
 }
 
 bool Parser::ParserImpl::CheckForIdentKey(
+    // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
     wikiopencite::proto::ExtractedCitation* citation, const std::string& key,
     const std::string& value) {
   if (key == "doi") {
-    citation->mutable_identifiers()->set_doi(
-        this->ParseDoi(algo::trim_copy(value)));
+    citation->mutable_identifiers()->set_doi(ParseDoi(algo::trim_copy(value)));
     return true;
-  } else if (key == "isbn") {
+  }
+
+  if (key == "isbn") {
     citation->mutable_identifiers()->set_isbn(algo::trim_copy(value));
     return true;
-  } else if (key == "pmid") {
+  }
+
+  if (key == "pmid") {
     HandlePmIdKey(citation, value);
     return true;
-  } else if (key == "pmc") {
+  }
+
+  if (key == "pmc") {
     HandlePmcIdKey(citation, value);
     return true;
-  } else if (key == "issn") {
+  }
+
+  if (key == "issn") {
     citation->mutable_identifiers()->set_issn(algo::trim_copy(value));
     return true;
   }
@@ -159,6 +169,7 @@ bool Parser::ParserImpl::CheckForIdentKey(
 }
 
 bool Parser::ParserImpl::CheckForUrlKey(
+    // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
     wikiopencite::proto::ExtractedCitation* citation, const std::string& key,
     const std::string& value) {
   if (key == "url") {
@@ -167,7 +178,9 @@ bool Parser::ParserImpl::CheckForUrlKey(
     url_message->set_url(algo::trim_copy(value));
 
     return true;
-  } else if (key == "archive-url") {
+  }
+
+  if (key == "archive-url") {
     auto* url_message = citation->add_urls();
     url_message->set_type(proto::UrlType::URL_TYPE_ARCHIVE);
     url_message->set_url(algo::trim_copy(value));
@@ -183,13 +196,13 @@ bool Parser::ParserImpl::HandlePmcIdKey(
     const std::string& value) {
   try {
     citation->mutable_identifiers()->set_pmcid(
-        static_cast<uint32_t>(this->ParsePmcId(algo::trim_copy(value))));
+        static_cast<uint32_t>(ParsePmcId(algo::trim_copy(value))));
   } catch (const TemplateParseException& e) {
-    if (this->options().ignore_invalid_ident) {
+    if (options().ignore_invalid_ident) {
       return false;
-    } else {
-      throw e;
     }
+
+    throw e;
   }
 
   return true;
@@ -200,13 +213,13 @@ bool Parser::ParserImpl::HandlePmIdKey(
     const std::string& value) {
   try {
     citation->mutable_identifiers()->set_pmid(
-        static_cast<uint32_t>(this->StrToIntIdent(algo::trim_copy(value))));
+        static_cast<uint32_t>(StrToIntIdent(algo::trim_copy(value))));
   } catch (const TemplateParseException& e) {
-    if (this->options().ignore_invalid_ident) {
+    if (options().ignore_invalid_ident) {
       return false;
-    } else {
-      throw e;
     }
+
+    throw e;
   }
 
   return true;

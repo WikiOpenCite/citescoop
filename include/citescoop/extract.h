@@ -4,11 +4,13 @@
 #ifndef INCLUDE_CITESCOOP_EXTRACT_H_
 #define INCLUDE_CITESCOOP_EXTRACT_H_
 
+#include <cstdint>
 #include <istream>
 #include <map>
 #include <memory>
+#include <ostream>
+#include <stdexcept>
 #include <string>
-#include <tuple>
 #include <utility>
 #include <vector>
 
@@ -53,7 +55,7 @@ class CITESCOOP_EXPORT TextExtractor : public Extractor {
  public:
   /// @brief Construct a new TextExtractor.
   /// @param parser Citations parser to use.
-  explicit TextExtractor(std::shared_ptr<Parser> parser);
+  explicit TextExtractor(const std::shared_ptr<Parser>& parser);
 
   ~TextExtractor() override;
 
@@ -84,7 +86,7 @@ class CITESCOOP_EXPORT Bz2Extractor : public Extractor {
  public:
   /// @brief Construct a new bzip extractor.
   /// @param parser Citations parser to use.
-  explicit Bz2Extractor(std::shared_ptr<Parser> parser);
+  explicit Bz2Extractor(const std::shared_ptr<Parser>& parser);
 
   ~Bz2Extractor() override;
 

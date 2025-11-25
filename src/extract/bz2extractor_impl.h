@@ -4,10 +4,11 @@
 #ifndef SRC_EXTRACT_BZ2EXTRACTOR_IMPL_H_
 #define SRC_EXTRACT_BZ2EXTRACTOR_IMPL_H_
 
+#include <cstdint>
 #include <istream>
 #include <map>
 #include <memory>
-#include <tuple>
+#include <ostream>
 #include <utility>
 #include <vector>
 

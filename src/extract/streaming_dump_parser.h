@@ -4,12 +4,12 @@
 #ifndef SRC_EXTRACT_STREAMING_DUMP_PARSER_H_
 #define SRC_EXTRACT_STREAMING_DUMP_PARSER_H_
 
+#include <cstdint>
 #include <istream>
 #include <map>
 #include <memory>
-#include <tuple>
+#include <ostream>
 #include <utility>
-#include <vector>
 
 #include "citescoop/io.h"
 #include "citescoop/parser.h"

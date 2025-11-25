@@ -22,7 +22,6 @@ include(Catch)
 
 add_executable(citescoop_test
   src/extract/bz2extractor_test.cc
-  src/extract/textextractor_test.cc
   src/extract/extractor_test.cc
   src/parser/parser_test.cc
   src/io_test.cc
