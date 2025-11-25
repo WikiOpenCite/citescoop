@@ -3,23 +3,26 @@
 
 #include "citescoop/parser.h"
 
+#include <functional>
+#include <memory>
 #include <string>
-#include <vector>
+
+#include "citescoop/proto/revision_citations.pb.h"
 
 #include "parser_impl.h"
 
 namespace wikiopencite::citescoop {
-Parser::Parser() : Parser([](auto) { return true; }) {}
+Parser::Parser() : Parser([](const auto&) { return true; }) {}
 
-Parser::Parser(std::function<bool(const std::string&)> filter)
+Parser::Parser(const std::function<bool(const std::string&)>& filter)
     // NOLINTNEXTLINE(whitespace/indent_namespace)
     : Parser(filter, ParserOptions()) {}
 
 Parser::Parser(ParserOptions options)
     // NOLINTNEXTLINE(whitespace/indent_namespace)
-    : Parser([](auto) { return true; }, options) {}
+    : Parser([](const auto&) { return true; }, options) {}
 
-Parser::Parser(std::function<bool(const std::string&)> filter,
+Parser::Parser(const std::function<bool(const std::string&)>& filter,
                ParserOptions options)
     : impl_(std::make_unique<ParserImpl>(filter, options)) {}
 

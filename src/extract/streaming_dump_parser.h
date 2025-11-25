@@ -4,12 +4,12 @@
 #ifndef SRC_EXTRACT_STREAMING_DUMP_PARSER_H_
 #define SRC_EXTRACT_STREAMING_DUMP_PARSER_H_
 
+#include <cstdint>
 #include <istream>
 #include <map>
 #include <memory>
-#include <tuple>
+#include <ostream>
 #include <utility>
-#include <vector>
 
 #include "citescoop/io.h"
 #include "citescoop/parser.h"
@@ -36,9 +36,9 @@ class StreamingDumpParser : private DumpParser {
   /// @param revisions_output Output stream for revisions.
   /// @return Number of pages written to the stream followed by the
   /// number of revisions written.
-  std::pair<uint64_t, uint64_t> ParseXML(
-      std::istream& input, std::shared_ptr<std::ostream> pages_output,
-      std::shared_ptr<std::ostream> revisions_output);
+  std::pair<uint64_t, uint64_t> ParseXML(std::istream& input,
+                                         std::ostream* pages_output,
+                                         std::ostream* revisions_output);
 
  protected:
   void Store(const std::map<uint64_t, wikiopencite::proto::Revision>& revisions,

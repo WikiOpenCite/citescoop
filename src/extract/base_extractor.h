@@ -5,21 +5,19 @@
 #define SRC_EXTRACT_BASE_EXTRACTOR_H_
 
 #include <memory>
+#include <utility>
 
 #include "citescoop/parser.h"
-
-#include "dump_parser.h"
 
 namespace wikiopencite::citescoop {
 
 /// @brief Base extractor implementation providing access to the dump parser.
 class BaseExtractor {
  public:
-  /// @brief Construct a new base extractor. Will automatically create a
-  /// dump parser for you.
+  /// @brief Construct a new base extractor.
   /// @param citation_parser Citation parser to use.
   explicit BaseExtractor(std::shared_ptr<Parser> citation_parser)
-      : citation_parser_(citation_parser) {}
+      : citation_parser_(std::move(citation_parser)) {}
 
  protected:
   /// Citation parser to use

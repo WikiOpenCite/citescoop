@@ -4,20 +4,22 @@
 #ifndef SRC_EXTRACT_DUMP_PARSER_H_
 #define SRC_EXTRACT_DUMP_PARSER_H_
 
+#include <cstdint>
 #include <iostream>
 #include <istream>
 #include <map>
 #include <memory>
 #include <string>
-#include <tuple>
 #include <utility>
 #include <vector>
 
-#include "libxml++/libxml++.h"
-
 #include "citescoop/parser.h"
+#include "citescoop/proto/citation.pb.h"
 #include "citescoop/proto/page.pb.h"
 #include "citescoop/proto/revision.pb.h"
+#include "citescoop/proto/revision_citations.pb.h"
+#include "libxml++/parsers/saxparser.h"
+#include "libxml++/ustring.h"
 
 namespace wikiopencite::citescoop {
 
@@ -130,7 +132,7 @@ class DumpParser : public xmlpp::SaxParser {
   /// revision. Used to make sure only revisions with references are
   /// stored.
   void CheckExistingCitations(
-      wikiopencite::proto::RevisionCitations* citations,
+      wikiopencite::proto::RevisionCitations* revision,
       std::map<std::string, wikiopencite::proto::Citation>*
           discovered_citations,
       std::map<uint64_t, int>* ref_count);

@@ -8,7 +8,6 @@
 #include <memory>
 #include <stdexcept>
 #include <string>
-#include <vector>
 
 #include "citescoop/citescoop_export.h"
 #include "citescoop/proto/revision_citations.pb.h"
@@ -68,7 +67,7 @@ class CITESCOOP_EXPORT Parser {
   /// };
   /// Parser parser(filter);
   /// @endcode
-  explicit Parser(std::function<bool(const std::string&)> filter);
+  explicit Parser(const std::function<bool(const std::string&)>& filter);
 
   /// @brief Construct a new parser with parser options and no filter.
   ///
@@ -88,7 +87,8 @@ class CITESCOOP_EXPORT Parser {
   /// href="https://en.wikipedia.org/wiki/Wikipedia:Citation_templates">
   /// Wikipedia - Citation Templates</a> for more details).
   /// @param options Parser options to configure parser with.
-  Parser(std::function<bool(const std::string&)> filter, ParserOptions options);
+  Parser(const std::function<bool(const std::string&)>& filter,
+         ParserOptions options);
 
   ~Parser();
 

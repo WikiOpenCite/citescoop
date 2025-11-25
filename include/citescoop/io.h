@@ -4,14 +4,16 @@
 #ifndef INCLUDE_CITESCOOP_IO_H_
 #define INCLUDE_CITESCOOP_IO_H_
 
+// NOLINTNEXTLINE(misc-include-cleaner)
 #include <arpa/inet.h>
 
+#include <cstdint>
 #include <istream>
 #include <memory>
 #include <ostream>
+#include <type_traits>
 
 #include "google/protobuf/io/coded_stream.h"
-#include "google/protobuf/io/zero_copy_stream.h"
 #include "google/protobuf/io/zero_copy_stream_impl.h"
 #include "google/protobuf/message.h"
 
@@ -24,35 +26,33 @@ class CITESCOOP_EXPORT MessageReader {
  public:
   /// @brief Construct a new message reader.
   /// @param input Input stream to read messages from.
-  explicit MessageReader(std::shared_ptr<std::istream> input) {
-    zero_copy_stream =
-        std::make_shared<google::protobuf::io::IstreamInputStream>(input.get());
-    coded_stream = std::make_unique<google::protobuf::io::CodedInputStream>(
-        zero_copy_stream.get());
-  }
+  explicit MessageReader(std::istream* input)
+      : zero_copy_stream_(input), coded_stream_(&zero_copy_stream_) {}
 
   /// @brief Read a message from the input stream.
   /// @tparam T Protobuf message to read. Must inherit from
   /// google::protobuf::Message
   /// @return The parses message.
-  template <class T, typename std::enable_if<std::is_base_of<
-                         google::protobuf::Message, T>::value>::type* = nullptr>
-  std::unique_ptr<T> ReadMessage() {
+  template <class T>
+  requires std::is_base_of_v<google::protobuf::Message, T> std::unique_ptr<T>
+  ReadMessage() {
     uint32_t size;
-    coded_stream->ReadRaw(&size, sizeof(size));
+    coded_stream_.ReadRaw(&size, sizeof(size));
+
+    // NOLINTNEXTLINE(misc-include-cleaner)
     size = ntohl(size);
 
     auto message = std::make_unique<T>();
-    auto limit = coded_stream->PushLimit(static_cast<int>(size));
-    message->ParseFromCodedStream(coded_stream.get());
-    coded_stream->PopLimit(limit);
+    auto limit = coded_stream_.PushLimit(static_cast<int>(size));
+    message->ParseFromCodedStream(&coded_stream_);
+    coded_stream_.PopLimit(limit);
 
     return message;
   }
 
  private:
-  std::shared_ptr<google::protobuf::io::ZeroCopyInputStream> zero_copy_stream;
-  std::unique_ptr<google::protobuf::io::CodedInputStream> coded_stream;
+  google::protobuf::io::IstreamInputStream zero_copy_stream_;
+  google::protobuf::io::CodedInputStream coded_stream_;
 };
 
 /// @brief Writer for PBF formatted streams.
@@ -64,9 +64,7 @@ class CITESCOOP_EXPORT MessageWriter {
  public:
   /// @brief Construct a new writer.
   /// @param output Output stream to write messages to.
-  explicit MessageWriter(std::shared_ptr<std::ostream> output) {
-    output_stream = output;
-  }
+  explicit MessageWriter(std::ostream* output) : output_stream_(output) {}
 
   /// @brief Write a message to the output stream.
   /// @param message Message to write.
@@ -74,17 +72,21 @@ class CITESCOOP_EXPORT MessageWriter {
   /// size of the uint32_t size written immediately before the
   /// serialized message.
   uint32_t WriteMessage(const google::protobuf::Message& message) {
-    uint32_t size = static_cast<uint32_t>(message.ByteSizeLong());
-    uint32_t network_size = htonl(size);
-    output_stream->write(reinterpret_cast<char*>(&network_size),
-                         sizeof(network_size));
+    // Value changes dependent upon parameters of method call.
+    // NOLINTNEXTLINE(readability-identifier-naming)
+    const auto size = static_cast<uint32_t>(message.ByteSizeLong());
 
-    message.SerializeToOstream(output_stream.get());
+    // NOLINTNEXTLINE(misc-include-cleaner)
+    uint32_t network_size = htonl(size);
+    output_stream_->write(reinterpret_cast<char*>(&network_size),
+                          sizeof(network_size));
+
+    message.SerializeToOstream(output_stream_);
     return size;
   }
 
  private:
-  std::shared_ptr<std::ostream> output_stream;
+  std::ostream* output_stream_;
 };
 }  // namespace wikiopencite::citescoop
 

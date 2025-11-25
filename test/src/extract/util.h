@@ -8,9 +8,9 @@
 
 inline std::string GetTestFilePath(const std::string& filename) {
   // __FILE__ gives the current source file path
-  std::string path = __FILE__;
-  auto pos = path.find_last_of("/\\");
-  return path.substr(0, pos + 1) + "data/" + filename;
+  const std::string kPath = __FILE__;
+  auto pos = kPath.find_last_of("/\\");
+  return kPath.substr(0, pos + 1) + "data/" + filename;
 }
 
 #endif

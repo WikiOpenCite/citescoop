@@ -1,8 +1,11 @@
 // SPDX-FileCopyrightText: 2025 The University of St Andrews
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+#include <cstdint>
+#include <istream>
 #include <map>
 #include <memory>
+#include <ostream>
 #include <utility>
 #include <vector>
 
@@ -18,7 +21,7 @@ namespace wikiopencite::citescoop {
 namespace proto = wikiopencite::proto;
 
 Bz2Extractor::Bz2Extractor(
-    std::shared_ptr<wikiopencite::citescoop::Parser> parser)
+    const std::shared_ptr<wikiopencite::citescoop::Parser>& parser)
     : impl_(std::make_unique<Bz2ExtractorImpl>(parser)) {}
 
 Bz2Extractor::~Bz2Extractor() = default;
@@ -30,8 +33,8 @@ Bz2Extractor::Extract(std::istream& stream) {
 }
 
 std::pair<uint64_t, uint64_t> Bz2Extractor::Extract(
-    std::istream& input, std::shared_ptr<std::ostream> pages_output,
-    std::shared_ptr<std::ostream> revisions_output) {
+    std::istream& input, std::ostream* pages_output,
+    std::ostream* revisions_output) {
   return impl_->Extract(input, pages_output, revisions_output);
 }
 }  // namespace wikiopencite::citescoop

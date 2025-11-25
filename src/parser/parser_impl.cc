@@ -3,23 +3,28 @@
 
 #include "parser_impl.h"
 
+#include <cstdint>
+#include <functional>
+#include <stdexcept>
 #include <string>
+#include <utility>
 #include <vector>
 
-#include "boost/algorithm/string.hpp"
+#include "boost/algorithm/string/case_conv.hpp"
+#include "boost/algorithm/string/erase.hpp"
+#include "boost/algorithm/string/trim.hpp"
 #include "boost/parser/parser.hpp"
-
+#include "citescoop/parser.h"
 #include "citescoop/proto/extracted_citation.pb.h"
 #include "citescoop/proto/revision_citations.pb.h"
 #include "citescoop/proto/url.pb.h"
-
-namespace algo = boost::algorithm;
-namespace proto = wikiopencite::proto;
 
 namespace wikiopencite::citescoop {
 
 namespace {
 namespace bp = boost::parser;
+namespace proto = wikiopencite::proto;
+namespace algo = boost::algorithm;
 
 // Rules
 const bp::rule<class template_type_r, std::string> kTemplateTypeRule =
@@ -55,13 +60,15 @@ BOOST_PARSER_DEFINE_RULES(kTemplateTypeRule, kKeyRule, kValRule, kParamRule,
 Parser::ParserImpl::ParserImpl(std::function<bool(const std::string&)> filter,
                                ParserOptions options)
     // NOLINTNEXTLINE(whitespace/indent_namespace)
-    : filter_(filter), options_(options) {}
+    : filter_(std::move(filter)), options_(options) {}
 
 proto::RevisionCitations Parser::ParserImpl::Parse(const std::string& text) {
   auto citations = proto::RevisionCitations();
 
   auto first = text.begin();
   auto last = text.end();
+  // Value changes each method call.
+  // NOLINTNEXTLINE(readability-identifier-naming)
   auto const results =
       bp::prefix_parse(first, last, kWikitextRule, bp::ws, bp::trace::off);
 
@@ -70,8 +77,8 @@ proto::RevisionCitations Parser::ParserImpl::Parse(const std::string& text) {
       auto normalised_name = algo::trim_copy(result.name);
       algo::to_lower(normalised_name);
 
-      if (this->filter_(normalised_name)) {
-        auto citation = this->BuildCitation(result);
+      if (filter_(normalised_name)) {
+        auto citation = BuildCitation(result);
         citations.mutable_citations()->insert({citation.title(), citation});
       }
     }
@@ -93,45 +100,9 @@ proto::ExtractedCitation Parser::ParserImpl::BuildCitation(
     if (param.value.has_value()) {
       if (key == "title") {
         citation.set_title(algo::trim_copy(param.value.value()));
-      }
-      // Identifiers
-      // NOLINTNEXTLINE(whitespace/newline, readability/braces)
-      else if (key == "doi") {
-        citation.mutable_identifiers()->set_doi(
-            this->ParseDoi(algo::trim_copy(param.value.value())));
-      } else if (key == "isbn") {
-        citation.mutable_identifiers()->set_isbn(
-            algo::trim_copy(param.value.value()));
-      } else if (key == "pmid") {
-        try {
-          citation.mutable_identifiers()->set_pmid(static_cast<uint32_t>(
-              this->StrToIntIdent(algo::trim_copy(param.value.value()))));
-        } catch (const TemplateParseException& e) {
-          if (!this->options().ignore_invalid_ident)
-            throw e;
-        }
-      } else if (key == "pmc") {
-        try {
-          citation.mutable_identifiers()->set_pmcid(static_cast<uint32_t>(
-              this->ParsePmcId(algo::trim_copy(param.value.value()))));
-        } catch (const TemplateParseException& e) {
-          if (!this->options().ignore_invalid_ident)
-            throw e;
-        }
-      } else if (key == "issn") {
-        citation.mutable_identifiers()->set_issn(
-            algo::trim_copy(param.value.value()));
-      }
-      // URLs
-      // NOLINTNEXTLINE(whitespace/newline, readability/braces)
-      else if (key == "url") {
-        auto url_message = citation.add_urls();
-        url_message->set_type(proto::UrlType::URL_TYPE_DEFAULT);
-        url_message->set_url(algo::trim_copy(param.value.value()));
-      } else if (key == "archive-url") {
-        auto url_message = citation.add_urls();
-        url_message->set_type(proto::UrlType::URL_TYPE_ARCHIVE);
-        url_message->set_url(algo::trim_copy(param.value.value()));
+      } else {
+        CheckForIdentKey(&citation, key, param.value.value()) ||
+            CheckForUrlKey(&citation, key, param.value.value());
       }
     }
   }
@@ -146,14 +117,14 @@ std::string Parser::ParserImpl::ParseDoi(std::string doi) {
   return doi;
 }
 
-int Parser::ParserImpl::ParsePmcId(std::string pmcid) {
+int Parser::ParserImpl::ParsePmcId(const std::string& pmcid) {
   if (pmcid.starts_with("PMC")) {
     return StrToIntIdent(algo::erase_first_copy(pmcid, "PMC"));
   }
   return StrToIntIdent(pmcid);
 }
 
-int Parser::ParserImpl::StrToIntIdent(std::string ident) {
+int Parser::ParserImpl::StrToIntIdent(const std::string& ident) {
   try {
     return std::stoi(ident);
   } catch (std::invalid_argument const& ex) {
@@ -163,5 +134,94 @@ int Parser::ParserImpl::StrToIntIdent(std::string ident) {
     throw TemplateParseException("Failed to parse ident: " +
                                  std::string(ex.what()));
   }
+}
+
+bool Parser::ParserImpl::CheckForIdentKey(
+    // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
+    wikiopencite::proto::ExtractedCitation* citation, const std::string& key,
+    const std::string& value) {
+  if (key == "doi") {
+    citation->mutable_identifiers()->set_doi(ParseDoi(algo::trim_copy(value)));
+    return true;
+  }
+
+  if (key == "isbn") {
+    citation->mutable_identifiers()->set_isbn(algo::trim_copy(value));
+    return true;
+  }
+
+  if (key == "pmid") {
+    HandlePmIdKey(citation, value);
+    return true;
+  }
+
+  if (key == "pmc") {
+    HandlePmcIdKey(citation, value);
+    return true;
+  }
+
+  if (key == "issn") {
+    citation->mutable_identifiers()->set_issn(algo::trim_copy(value));
+    return true;
+  }
+
+  return false;
+}
+
+bool Parser::ParserImpl::CheckForUrlKey(
+    // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
+    wikiopencite::proto::ExtractedCitation* citation, const std::string& key,
+    const std::string& value) {
+  if (key == "url") {
+    auto* url_message = citation->add_urls();
+    url_message->set_type(proto::UrlType::URL_TYPE_DEFAULT);
+    url_message->set_url(algo::trim_copy(value));
+
+    return true;
+  }
+
+  if (key == "archive-url") {
+    auto* url_message = citation->add_urls();
+    url_message->set_type(proto::UrlType::URL_TYPE_ARCHIVE);
+    url_message->set_url(algo::trim_copy(value));
+
+    return true;
+  }
+
+  return false;
+}
+
+bool Parser::ParserImpl::HandlePmcIdKey(
+    wikiopencite::proto::ExtractedCitation* citation,
+    const std::string& value) {
+  try {
+    citation->mutable_identifiers()->set_pmcid(
+        static_cast<uint32_t>(ParsePmcId(algo::trim_copy(value))));
+  } catch (const TemplateParseException& e) {
+    if (options().ignore_invalid_ident) {
+      return false;
+    }
+
+    throw e;
+  }
+
+  return true;
+}
+
+bool Parser::ParserImpl::HandlePmIdKey(
+    wikiopencite::proto::ExtractedCitation* citation,
+    const std::string& value) {
+  try {
+    citation->mutable_identifiers()->set_pmid(
+        static_cast<uint32_t>(StrToIntIdent(algo::trim_copy(value))));
+  } catch (const TemplateParseException& e) {
+    if (options().ignore_invalid_ident) {
+      return false;
+    }
+
+    throw e;
+  }
+
+  return true;
 }
 }  // namespace wikiopencite::citescoop
