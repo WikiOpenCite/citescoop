@@ -72,8 +72,8 @@
               <span class="m-doc-wrap-bumper"><a href="#ae8c99f24fc61fe2f5d37958c5b938ece" class="m-doc">Parser</a>(</span><span class="m-doc-wrap">)</span>
             </dt>
             <dd>Construct a parser that has no filter and no options.</dd>
-            <dt id="a02130dc45510801fb0dcae5beb1d561d">
-              <span class="m-doc-wrap-bumper"><a href="#a02130dc45510801fb0dcae5beb1d561d" class="m-doc-self">Parser</a>(</span><span class="m-doc-wrap">std::function&lt;bool(const std::string&amp;)&gt; filter) <span class="m-label m-flat m-info">explicit</span> </span>
+            <dt id="a067b597fd2056bc179cd74abb2fbe6f8">
+              <span class="m-doc-wrap-bumper"><a href="#a067b597fd2056bc179cd74abb2fbe6f8" class="m-doc-self">Parser</a>(</span><span class="m-doc-wrap">const std::function&lt;bool(const std::string&amp;)&gt;&amp; filter) <span class="m-label m-flat m-info">explicit</span> </span>
             </dt>
             <dd><span></span></dd>
             <dt>
@@ -81,7 +81,7 @@
             </dt>
             <dd>Construct a new parser with parser options and no filter.</dd>
             <dt>
-              <span class="m-doc-wrap-bumper"><a href="#ac53c672426418ac532ab34e069aa0df2" class="m-doc">Parser</a>(</span><span class="m-doc-wrap">std::function&lt;bool(const std::string&amp;)&gt; filter,
+              <span class="m-doc-wrap-bumper"><a href="#a1e2f6283d0d635248dacce6178cd3bd5" class="m-doc">Parser</a>(</span><span class="m-doc-wrap">const std::function&lt;bool(const std::string&amp;)&gt;&amp; filter,
               <a href="structwikiopencite_1_1citescoop_1_1ParserOptions.html" class="m-doc">ParserOptions</a> options)</span>
             </dt>
             <dd>Construct a new parser with a filter and parser options.</dd>
@@ -130,9 +130,9 @@
               </tbody>
             </table>
           </div></section>
-          <section class="m-doc-details" id="ac53c672426418ac532ab34e069aa0df2"><div>
+          <section class="m-doc-details" id="a1e2f6283d0d635248dacce6178cd3bd5"><div>
             <h3>
-              <span class="m-doc-wrap-bumper"> wikiopencite::<wbr />citescoop::<wbr />Parser::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#ac53c672426418ac532ab34e069aa0df2" class="m-doc-self">Parser</a>(</span><span class="m-doc-wrap">std::function&lt;bool(const std::string&amp;)&gt; filter,
+              <span class="m-doc-wrap-bumper"> wikiopencite::<wbr />citescoop::<wbr />Parser::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#a1e2f6283d0d635248dacce6178cd3bd5" class="m-doc-self">Parser</a>(</span><span class="m-doc-wrap">const std::function&lt;bool(const std::string&amp;)&gt;&amp; filter,
               <a href="structwikiopencite_1_1citescoop_1_1ParserOptions.html" class="m-doc">ParserOptions</a> options)</span></span>
             </h3>
             <p>Construct a new parser with a filter and parser options.</p>
@@ -175,7 +175,7 @@
                 </tr>
               </tfoot>
             </table>
-<p>If a filter has been set for this parser, the return values will only contain any citations that match the provided filter.</p><aside class="m-note m-default"><h4>See also</h4><p><a href="#a02130dc45510801fb0dcae5beb1d561d" class="m-doc">Parser(std::<wbr />function&lt;bool(const std::<wbr />string&amp;)&gt; filter)</a></p></aside>
+<p>If a filter has been set for this parser, the return values will only contain any citations that match the provided filter.</p><aside class="m-note m-default"><h4>See also</h4><p>Parser(std::function&lt;bool(const std::string&amp;)&gt; filter)</p></aside>
           </div></section>
           <section class="m-doc-details" id="a9e5334da4ed031c3db6dfa476dfb4b6e"><div>
             <h3>

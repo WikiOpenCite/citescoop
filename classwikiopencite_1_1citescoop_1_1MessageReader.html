@@ -69,7 +69,7 @@
           <h2><a href="#typeless-methods">Constructors, destructors, conversion operators</a></h2>
           <dl class="m-doc">
             <dt>
-              <span class="m-doc-wrap-bumper"><a href="#a30a047650fd6398ef1fbd62b18ff97f2" class="m-doc">MessageReader</a>(</span><span class="m-doc-wrap">std::shared_ptr&lt;std::istream&gt; input) <span class="m-label m-flat m-info">explicit</span> </span>
+              <span class="m-doc-wrap-bumper"><a href="#ae8ab3c58ebde7f9114d017f541d7ff93" class="m-doc">MessageReader</a>(</span><span class="m-doc-wrap">std::istream* input) <span class="m-label m-flat m-info">explicit</span> </span>
             </dt>
             <dd>Construct a new message reader.</dd>
           </dl>
@@ -78,17 +78,17 @@
           <h2><a href="#pub-methods">Public functions</a></h2>
           <dl class="m-doc">
             <dt>
-              <div class="m-doc-template">template&lt;class T, typename std::enable_if&lt;std::is_base_of&lt;google::protobuf::Message, T&gt;::value&gt;::type* = nullptr&gt;</div>
-              <span class="m-doc-wrap-bumper">auto <a href="#aab23e94a710162e7c8218a505ebda073" class="m-doc">ReadMessage</a>(</span><span class="m-doc-wrap">) -&gt; std::unique_ptr&lt;T&gt;</span>
+              <div class="m-doc-template">template&lt;class T&gt;</div>
+              <span class="m-doc-wrap-bumper">auto <a href="#ae4c53653f0759ce338d5363b560cc19b" class="m-doc">ReadMessage</a>(</span><span class="m-doc-wrap">) -&gt; std::unique_ptr&lt;T&gt;</span>
             </dt>
             <dd>Read a message from the input stream.</dd>
           </dl>
         </section>
         <section>
           <h2>Function documentation</h2>
-          <section class="m-doc-details" id="a30a047650fd6398ef1fbd62b18ff97f2"><div>
+          <section class="m-doc-details" id="ae8ab3c58ebde7f9114d017f541d7ff93"><div>
             <h3>
-              <span class="m-doc-wrap-bumper"> wikiopencite::<wbr />citescoop::<wbr />MessageReader::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#a30a047650fd6398ef1fbd62b18ff97f2" class="m-doc-self">MessageReader</a>(</span><span class="m-doc-wrap">std::shared_ptr&lt;std::istream&gt; input) <span class="m-label m-info">explicit</span> </span></span>
+              <span class="m-doc-wrap-bumper"> wikiopencite::<wbr />citescoop::<wbr />MessageReader::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#ae8ab3c58ebde7f9114d017f541d7ff93" class="m-doc-self">MessageReader</a>(</span><span class="m-doc-wrap">std::istream* input) <span class="m-label m-info">explicit</span> </span></span>
             </h3>
             <p>Construct a new message reader.</p>
             <table class="m-table m-fullwidth m-flat">
@@ -103,12 +103,12 @@
               </tbody>
             </table>
           </div></section>
-          <section class="m-doc-details" id="aab23e94a710162e7c8218a505ebda073"><div>
+          <section class="m-doc-details" id="ae4c53653f0759ce338d5363b560cc19b"><div>
             <h3>
               <div class="m-doc-template">
-                template&lt;class T, typename std::enable_if&lt;std::is_base_of&lt;google::protobuf::Message, T&gt;::value&gt;::type* = nullptr&gt;
+                template&lt;class T&gt;
               </div>
-              <span class="m-doc-wrap-bumper">std::unique_ptr&lt;T&gt; wikiopencite::<wbr />citescoop::<wbr />MessageReader::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#aab23e94a710162e7c8218a505ebda073" class="m-doc-self">ReadMessage</a>(</span><span class="m-doc-wrap">)</span></span>
+              <span class="m-doc-wrap-bumper">std::unique_ptr&lt;T&gt; wikiopencite::<wbr />citescoop::<wbr />MessageReader::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#ae4c53653f0759ce338d5363b560cc19b" class="m-doc-self">ReadMessage</a>(</span><span class="m-doc-wrap">)</span></span>
             </h3>
             <p>Read a message from the input stream.</p>
             <table class="m-table m-fullwidth m-flat">

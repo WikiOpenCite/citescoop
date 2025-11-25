@@ -79,7 +79,7 @@
           <h2><a href="#typeless-methods">Constructors, destructors, conversion operators</a></h2>
           <dl class="m-doc">
             <dt>
-              <span class="m-doc-wrap-bumper"><a href="#a5297630d4273440e0d3a3bcb1f473bee" class="m-doc">TextExtractor</a>(</span><span class="m-doc-wrap">std::shared_ptr&lt;<a href="classwikiopencite_1_1citescoop_1_1Parser.html" class="m-doc">Parser</a>&gt; parser) <span class="m-label m-flat m-info">explicit</span> </span>
+              <span class="m-doc-wrap-bumper"><a href="#a6224dc96db82fbb2b54e88085aa782c8" class="m-doc">TextExtractor</a>(</span><span class="m-doc-wrap">const std::shared_ptr&lt;<a href="classwikiopencite_1_1citescoop_1_1Parser.html" class="m-doc">Parser</a>&gt;&amp; parser) <span class="m-label m-flat m-info">explicit</span> </span>
             </dt>
             <dd>Construct a new <a href="classwikiopencite_1_1citescoop_1_1TextExtractor.html" class="m-doc">TextExtractor</a>.</dd>
             <dt id="aae0d6746fd99815bfa4e9652f4a2ac12">
@@ -96,18 +96,18 @@
             </dt>
             <dd>Extract citations from text based streams.</dd>
             <dt>
-              <span class="m-doc-wrap-bumper">auto <a href="#ad8165cbea789d78e809622e9e669e6eb" class="m-doc">Extract</a>(</span><span class="m-doc-wrap">std::istream&amp; input,
-              std::shared_ptr&lt;std::ostream&gt; pages_output,
-              std::shared_ptr&lt;std::ostream&gt; revisions_output) -&gt; std::pair&lt;uint64_t, uint64_t&gt; <span class="m-label m-flat m-warning">override</span></span>
+              <span class="m-doc-wrap-bumper">auto <a href="#aedb7772fdd79850e4d6055aa7afc8c2e" class="m-doc">Extract</a>(</span><span class="m-doc-wrap">std::istream&amp; input,
+              std::ostream* pages_output,
+              std::ostream* revisions_output) -&gt; std::pair&lt;uint64_t, uint64_t&gt; <span class="m-label m-flat m-warning">override</span></span>
             </dt>
             <dd>Extract citations a text based input stream.</dd>
           </dl>
         </section>
         <section>
           <h2>Function documentation</h2>
-          <section class="m-doc-details" id="a5297630d4273440e0d3a3bcb1f473bee"><div>
+          <section class="m-doc-details" id="a6224dc96db82fbb2b54e88085aa782c8"><div>
             <h3>
-              <span class="m-doc-wrap-bumper"> wikiopencite::<wbr />citescoop::<wbr />TextExtractor::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#a5297630d4273440e0d3a3bcb1f473bee" class="m-doc-self">TextExtractor</a>(</span><span class="m-doc-wrap">std::shared_ptr&lt;<a href="classwikiopencite_1_1citescoop_1_1Parser.html" class="m-doc">Parser</a>&gt; parser) <span class="m-label m-info">explicit</span> </span></span>
+              <span class="m-doc-wrap-bumper"> wikiopencite::<wbr />citescoop::<wbr />TextExtractor::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#a6224dc96db82fbb2b54e88085aa782c8" class="m-doc-self">TextExtractor</a>(</span><span class="m-doc-wrap">const std::shared_ptr&lt;<a href="classwikiopencite_1_1citescoop_1_1Parser.html" class="m-doc">Parser</a>&gt;&amp; parser) <span class="m-label m-info">explicit</span> </span></span>
             </h3>
             <p>Construct a new <a href="classwikiopencite_1_1citescoop_1_1TextExtractor.html" class="m-doc">TextExtractor</a>.</p>
             <table class="m-table m-fullwidth m-flat">
@@ -145,11 +145,11 @@
               </tfoot>
             </table>
           </div></section>
-          <section class="m-doc-details" id="ad8165cbea789d78e809622e9e669e6eb"><div>
+          <section class="m-doc-details" id="aedb7772fdd79850e4d6055aa7afc8c2e"><div>
             <h3>
-              <span class="m-doc-wrap-bumper">std::pair&lt;uint64_t, uint64_t&gt; wikiopencite::<wbr />citescoop::<wbr />TextExtractor::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#ad8165cbea789d78e809622e9e669e6eb" class="m-doc-self">Extract</a>(</span><span class="m-doc-wrap">std::istream&amp; input,
-              std::shared_ptr&lt;std::ostream&gt; pages_output,
-              std::shared_ptr&lt;std::ostream&gt; revisions_output) <span class="m-label m-warning">override</span></span></span>
+              <span class="m-doc-wrap-bumper">std::pair&lt;uint64_t, uint64_t&gt; wikiopencite::<wbr />citescoop::<wbr />TextExtractor::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#aedb7772fdd79850e4d6055aa7afc8c2e" class="m-doc-self">Extract</a>(</span><span class="m-doc-wrap">std::istream&amp; input,
+              std::ostream* pages_output,
+              std::ostream* revisions_output) <span class="m-label m-warning">override</span></span></span>
             </h3>
             <p>Extract citations a text based input stream.</p>
             <table class="m-table m-fullwidth m-flat">

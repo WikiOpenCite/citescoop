@@ -79,7 +79,7 @@
           <h2><a href="#typeless-methods">Constructors, destructors, conversion operators</a></h2>
           <dl class="m-doc">
             <dt>
-              <span class="m-doc-wrap-bumper"><a href="#aa98925483dff5bc5830b7d035499c09c" class="m-doc">Bz2Extractor</a>(</span><span class="m-doc-wrap">std::shared_ptr&lt;<a href="classwikiopencite_1_1citescoop_1_1Parser.html" class="m-doc">Parser</a>&gt; parser) <span class="m-label m-flat m-info">explicit</span> </span>
+              <span class="m-doc-wrap-bumper"><a href="#a223ef8e249e38a1757c61f010bfebf3b" class="m-doc">Bz2Extractor</a>(</span><span class="m-doc-wrap">const std::shared_ptr&lt;<a href="classwikiopencite_1_1citescoop_1_1Parser.html" class="m-doc">Parser</a>&gt;&amp; parser) <span class="m-label m-flat m-info">explicit</span> </span>
             </dt>
             <dd>Construct a new bzip extractor.</dd>
             <dt id="a4cc8606c10cff10bc91292a53bbc8754">
@@ -96,18 +96,18 @@
             </dt>
             <dd>Extract citations from a bzip2 compressed data dump.</dd>
             <dt>
-              <span class="m-doc-wrap-bumper">auto <a href="#a4e13b7057da9afcfdd600984812d3535" class="m-doc">Extract</a>(</span><span class="m-doc-wrap">std::istream&amp; input,
-              std::shared_ptr&lt;std::ostream&gt; pages_output,
-              std::shared_ptr&lt;std::ostream&gt; revisions_output) -&gt; std::pair&lt;uint64_t, uint64_t&gt; <span class="m-label m-flat m-warning">override</span></span>
+              <span class="m-doc-wrap-bumper">auto <a href="#a7ef09b9bb7f46c5bcca951eab20f6276" class="m-doc">Extract</a>(</span><span class="m-doc-wrap">std::istream&amp; input,
+              std::ostream* pages_output,
+              std::ostream* revisions_output) -&gt; std::pair&lt;uint64_t, uint64_t&gt; <span class="m-label m-flat m-warning">override</span></span>
             </dt>
             <dd>Extract citations from a bzip2 compressed data dump.</dd>
           </dl>
         </section>
         <section>
           <h2>Function documentation</h2>
-          <section class="m-doc-details" id="aa98925483dff5bc5830b7d035499c09c"><div>
+          <section class="m-doc-details" id="a223ef8e249e38a1757c61f010bfebf3b"><div>
             <h3>
-              <span class="m-doc-wrap-bumper"> wikiopencite::<wbr />citescoop::<wbr />Bz2Extractor::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#aa98925483dff5bc5830b7d035499c09c" class="m-doc-self">Bz2Extractor</a>(</span><span class="m-doc-wrap">std::shared_ptr&lt;<a href="classwikiopencite_1_1citescoop_1_1Parser.html" class="m-doc">Parser</a>&gt; parser) <span class="m-label m-info">explicit</span> </span></span>
+              <span class="m-doc-wrap-bumper"> wikiopencite::<wbr />citescoop::<wbr />Bz2Extractor::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#a223ef8e249e38a1757c61f010bfebf3b" class="m-doc-self">Bz2Extractor</a>(</span><span class="m-doc-wrap">const std::shared_ptr&lt;<a href="classwikiopencite_1_1citescoop_1_1Parser.html" class="m-doc">Parser</a>&gt;&amp; parser) <span class="m-label m-info">explicit</span> </span></span>
             </h3>
             <p>Construct a new bzip extractor.</p>
             <table class="m-table m-fullwidth m-flat">
@@ -145,11 +145,11 @@
               </tfoot>
             </table>
           </div></section>
-          <section class="m-doc-details" id="a4e13b7057da9afcfdd600984812d3535"><div>
+          <section class="m-doc-details" id="a7ef09b9bb7f46c5bcca951eab20f6276"><div>
             <h3>
-              <span class="m-doc-wrap-bumper">std::pair&lt;uint64_t, uint64_t&gt; wikiopencite::<wbr />citescoop::<wbr />Bz2Extractor::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#a4e13b7057da9afcfdd600984812d3535" class="m-doc-self">Extract</a>(</span><span class="m-doc-wrap">std::istream&amp; input,
-              std::shared_ptr&lt;std::ostream&gt; pages_output,
-              std::shared_ptr&lt;std::ostream&gt; revisions_output) <span class="m-label m-warning">override</span></span></span>
+              <span class="m-doc-wrap-bumper">std::pair&lt;uint64_t, uint64_t&gt; wikiopencite::<wbr />citescoop::<wbr />Bz2Extractor::<wbr /></span><span class="m-doc-wrap"><span class="m-doc-wrap-bumper"><a href="#a7ef09b9bb7f46c5bcca951eab20f6276" class="m-doc-self">Extract</a>(</span><span class="m-doc-wrap">std::istream&amp; input,
+              std::ostream* pages_output,
+              std::ostream* revisions_output) <span class="m-label m-warning">override</span></span></span>
             </h3>
             <p>Extract citations from a bzip2 compressed data dump.</p>
             <table class="m-table m-fullwidth m-flat">
