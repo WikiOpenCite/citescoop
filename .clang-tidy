@@ -49,10 +49,10 @@ Checks: >
   -readability-redundant-declaration
 
 # Turn all the warnings from the checks above into errors.
-# WarningsAsErrors: "*"
+WarningsAsErrors: "*"
 
 # TODO(#205) - Enable clang-tidy checks in our headers.
-#    HeaderFilterRegex: "google/cloud/.*"
+HeaderFilterRegex: "^citescoop/.*"
 
 CheckOptions:
   - { key: readability-identifier-naming.NamespaceCase, value: lower_case }
@@ -85,6 +85,8 @@ CheckOptions:
   - { key: readability-identifier-naming.ConstexprVariablePrefix, value: k }
   - { key: readability-identifier-naming.GlobalConstantCase, value: CamelCase }
   - { key: readability-identifier-naming.GlobalConstantPrefix, value: k }
+  - { key: readability-identifier-naming.LocalConstantCase, value: CamelCase }
+  - { key: readability-identifier-naming.LocalConstantPrefix, value: k }
   - { key: readability-identifier-naming.MemberConstantCase, value: CamelCase }
   - { key: readability-identifier-naming.MemberConstantPrefix, value: k }
   - { key: readability-identifier-naming.StaticConstantCase, value: CamelCase }
