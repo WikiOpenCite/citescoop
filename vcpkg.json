@@ -1,6 +1,6 @@
 {
   "name": "citescoop",
-  "version-semver": "0.1.2",
+  "version-semver": "0.2.0",
   "dependencies": [
     {
       "name": "boost-parser",
