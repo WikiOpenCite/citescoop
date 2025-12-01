@@ -315,3 +315,48 @@ TEST_CASE(kTestNamePrefix + "Streaming input / output",
   auto revision = revision_reader.ReadMessage<proto::Revision>();
   REQUIRE(revision->revision_id() == 5);
 }
+
+/// Check that the extractor handles streaming correctly.
+TEST_CASE(kTestNamePrefix + "Streaming input / output multiple pages",
+          "[extract][extract/Extractor]") {
+  auto parser = std::make_shared<cs::Parser>();
+  auto extractor = cs::TextExtractor(parser);
+
+  auto pages_stream =
+      std::stringstream(std::ios::binary | std::ios::in | std::ios::out);
+  auto page_reader = cs::MessageReader(&pages_stream);
+  pages_stream.clear();
+
+  auto revisions_stream =
+      std::stringstream(std::ios::binary | std::ios::in | std::ios::out);
+  auto revision_reader = cs::MessageReader(&revisions_stream);
+  revisions_stream.clear();
+
+  std::ifstream file(GetTestFilePath("multiple-pages.xml"));
+  REQUIRE(file.is_open());
+
+  auto pair = extractor.Extract(file, &pages_stream, &revisions_stream);
+  REQUIRE(pair.first == 2);
+  REQUIRE(pair.second == 2);
+
+  pages_stream.clear();
+  pages_stream.seekg(0);
+  revisions_stream.clear();
+  revisions_stream.seekg(0);
+
+  auto page = page_reader.ReadMessage<proto::Page>();
+  REQUIRE(page->title() == "My Page");
+  REQUIRE(page->page_id() == 1);
+  REQUIRE(page->citations_size() == 1);
+
+  page = page_reader.ReadMessage<proto::Page>();
+  REQUIRE(page->title() == "My Second Page");
+  REQUIRE(page->page_id() == 2);
+  REQUIRE(page->citations_size() == 1);
+
+  auto revision = revision_reader.ReadMessage<proto::Revision>();
+  REQUIRE(revision->revision_id() == 5);
+
+  revision = revision_reader.ReadMessage<proto::Revision>();
+  REQUIRE(revision->revision_id() == 8);
+}

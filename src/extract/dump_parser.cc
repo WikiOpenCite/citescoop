@@ -232,6 +232,7 @@ void DumpParser::OnEndPage() {
   current_page_.Clear();
   current_page_revisions_.clear();
   citations_by_revision_.clear();
+  revisions_to_store_.clear();
 }
 
 void DumpParser::OnEndRevision() {
