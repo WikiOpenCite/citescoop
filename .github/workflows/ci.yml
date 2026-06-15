@@ -45,6 +45,9 @@ jobs:
         uses: friendlyanon/setup-vcpkg@v1
         with: { committish: "${{ env.VCPKG_COMMIT }}" }
 
+      - name: Install required gperf dependencies
+        run: sudo apt install autoconf autoconf-archive automake libtool
+
       - name: Configure
         shell: pwsh
         run: cmake --preset=ci-ubuntu
@@ -71,6 +74,9 @@ jobs:
       - name: Install vcpkg
         uses: friendlyanon/setup-vcpkg@v1
         with: { committish: "${{ env.VCPKG_COMMIT }}" }
+
+      - name: Install required gperf dependencies
+        run: sudo apt install autoconf autoconf-archive automake libtool
 
       - name: Configure
         run: cmake --preset=ci-coverage
@@ -104,6 +110,9 @@ jobs:
       - name: Install vcpkg
         uses: friendlyanon/setup-vcpkg@v1
         with: { committish: "${{ env.VCPKG_COMMIT }}" }
+
+      - name: Install required gperf dependencies
+        run: sudo apt install autoconf autoconf-archive automake libtool
 
       - name: Configure
         shell: pwsh
@@ -145,6 +154,14 @@ jobs:
           sudo update-alternatives --install
           /usr/bin/clang-tidy clang-tidy
           /usr/bin/clang-tidy-18 180
+
+      - name: Install required gperf dependencies
+        if: matrix.os == 'ubuntu-24.04'
+        run: sudo apt install autoconf autoconf-archive automake libtool
+
+      - name: Install required gperf dependencies
+        if: matrix.os == 'macos-14'
+        run: brew install autoconf autoconf-archive automake libtool
 
       - name: Install vcpkg
         uses: friendlyanon/setup-vcpkg@v1
