@@ -15,6 +15,7 @@ project(
 
 include(cmake/project-is-top-level.cmake)
 include(cmake/variables.cmake)
+include(cmake/gperf.cmake)
 
 # set(CMAKE_CXX_CLANG_TIDY clang-tidy)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -23,6 +24,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_library(
     citescoop_citescoop
+    src/langmap.cc
     src/extract/bz2extractor_impl.cc
     src/extract/bz2extractor.cc
     src/extract/dump_parser.cc
@@ -34,8 +36,12 @@ add_library(
     src/parser/parser.cc
     src/parser/parser_impl.cc
     src/parser/exceptions.cc
+    src/openalex/snapshot_processor.cc
+    src/openalex/snapshot_processor_impl.cc
 )
 add_library(wikiopencite::citescoop ALIAS citescoop_citescoop)
+add_dependencies(citescoop_citescoop generate_language_hash)
+
 
 include(GenerateExportHeader)
 generate_export_header(
@@ -71,9 +77,17 @@ target_include_directories(
     "\$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/export>"
 )
 
+target_include_directories(
+    citescoop_citescoop
+    PRIVATE
+    "\$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/configured>"
+    "\$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src>"
+)
+
 target_compile_features(citescoop_citescoop PUBLIC cxx_std_20)
 
 find_package(Boost REQUIRED COMPONENTS parser algorithm iostreams)
+find_package(nlohmann_json 3.12.0 REQUIRED)
 find_package(citescoop-proto REQUIRED)
 
 find_package(PkgConfig REQUIRED)
@@ -85,8 +99,11 @@ target_link_libraries(citescoop_citescoop PRIVATE
   Boost::algorithm
   Boost::iostreams
   PkgConfig::LIBXMLXX
-  wikiopencite::citescoop-proto
+  nlohmann_json::nlohmann_json
 )
+
+target_link_libraries(citescoop_citescoop PUBLIC
+  wikiopencite::citescoop-proto)
 
 # ---- Install rules ----
 
