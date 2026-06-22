@@ -20,7 +20,7 @@
     },
     {
       "name": "libxmlpp",
-      "version>=": "5.4.0"
+      "version>=": "5.6.1"
     },
     {
       "name": "nlohmann-json",
