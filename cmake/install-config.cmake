@@ -7,6 +7,7 @@ include(CMakeFindDependencyMacro)
 
 find_dependency(Boost REQUIRED COMPONENTS parser algorithm iostreams)
 find_dependency(citescoop-proto REQUIRED)
+find_dependency(nlohmann_json REQUIRED)
 find_dependency(PkgConfig REQUIRED)
 # Then use pkg-config for locate specific package
 pkg_check_modules(LIBXMLXX REQUIRED IMPORTED_TARGET libxml++-5.0)

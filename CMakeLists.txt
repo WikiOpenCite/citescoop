@@ -87,7 +87,7 @@ target_include_directories(
 target_compile_features(citescoop_citescoop PUBLIC cxx_std_20)
 
 find_package(Boost REQUIRED COMPONENTS parser algorithm iostreams)
-find_package(nlohmann_json 3.12.0 REQUIRED)
+find_package(nlohmann_json REQUIRED)
 find_package(citescoop-proto REQUIRED)
 
 find_package(PkgConfig REQUIRED)
