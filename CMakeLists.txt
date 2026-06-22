@@ -7,7 +7,7 @@ include(cmake/prelude.cmake)
 
 project(
     citescoop
-    VERSION 0.2.1
+    VERSION 0.3.0
     DESCRIPTION "A library for extracting citations from Wikitext"
     HOMEPAGE_URL "https://github.com/WikiOpenCite/citescoop"
     LANGUAGES CXX
