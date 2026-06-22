@@ -2,9 +2,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include <fstream>
+#include <iostream>
+#include <sstream>
 
 #include <catch2/catch_test_macros.hpp>
 
+#include "citescoop/io.h"
 #include "citescoop/openalex.h"
 #include "citescoop/proto/language.pb.h"
 #include "citescoop/proto/openalex/work.pb.h"
@@ -16,6 +19,7 @@
 
 namespace proto = wikiopencite::proto;
 namespace openalex = wikiopencite::citescoop::openalex;
+namespace cs = wikiopencite::citescoop;
 
 SCENARIO(TEST_NAME_PREFIX "all fields are extracted correctly from the record",
          "[openalex][openalex / SnapshotProcessor]") {
@@ -100,7 +104,7 @@ SCENARIO(TEST_NAME_PREFIX "all fields are extracted correctly from the record",
       }
     }
   }
-}
+}  // namespace wikiopencite::citescoop
 
 SCENARIO(TEST_NAME_PREFIX
          "missing and null values in OpenAlex dump are handled gracefully",
@@ -211,6 +215,78 @@ SCENARIO(TEST_NAME_PREFIX "unrecognized languages are handled gracefully",
       THEN("language is marked as unspecified") {
         REQUIRE(works.at(0).language() ==
                 proto::Language::LANGUAGE_UNSPECIFIED);
+      }
+    }
+  }
+}
+
+SCENARIO(TEST_NAME_PREFIX "streaming single line file works as expected",
+         "[openalex][openalex / SnapshotProcessor]") {
+  GIVEN("an OpenAlex dump file differing work, author and institution counts") {
+    auto processor = openalex::SnapshotProcessor();
+
+    std::ifstream file(
+        FILE("data/diff-counts.jsonl"));  // NOLINT(misc-include-cleaner)
+    REQUIRE(file.is_open());
+
+    auto authors =
+        std::stringstream(std::ios::binary | std::ios::in | std::ios::out);
+    auto authors_reader = cs::MessageReader(&authors);
+    authors.clear();
+
+    auto institutions =
+        std::stringstream(std::ios::binary | std::ios::in | std::ios::out);
+    auto institutions_reader = cs::MessageReader(&institutions);
+    institutions.clear();
+
+    auto works =
+        std::stringstream(std::ios::binary | std::ios::in | std::ios::out);
+    auto works_reader = cs::MessageReader(&works);
+    works.clear();
+
+    WHEN("file is parsed") {
+      auto counts =
+          processor.ProcessWorksSnapshot(file, &authors, &institutions, &works);
+
+      THEN("number of authors is 3") {
+        REQUIRE(std::get<0>(counts) == 3);
+      }
+
+      THEN("number of institutions is 2") {
+        REQUIRE(std::get<1>(counts) == 2);
+      }
+
+      THEN("number of works is 1") {
+        REQUIRE(std::get<2>(counts) == 1);
+      }
+
+      WHEN("the authors are read from the stream") {
+        authors.seekg(0);
+        auto author = authors_reader.ReadMessage<proto::openalex::Author>();
+        REQUIRE(author->openalex_id() == "A123456789");
+
+        author = authors_reader.ReadMessage<proto::openalex::Author>();
+        REQUIRE(author->openalex_id() == "A987654321");
+
+        author = authors_reader.ReadMessage<proto::openalex::Author>();
+        REQUIRE(author->openalex_id() == "A000000000");
+      }
+
+      WHEN("the institutions are read from the stream") {
+        institutions.seekg(0);
+        auto institution =
+            institutions_reader.ReadMessage<proto::openalex::Institution>();
+        REQUIRE(institution->openalex_id() == "I123456789");
+
+        institution =
+            institutions_reader.ReadMessage<proto::openalex::Institution>();
+        REQUIRE(institution->openalex_id() == "I987654321");
+      }
+
+      WHEN("the work is read from the stream") {
+        works.seekg(0);
+        auto work = works_reader.ReadMessage<proto::openalex::Work>();
+        REQUIRE(work->openalex_id() == "W1234567890");
       }
     }
   }
