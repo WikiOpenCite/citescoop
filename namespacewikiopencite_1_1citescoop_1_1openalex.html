@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>citescoop</title>
+  <title>wikiopencite::citescoop::openalex namespace | citescoop</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400i,600,600i%7CSource+Code+Pro:400,400i,600" />
   <link rel="stylesheet" href="m-dark+documentation.compiled.css" />
   <link rel="icon" href="favicon-dark.png" type="image/png" />
@@ -30,7 +30,7 @@
                 <li><a href="about.html">About</a></li>
               </ol>
             </li>
-            <li><a href="namespaces.html" id="m-navbar-current">Namespaces</a></li>
+            <li><a href="namespaces.html">Namespaces</a></li>
           </ol>
           <ol class="m-col-t-6 m-col-m-none" start="3">
             <li><a href="annotated.html">Classes</a></li>
@@ -48,37 +48,72 @@
   <div class="m-container m-container-inflatable">
     <div class="m-row">
       <div class="m-col-l-10 m-push-l-1">
-        <h1>Namespaces</h1>
-        <ul class="m-doc">
-          <li>namespace <a href="namespacestd.html" class="m-doc">std</a> <span class="m-doc"><span></span></span></li>
-          <li class="m-doc-collapsible">
-            <a href="#" onclick="return toggle(this)">namespace</a> <a href="namespacewikiopencite.html" class="m-doc">wikiopencite</a> <span class="m-doc"><span></span></span>
-            <ul class="m-doc">
-              <li class="m-doc-collapsible">
-                <a href="#" onclick="return toggle(this)">namespace</a> <a href="namespacewikiopencite_1_1citescoop.html" class="m-doc">citescoop</a> <span class="m-doc"><span></span></span>
-                <ul class="m-doc">
-                  <li>namespace <a href="namespacewikiopencite_1_1citescoop_1_1openalex.html" class="m-doc">openalex</a> <span class="m-doc"><span></span></span></li>
-                </ul>
-              </li>
-            </ul>
-          </li>
-        </ul>
-        <script>
-        function toggle(e) {
-            e.parentElement.className = e.parentElement.className == 'm-doc-collapsible' ?
-                'm-doc-expansible' : 'm-doc-collapsible';
-            return false;
-        }
-        /* Collapse all nodes marked as such. Doing it via JS instead of
-           directly in markup so disabling it doesn't harm usability. The list
-           is somehow regenerated on every iteration and shrinks as I change
-           the classes. It's not documented anywhere and I'm not sure if this
-           is the same across browsers, so I am going backwards in that list to
-           be sure. */
-        var collapsed = document.getElementsByClassName("collapsed");
-        for(var i = collapsed.length - 1; i >= 0; --i)
-            collapsed[i].className = 'm-doc-expansible';
-        </script>
+        <h1>
+          <span class="m-breadcrumb"><a href="namespacewikiopencite.html">wikiopencite</a>::<wbr/></span><span class="m-breadcrumb"><a href="namespacewikiopencite_1_1citescoop.html">citescoop</a>::<wbr/></span>openalex <span class="m-thin">namespace</span>
+        </h1>
+        <p><span></span></p>
+        <nav class="m-block m-default">
+          <h3>Contents</h3>
+          <ul>
+            <li>
+              Reference
+              <ul>
+                <li><a href="#nested-classes">Classes</a></li>
+                <li><a href="#typedef-members">Typedefs</a></li>
+              </ul>
+            </li>
+          </ul>
+        </nav>
+        <section id="nested-classes">
+          <h2><a href="#nested-classes">Classes</a></h2>
+          <dl class="m-doc">
+            <dt>
+              class <a href="classwikiopencite_1_1citescoop_1_1openalex_1_1SnapshotProcessor.html" class="m-doc">SnapshotProcessor</a>
+            </dt>
+            <dd>Process OpenAlex dataset snapshots.</dd>
+          </dl>
+        </section>
+        <section id="typedef-members">
+          <h2><a href="#typedef-members">Typedefs</a></h2>
+          <dl class="m-doc">
+            <dt>
+              using <a href="#aea81d59d1ce88a30d4f635e134f30417" class="m-doc">Authors</a> = std::vector&lt;wikiopencite::proto::openalex::Author&gt;
+            </dt>
+            <dd><span></span></dd>
+            <dt>
+              using <a href="#a6bfd4b7222fca772c59c3690101cda19" class="m-doc">Institutions</a> = std::vector&lt;wikiopencite::proto::openalex::Institution&gt;
+            </dt>
+            <dd><span></span></dd>
+            <dt>
+              using <a href="#a74d6ed51cb48033f33a865495ddaaf13" class="m-doc">Works</a> = std::vector&lt;wikiopencite::proto::openalex::Work&gt;
+            </dt>
+            <dd><span></span></dd>
+          </dl>
+        </section>
+        <section>
+          <h2>Typedef documentation</h2>
+          <section class="m-doc-details" id="aea81d59d1ce88a30d4f635e134f30417"><div>
+            <h3>
+              using wikiopencite::<wbr />citescoop::<wbr />openalex::<wbr /><a href="#aea81d59d1ce88a30d4f635e134f30417" class="m-doc-self">Authors</a> = std::vector&lt;wikiopencite::proto::openalex::Author&gt;
+              <div class="m-doc-include m-code m-inverted m-text-right"><span class="cp">#include</span> <a class="cpf" href="openalex_8h.html">&lt;citescoop/openalex.h&gt;</a></div>
+            </h3>
+            <p><span></span></p>
+          </div></section>
+          <section class="m-doc-details" id="a6bfd4b7222fca772c59c3690101cda19"><div>
+            <h3>
+              using wikiopencite::<wbr />citescoop::<wbr />openalex::<wbr /><a href="#a6bfd4b7222fca772c59c3690101cda19" class="m-doc-self">Institutions</a> = std::vector&lt;wikiopencite::proto::openalex::Institution&gt;
+              <div class="m-doc-include m-code m-inverted m-text-right"><span class="cp">#include</span> <a class="cpf" href="openalex_8h.html">&lt;citescoop/openalex.h&gt;</a></div>
+            </h3>
+            <p><span></span></p>
+          </div></section>
+          <section class="m-doc-details" id="a74d6ed51cb48033f33a865495ddaaf13"><div>
+            <h3>
+              using wikiopencite::<wbr />citescoop::<wbr />openalex::<wbr /><a href="#a74d6ed51cb48033f33a865495ddaaf13" class="m-doc-self">Works</a> = std::vector&lt;wikiopencite::proto::openalex::Work&gt;
+              <div class="m-doc-include m-code m-inverted m-text-right"><span class="cp">#include</span> <a class="cpf" href="openalex_8h.html">&lt;citescoop/openalex.h&gt;</a></div>
+            </h3>
+            <p><span></span></p>
+          </div></section>
+        </section>
       </div>
     </div>
   </div>
