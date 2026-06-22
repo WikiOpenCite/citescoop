@@ -15,7 +15,7 @@
 #include "citescoop/parser.h"
 #include "citescoop/proto/page.pb.h"
 
-#include "util.h"
+#include "util.h"  // NOLINT(misc-include-cleaner)
 
 const std::string kTestNamePrefix = "[BZ2 Extractor] ";
 
@@ -29,8 +29,8 @@ TEST_CASE(kTestNamePrefix + "Extract single citation from single revision",
   auto parser = std::make_shared<cs::Parser>();
   auto extractor = cs::Bz2Extractor(parser);
 
-  std::ifstream file(
-      GetTestFilePath("single-revision-single-citation.xml.bz2"));
+  // NOLINTNEXTLINE(misc-include-cleaner)
+  std::ifstream file(FILE("data/single-revision-single-citation.xml.bz2"));
   REQUIRE(file.is_open());
 
   const int kRevisionAdded = 5;
@@ -69,8 +69,7 @@ TEST_CASE(kTestNamePrefix + "Streaming input / output",
   auto revision_reader = cs::MessageReader(&revisions_stream);
   revisions_stream.clear();
 
-  std::ifstream file(
-      GetTestFilePath("single-revision-single-citation.xml.bz2"));
+  std::ifstream file(FILE("data/single-revision-single-citation.xml.bz2"));
   REQUIRE(file.is_open());
 
   auto pair = extractor.Extract(file, &pages_stream, &revisions_stream);

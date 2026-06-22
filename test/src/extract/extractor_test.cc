@@ -16,7 +16,7 @@
 #include "citescoop/proto/page.pb.h"
 #include "citescoop/proto/revision.pb.h"
 
-#include "util.h"
+#include "util.h"  // NOLINT(misc-include-cleaner)
 
 const std::string kTestNamePrefix = "[Extractor] ";
 
@@ -30,7 +30,8 @@ TEST_CASE(kTestNamePrefix + "Extract single citation from single revision",
   auto parser = std::make_shared<cs::Parser>();
   auto extractor = cs::TextExtractor(parser);
 
-  std::ifstream file(GetTestFilePath("single-revision-single-citation.xml"));
+  // NOLINTNEXTLINE(misc-include-cleaner)
+  std::ifstream file(FILE("data/single-revision-single-citation.xml"));
   REQUIRE(file.is_open());
 
   const int kRevisionAdded = 5;
@@ -62,7 +63,7 @@ TEST_CASE(kTestNamePrefix + "Multiple revisions with citation being removed",
   auto parser = std::make_shared<cs::Parser>();
   auto extractor = cs::TextExtractor(parser);
 
-  std::ifstream file(GetTestFilePath("multiple-revision-citation-removed.xml"));
+  std::ifstream file(FILE("data/multiple-revision-citation-removed.xml"));
   REQUIRE(file.is_open());
 
   const int kRevisionAdded = 5;
@@ -99,8 +100,7 @@ TEST_CASE(kTestNamePrefix + "Multiple revisions in non-chronological order",
   auto parser = std::make_shared<cs::Parser>();
   auto extractor = cs::TextExtractor(parser);
 
-  std::ifstream file(
-      GetTestFilePath("multiple-revision-not-chronological.xml"));
+  std::ifstream file(FILE("data/multiple-revision-not-chronological.xml"));
   REQUIRE(file.is_open());
 
   const int kRevisionAdded = 5;
@@ -137,7 +137,7 @@ TEST_CASE(kTestNamePrefix + "Multiple revisions with same timestamp",
   auto parser = std::make_shared<cs::Parser>();
   auto extractor = cs::TextExtractor(parser);
 
-  std::ifstream file(GetTestFilePath("multiple-revision-same-timestamp.xml"));
+  std::ifstream file(FILE("data/multiple-revision-same-timestamp.xml"));
   REQUIRE(file.is_open());
 
   const int kRevisionAdded = 6;
@@ -170,7 +170,7 @@ TEST_CASE(kTestNamePrefix + "Order not determined by ID",
   auto parser = std::make_shared<cs::Parser>();
   auto extractor = cs::TextExtractor(parser);
 
-  std::ifstream file(GetTestFilePath("multiple-revision-order-not-by-id.xml"));
+  std::ifstream file(FILE("data/multiple-revision-order-not-by-id.xml"));
   REQUIRE(file.is_open());
 
   const int kRevisionAdded = 6;
@@ -205,7 +205,7 @@ TEST_CASE(kTestNamePrefix + "Multiple pages", "[extract][extract/Extractor]") {
   auto parser = std::make_shared<cs::Parser>();
   auto extractor = cs::TextExtractor(parser);
 
-  std::ifstream file(GetTestFilePath("multiple-pages.xml"));
+  std::ifstream file(FILE("data/multiple-pages.xml"));
   REQUIRE(file.is_open());
 
   const int kPage1RevisionAdded = 5;
@@ -251,7 +251,7 @@ TEST_CASE(kTestNamePrefix + "Orphaned revision inclusion",
   auto parser = std::make_shared<cs::Parser>();
   auto extractor = cs::TextExtractor(parser);
 
-  std::ifstream file(GetTestFilePath("orphaned-revision-included.xml"));
+  std::ifstream file(FILE("data/orphaned-revision-included.xml"));
   REQUIRE(file.is_open());
 
   const int kRevisionId = 5;
@@ -268,7 +268,7 @@ TEST_CASE(kTestNamePrefix + "Malformed XML", "[extract][extract/Extractor]") {
   auto parser = std::make_shared<cs::Parser>();
   auto extractor = cs::TextExtractor(parser);
 
-  std::ifstream file(GetTestFilePath("malformed.xml"));
+  std::ifstream file(FILE("data/malformed.xml"));
   REQUIRE(file.is_open());
 
   REQUIRE_THROWS_AS(extractor.Extract(file), cs::DumpParseException);
@@ -290,7 +290,7 @@ TEST_CASE(kTestNamePrefix + "Streaming input / output",
   auto revision_reader = cs::MessageReader(&revisions_stream);
   revisions_stream.clear();
 
-  std::ifstream file(GetTestFilePath("single-revision-single-citation.xml"));
+  std::ifstream file(FILE("data/single-revision-single-citation.xml"));
   REQUIRE(file.is_open());
 
   auto pair = extractor.Extract(file, &pages_stream, &revisions_stream);
@@ -332,7 +332,7 @@ TEST_CASE(kTestNamePrefix + "Streaming input / output multiple pages",
   auto revision_reader = cs::MessageReader(&revisions_stream);
   revisions_stream.clear();
 
-  std::ifstream file(GetTestFilePath("multiple-pages.xml"));
+  std::ifstream file(FILE("data/multiple-pages.xml"));
   REQUIRE(file.is_open());
 
   auto pair = extractor.Extract(file, &pages_stream, &revisions_stream);

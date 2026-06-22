@@ -24,8 +24,14 @@ add_executable(citescoop_test
   src/extract/bz2extractor_test.cc
   src/extract/extractor_test.cc
   src/parser/parser_test.cc
+  src/openalex/snapshot_processor_test.cc
   src/io_test.cc
 )
+
+target_include_directories(citescoop_test PRIVATE
+  ${CMAKE_CURRENT_SOURCE_DIR}/src
+)
+
 target_link_libraries(
     citescoop_test PRIVATE
     wikiopencite::citescoop
