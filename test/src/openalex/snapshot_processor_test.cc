@@ -123,7 +123,7 @@ SCENARIO(TEST_NAME_PREFIX
       THEN("the correct number of elements has been extracted") {
         REQUIRE(authors.size() == 3);
         REQUIRE(institutions.size() == 3);
-        REQUIRE(works.size() == 24);
+        REQUIRE(works.size() == 30);
       }
     }
   }
