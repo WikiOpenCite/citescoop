@@ -100,7 +100,9 @@ proto::openalex::Work SnapshotProcessor::SnapshotProcessorImpl::ExtractWork(
   proto::openalex::Work work;
 
   work.set_openalex_id(TrimOpenAlexId(data["id"].get<std::string>()));
-  work.set_title(data["title"].get<std::string>());
+  if (data.contains("title") && data["title"].is_string()) {
+    work.set_title(data["title"].get<std::string>());
+  }
 
   if (data.contains("publication_date") &&
       data["publication_date"].is_string()) {
