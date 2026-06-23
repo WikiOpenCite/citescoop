@@ -58,7 +58,8 @@ class CITESCOOP_EXPORT SnapshotProcessor {
   /// @param institutions_output Output stream for institutions in
   /// citescoop pbf format.
   /// @param works_output Output stream for works in citescoop pbf format.
-  /// @return The number of messages sent to each stream.
+  /// @return The number of messages sent to each stream (authors,
+  /// institutions, works).
   std::tuple<uint64_t, uint64_t, uint64_t> ProcessWorksSnapshot(
       std::istream& input, std::ostream* authors_output,
       std::ostream* institutions_output, std::ostream* works_output) const;
