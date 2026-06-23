@@ -64,6 +64,7 @@ class CITESCOOP_EXPORT SnapshotProcessor {
       std::istream& input, std::ostream* authors_output,
       std::ostream* institutions_output, std::ostream* works_output) const;
 
+ private:
   class SnapshotProcessorImpl;
   std::unique_ptr<SnapshotProcessorImpl> impl_;
 };
