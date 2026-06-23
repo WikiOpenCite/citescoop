@@ -121,9 +121,9 @@ SCENARIO(TEST_NAME_PREFIX
           processor.ProcessWorksSnapshot(file);
 
       THEN("the correct number of elements has been extracted") {
-        REQUIRE(authors.size() == 1);
-        REQUIRE(institutions.size() == 1);
-        REQUIRE(works.size() == 16);
+        REQUIRE(authors.size() == 3);
+        REQUIRE(institutions.size() == 3);
+        REQUIRE(works.size() == 22);
       }
     }
   }

@@ -129,12 +129,10 @@ proto::openalex::Work SnapshotProcessor::SnapshotProcessorImpl::ExtractWork(
   for (const auto& author : data["authorships"]) {
     // No need to deduplicate authors, as they are already deduplicated
     // by OpenAlex.
-    work.add_author_ids(
-        TrimOpenAlexId(author["author"]["id"].get<std::string>()));
+    work.add_author_ids(GetAuthorId(author["author"]));
 
-    for (const auto& institutions : author["institutions"]) {
-      const std::string kTrimmedInstitutionId =
-          TrimOpenAlexId(institutions["id"].get<std::string>());
+    for (const auto& institution : author["institutions"]) {
+      const std::string kTrimmedInstitutionId = GetInstitutionId(institution);
 
       if (!seen_institution_ids.contains(kTrimmedInstitutionId)) {
         seen_institution_ids.insert(kTrimmedInstitutionId);
@@ -154,14 +152,13 @@ Authors SnapshotProcessor::SnapshotProcessorImpl::ExtractAuthors(
   auto authors = Authors();
 
   for (const auto& author : data["authorships"]) {
-    std::string trimmed_author_id =
-        TrimOpenAlexId(author["author"]["id"].get<std::string>());
+    std::string author_id = GetAuthorId(author["author"]);
 
-    if (!seen_ids_.contains(trimmed_author_id)) {
-      seen_ids_.insert(trimmed_author_id);
+    if (!seen_ids_.contains(author_id)) {
+      seen_ids_.insert(author_id);
 
       proto::openalex::Author author_message;
-      author_message.set_openalex_id(trimmed_author_id);
+      author_message.set_openalex_id(author_id);
       author_message.set_name(
           author["author"]["display_name"].get<std::string>());
 
@@ -182,14 +179,13 @@ Institutions SnapshotProcessor::SnapshotProcessorImpl::ExtractInstitutions(
 
   for (const auto& author : data["authorships"]) {
     for (const auto& institution : author["institutions"]) {
-      std::string trimmed_institution_id =
-          TrimOpenAlexId(institution["id"].get<std::string>());
+      std::string institution_id = GetInstitutionId(institution);
 
-      if (!seen_ids_.contains(trimmed_institution_id)) {
-        seen_ids_.insert(trimmed_institution_id);
+      if (!seen_ids_.contains(institution_id)) {
+        seen_ids_.insert(institution_id);
 
         proto::openalex::Institution institution_message;
-        institution_message.set_openalex_id(trimmed_institution_id);
+        institution_message.set_openalex_id(institution_id);
         institution_message.set_name(
             institution["display_name"].get<std::string>());
 
@@ -221,6 +217,32 @@ proto::Identifiers SnapshotProcessor::SnapshotProcessorImpl::ExtractIdentifiers(
   // TODO(@Computroniks): Add more identifiers as needed
 
   return identifiers;
+}
+
+std::string SnapshotProcessor::SnapshotProcessorImpl::GetInstitutionId(
+    const nlohmann::json& institution) {
+  if (institution.contains("id") && institution["id"].is_string()) {
+    return TrimOpenAlexId(institution["id"].get<std::string>());
+  }
+
+  if (institution.contains("ror") && institution["ror"].is_string()) {
+    return "UNKNOWN_" + institution["ror"].get<std::string>();
+  }
+
+  return "UNKNOWN_" + institution["display_name"].get<std::string>();
+}
+
+std::string SnapshotProcessor::SnapshotProcessorImpl::GetAuthorId(
+    const nlohmann::json& author) {
+  if (author.contains("id") && author["id"].is_string()) {
+    return TrimOpenAlexId(author["id"].get<std::string>());
+  }
+
+  if (author.contains("orcid") && author["orcid"].is_string()) {
+    return "UNKNOWN_" + author["orcid"].get<std::string>();
+  }
+
+  return "UNKNOWN_" + author["display_name"].get<std::string>();
 }
 
 wikiopencite::proto::openalex::Work::OACategory
