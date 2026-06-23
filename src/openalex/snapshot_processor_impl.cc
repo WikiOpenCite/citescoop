@@ -131,14 +131,19 @@ proto::openalex::Work SnapshotProcessor::SnapshotProcessorImpl::ExtractWork(
   for (const auto& author : data["authorships"]) {
     // No need to deduplicate authors, as they are already deduplicated
     // by OpenAlex.
-    work.add_author_ids(GetAuthorId(author["author"]));
+    if (!IsAuthorEmpty(author["author"])) {
+      work.add_author_ids(GetAuthorId(author["author"]));
 
-    for (const auto& institution : author["institutions"]) {
-      const std::string kTrimmedInstitutionId = GetInstitutionId(institution);
+      for (const auto& institution : author["institutions"]) {
+        if (!IsInstitutionEmpty(institution)) {
+          const std::string kTrimmedInstitutionId =
+              GetInstitutionId(institution);
 
-      if (!seen_institution_ids.contains(kTrimmedInstitutionId)) {
-        seen_institution_ids.insert(kTrimmedInstitutionId);
-        work.add_institution_ids(kTrimmedInstitutionId);
+          if (!seen_institution_ids.contains(kTrimmedInstitutionId)) {
+            seen_institution_ids.insert(kTrimmedInstitutionId);
+            work.add_institution_ids(kTrimmedInstitutionId);
+          }
+        }
       }
     }
   }
@@ -154,22 +159,29 @@ Authors SnapshotProcessor::SnapshotProcessorImpl::ExtractAuthors(
   auto authors = Authors();
 
   for (const auto& author : data["authorships"]) {
-    std::string author_id = GetAuthorId(author["author"]);
+    if (!IsAuthorEmpty(author["author"])) {
+      std::string author_id = GetAuthorId(author["author"]);
 
-    if (!seen_ids_.contains(author_id)) {
-      seen_ids_.insert(author_id);
+      if (!seen_ids_.contains(author_id)) {
+        seen_ids_.insert(author_id);
 
-      proto::openalex::Author author_message;
-      author_message.set_openalex_id(author_id);
-      author_message.set_name(
-          author["author"]["display_name"].get<std::string>());
+        proto::openalex::Author author_message;
+        author_message.set_openalex_id(author_id);
 
-      if (author["author"].contains("orcid") &&
-          author["author"]["orcid"].is_string()) {
-        author_message.set_orcid(author["author"]["orcid"].get<std::string>());
+        if (author["author"].contains("display_name") &&
+            author["author"]["display_name"].is_string()) {
+          author_message.set_name(
+              author["author"]["display_name"].get<std::string>());
+        }
+
+        if (author["author"].contains("orcid") &&
+            author["author"]["orcid"].is_string()) {
+          author_message.set_orcid(
+              author["author"]["orcid"].get<std::string>());
+        }
+
+        authors.push_back(author_message);
       }
-
-      authors.push_back(author_message);
     }
   }
   return authors;
@@ -181,21 +193,26 @@ Institutions SnapshotProcessor::SnapshotProcessorImpl::ExtractInstitutions(
 
   for (const auto& author : data["authorships"]) {
     for (const auto& institution : author["institutions"]) {
-      std::string institution_id = GetInstitutionId(institution);
+      if (!IsInstitutionEmpty(institution)) {
+        std::string institution_id = GetInstitutionId(institution);
 
-      if (!seen_ids_.contains(institution_id)) {
-        seen_ids_.insert(institution_id);
+        if (!seen_ids_.contains(institution_id)) {
+          seen_ids_.insert(institution_id);
 
-        proto::openalex::Institution institution_message;
-        institution_message.set_openalex_id(institution_id);
-        institution_message.set_name(
-            institution["display_name"].get<std::string>());
+          proto::openalex::Institution institution_message;
+          institution_message.set_openalex_id(institution_id);
+          if (institution.contains("display_name") &&
+              institution["display_name"].is_string()) {
+            institution_message.set_name(
+                institution["display_name"].get<std::string>());
+          }
 
-        if (institution.contains("ror") && institution["ror"].is_string()) {
-          institution_message.set_ror(institution["ror"].get<std::string>());
+          if (institution.contains("ror") && institution["ror"].is_string()) {
+            institution_message.set_ror(institution["ror"].get<std::string>());
+          }
+
+          institutions.push_back(institution_message);
         }
-
-        institutions.push_back(institution_message);
       }
     }
   }
@@ -269,6 +286,30 @@ SnapshotProcessor::SnapshotProcessorImpl::StringToOaCategory(
     return wikiopencite::proto::openalex::Work_OACategory_OA_CATEGORY_CLOSED;
   }
   return wikiopencite::proto::openalex::Work_OACategory_OA_CATEGORY_UNSPECIFIED;
+}
+
+bool SnapshotProcessor::SnapshotProcessorImpl::IsInstitutionEmpty(
+    const nlohmann::json& institution) {
+
+  const bool kMissingId =
+      !(institution.contains("id") && institution["id"].is_string());
+  const bool kMissingName = !(institution.contains("display_name") &&
+                              institution["display_name"].is_string());
+  const bool kMissingRor =
+      !(institution.contains("ror") && institution["ror"].is_string());
+
+  return kMissingId && kMissingName && kMissingRor;
+}
+
+bool SnapshotProcessor::SnapshotProcessorImpl::IsAuthorEmpty(
+    const nlohmann::json& author) {
+  const bool kMissingId = !(author.contains("id") && author["id"].is_string());
+  const bool kMissingName =
+      !(author.contains("display_name") && author["display_name"].is_string());
+  const bool kMissingOrcid =
+      !(author.contains("ror") && author["ror"].is_string());
+
+  return kMissingId && kMissingName && kMissingOrcid;
 }
 
 }  // namespace wikiopencite::citescoop::openalex

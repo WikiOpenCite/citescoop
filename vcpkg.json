@@ -1,6 +1,6 @@
 {
   "name": "citescoop",
-  "version-semver": "0.3.0-alpha.4",
+  "version-semver": "0.3.0-alpha.5",
   "dependencies": [
     {
       "name": "boost-algorithm",

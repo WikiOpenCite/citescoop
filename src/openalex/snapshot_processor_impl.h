@@ -138,6 +138,24 @@ class SnapshotProcessor::SnapshotProcessorImpl {
   static wikiopencite::proto::openalex::Work::OACategory StringToOaCategory(
       const std::string& category);
 
+  /// @brief Is the institution empty?
+  ///
+  /// An institution is regarded as empty if the OpenAlex ID, display
+  /// name and ROR id are all null.
+  ///
+  /// @param institution Institution to check emptyness for
+  /// @return True if empty
+  static bool IsInstitutionEmpty(const nlohmann::json& institution);
+
+  /// @brief Is the author empty?
+  ///
+  /// An author is regarded as empty if the OpenAlex ID, display name
+  /// and ROR id are all null.
+  ///
+  /// @param author Author to check emptyness for
+  /// @return True if empty
+  static bool IsAuthorEmpty(const nlohmann::json& author);
+
   /// @brief Set of author and institution IDs already seen (so
   /// shouldn't be included again)
   std::unordered_set<std::string> seen_ids_;
