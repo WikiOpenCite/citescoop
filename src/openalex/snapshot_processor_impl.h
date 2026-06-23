@@ -108,6 +108,28 @@ class SnapshotProcessor::SnapshotProcessorImpl {
         RemovePrefix(pubmed_id, "https://pubmed.ncbi.nlm.nih.gov/")));
   }
 
+  /// @brief Get the institution ID from an institution JSON object
+  ///
+  /// If no OpenAlex ID exist for the institution, it will be identified
+  /// as follows:
+  ///   - With an ROR: "UNKNOWN_<ror>"
+  ///   - Without an ROR: "UNKNOWN_<display name>"
+  ///
+  /// @param institution Institution JSON record
+  /// @return OpenAlex identifier (shortened) or the fallback alternatives
+  static std::string GetInstitutionId(const nlohmann::json& institution);
+
+  /// @brief Get the author ID from an author JSON object
+  ///
+  /// If no OpenAlex ID exist for the author, it will be identified
+  /// as follows:
+  ///   - With an orcid: "UNKNOWN_<orcid>"
+  ///   - Without an orcid: "UNKNOWN_<display name>"
+  ///
+  /// @param author Orcid JSON record
+  /// @return OpenAlex identifier (shortened) or the fallback alternatives
+  static std::string GetAuthorId(const nlohmann::json& author);
+
   /// @brief Convert an OpenAlex category string into the corresponding
   /// Work::OACategory enum value.
   /// @param category The OpenAlex category string.
