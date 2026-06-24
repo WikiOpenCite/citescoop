@@ -28,8 +28,8 @@ TEST_CASE(kTestNamePrefix + "Read and write with IO reader and writer",
 
   auto message = proto::FileHeader();
   // NOLINTNEXTLINE(readability-magic-numbers)
-  message.set_page_count(10);
-  message.set_language(proto::Language::LANGUAGE_ENGLISH);
+  message.set_count(10);
+  message.set_type(proto::FileType::FILE_TYPE_OPENALEX_AUTHORS);
 
   auto size = writer.WriteMessage(message);
   REQUIRE(size == message.ByteSizeLong());
@@ -38,6 +38,6 @@ TEST_CASE(kTestNamePrefix + "Read and write with IO reader and writer",
   stream.seekg(0);
 
   auto read_message = reader.ReadMessage<proto::FileHeader>();
-  REQUIRE(read_message->page_count() == 10);
-  REQUIRE(read_message->language() == proto::Language::LANGUAGE_ENGLISH);
+  REQUIRE(read_message->count() == 10);
+  REQUIRE(read_message->type() == proto::FileType::FILE_TYPE_OPENALEX_AUTHORS);
 }
