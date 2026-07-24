@@ -28,16 +28,16 @@ namespace {
 namespace citescoop = wikiopencite::citescoop;
 using json = nlohmann::json;  // NOLINT(misc-include-cleaner)
 
-const char kOpenAlexPrefix[] =
-    "https://openalex.org/";  // NOLINT(modernize-avoid-c-arrays)
-const char kPubmedPrefix[] =
-    "https://pubmed.ncbi.nlm.nih.gov/";  // NOLINT(modernize-avoid-c-arrays)
-const char kOrcidPrefix[] =
-    "https://orcid.org/";  // NOLINT(modernize-avoid-c-arrays)
-const char kRorPrefix[] =
-    "https://ror.org/";  // NOLINT(modernize-avoid-c-arrays)
-const char kDoiPrefix[] =
-    "https://doi.org/";  // NOLINT(modernize-avoid-c-arrays)
+// NOLINTNEXTLINE(modernize-avoid-c-arrays)
+const char kOpenAlexPrefix[] = "https://openalex.org/";
+// NOLINTNEXTLINE(modernize-avoid-c-arrays)
+const char kPubmedPrefix[] = "https://pubmed.ncbi.nlm.nih.gov/";
+// NOLINTNEXTLINE(modernize-avoid-c-arrays)
+const char kOrcidPrefix[] = "https://orcid.org/";
+// NOLINTNEXTLINE(modernize-avoid-c-arrays)
+const char kRorPrefix[] = "https://ror.org/";
+// NOLINTNEXTLINE(modernize-avoid-c-arrays)
+const char kDoiPrefix[] = "https://doi.org/";
 
 }  // namespace
 
