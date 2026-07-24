@@ -92,23 +92,6 @@ class SnapshotProcessor::SnapshotProcessorImpl {
     return str;
   }
 
-  /// @brief Trim the OpenAlex URL prefix from an OpenAlex identifier.
-  /// @param openalex_id The OpenAlex identifier string, possibly prefixed
-  /// with "https://openalex.org/".
-  /// @return The trimmed OpenAlex identifier without the URL prefix.
-  static std::string TrimOpenAlexId(const std::string& openalex_id) {
-    return RemovePrefix(openalex_id, "https://openalex.org/");
-  }
-
-  /// @brief Parse a PubMed identifier URL into a numeric PubMed ID.
-  /// @param pubmed_id The PubMed identifier string, possibly prefixed with
-  /// "https://pubmed.ncbi.nlm.nih.gov/".
-  /// @return The parsed PubMed identifier as a uint32_t.
-  static uint32_t ParsePubmedId(const std::string& pubmed_id) {
-    return static_cast<uint32_t>(std::stoul(
-        RemovePrefix(pubmed_id, "https://pubmed.ncbi.nlm.nih.gov/")));
-  }
-
   /// @brief Get the institution ID from an institution JSON object
   ///
   /// If no OpenAlex ID exist for the institution, it will be identified
