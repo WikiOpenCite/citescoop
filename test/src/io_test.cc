@@ -10,7 +10,6 @@
 
 #include "citescoop/io.h"
 #include "citescoop/proto/file_header.pb.h"
-#include "citescoop/proto/language.pb.h"
 
 const std::string kTestNamePrefix = "[IO] ";
 
