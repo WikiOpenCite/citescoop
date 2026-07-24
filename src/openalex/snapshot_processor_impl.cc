@@ -322,7 +322,7 @@ bool SnapshotProcessor::SnapshotProcessorImpl::IsAuthorEmpty(
   const bool kMissingName =
       !(author.contains("display_name") && author["display_name"].is_string());
   const bool kMissingOrcid =
-      !(author.contains("ror") && author["ror"].is_string());
+      !(author.contains("orcid") && author["orcid"].is_string());
 
   return kMissingId && kMissingName && kMissingOrcid;
 }
