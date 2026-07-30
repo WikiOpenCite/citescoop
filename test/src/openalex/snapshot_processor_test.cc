@@ -57,7 +57,7 @@ SCENARIO(TEST_NAME_PREFIX "all fields are extracted correctly from the record",
         THEN("the institution has the correct values") {
           REQUIRE(institution.openalex_id() == "I123456789");
           REQUIRE(institution.name() == "Example University");
-          REQUIRE(institution.ror() == "https://ror.org/012345678");
+          REQUIRE(institution.ror() == "012345678");
         }
       }
 

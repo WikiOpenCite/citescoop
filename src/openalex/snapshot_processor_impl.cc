@@ -28,6 +28,17 @@ namespace {
 namespace citescoop = wikiopencite::citescoop;
 using json = nlohmann::json;  // NOLINT(misc-include-cleaner)
 
+// NOLINTNEXTLINE(modernize-avoid-c-arrays)
+const char kOpenAlexPrefix[] = "https://openalex.org/";
+// NOLINTNEXTLINE(modernize-avoid-c-arrays)
+const char kPubmedPrefix[] = "https://pubmed.ncbi.nlm.nih.gov/";
+// NOLINTNEXTLINE(modernize-avoid-c-arrays)
+const char kOrcidPrefix[] = "https://orcid.org/";
+// NOLINTNEXTLINE(modernize-avoid-c-arrays)
+const char kRorPrefix[] = "https://ror.org/";
+// NOLINTNEXTLINE(modernize-avoid-c-arrays)
+const char kDoiPrefix[] = "https://doi.org/";
+
 }  // namespace
 
 std::tuple<Authors, Institutions, Works>
@@ -99,7 +110,9 @@ proto::openalex::Work SnapshotProcessor::SnapshotProcessorImpl::ExtractWork(
     const nlohmann::json& data) {
   proto::openalex::Work work;
 
-  work.set_openalex_id(TrimOpenAlexId(data["id"].get<std::string>()));
+  work.set_openalex_id(
+      RemovePrefix(data["id"].get<std::string>(), kOpenAlexPrefix));
+
   if (data.contains("title") && data["title"].is_string()) {
     work.set_title(data["title"].get<std::string>());
   }
@@ -176,8 +189,8 @@ Authors SnapshotProcessor::SnapshotProcessorImpl::ExtractAuthors(
 
         if (author["author"].contains("orcid") &&
             author["author"]["orcid"].is_string()) {
-          author_message.set_orcid(
-              author["author"]["orcid"].get<std::string>());
+          author_message.set_orcid(RemovePrefix(
+              author["author"]["orcid"].get<std::string>(), kOrcidPrefix));
         }
 
         authors.push_back(author_message);
@@ -208,7 +221,8 @@ Institutions SnapshotProcessor::SnapshotProcessorImpl::ExtractInstitutions(
           }
 
           if (institution.contains("ror") && institution["ror"].is_string()) {
-            institution_message.set_ror(institution["ror"].get<std::string>());
+            institution_message.set_ror(RemovePrefix(
+                institution["ror"].get<std::string>(), kRorPrefix));
           }
 
           institutions.push_back(institution_message);
@@ -230,7 +244,8 @@ proto::Identifiers SnapshotProcessor::SnapshotProcessorImpl::ExtractIdentifiers(
   }
 
   if (data["ids"].contains("pmid") && data["ids"]["pmid"].is_string()) {
-    identifiers.set_pmid(ParsePubmedId(data["ids"]["pmid"].get<std::string>()));
+    identifiers.set_pmid(static_cast<uint32_t>(std::stoul(
+        RemovePrefix(data["ids"]["pmid"].get<std::string>(), kPubmedPrefix))));
   }
 
   // TODO(@Computroniks): Add more identifiers as needed
@@ -241,7 +256,7 @@ proto::Identifiers SnapshotProcessor::SnapshotProcessorImpl::ExtractIdentifiers(
 std::string SnapshotProcessor::SnapshotProcessorImpl::GetInstitutionId(
     const nlohmann::json& institution) {
   if (institution.contains("id") && institution["id"].is_string()) {
-    return TrimOpenAlexId(institution["id"].get<std::string>());
+    return RemovePrefix(institution["id"].get<std::string>(), kOpenAlexPrefix);
   }
 
   if (institution.contains("ror") && institution["ror"].is_string()) {
@@ -254,7 +269,7 @@ std::string SnapshotProcessor::SnapshotProcessorImpl::GetInstitutionId(
 std::string SnapshotProcessor::SnapshotProcessorImpl::GetAuthorId(
     const nlohmann::json& author) {
   if (author.contains("id") && author["id"].is_string()) {
-    return TrimOpenAlexId(author["id"].get<std::string>());
+    return RemovePrefix(author["id"].get<std::string>(), kOpenAlexPrefix);
   }
 
   if (author.contains("orcid") && author["orcid"].is_string()) {
@@ -307,7 +322,7 @@ bool SnapshotProcessor::SnapshotProcessorImpl::IsAuthorEmpty(
   const bool kMissingName =
       !(author.contains("display_name") && author["display_name"].is_string());
   const bool kMissingOrcid =
-      !(author.contains("ror") && author["ror"].is_string());
+      !(author.contains("orcid") && author["orcid"].is_string());
 
   return kMissingId && kMissingName && kMissingOrcid;
 }
