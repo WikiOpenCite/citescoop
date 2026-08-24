@@ -12,7 +12,7 @@
     },
     {
       "name": "boost-parser",
-      "version>=": "1.91.0"
+      "version>=": "1.92.0"
     },
     {
       "name": "citescoop-proto",
