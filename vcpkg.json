@@ -4,7 +4,7 @@
   "dependencies": [
     {
       "name": "boost-algorithm",
-      "version>=": "1.91.0"
+      "version>=": "1.92.0"
     },
     {
       "name": "boost-iostreams",
